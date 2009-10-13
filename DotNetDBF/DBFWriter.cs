@@ -94,6 +94,21 @@ namespace DotNetDBF
             recordCount = header.NumberOfRecords;
         }
 
+	public byte LanguageDriver
+	{
+        set
+        {
+                if (header.languageDriver != 0x00)
+                {
+                        throw new DBFException("LanguageDriver has already been set");
+                }
+
+                header.languageDriver = value;
+        }
+	}
+	
+
+
         ///Sets fields.
         public DBFField[] Fields
         {

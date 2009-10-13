@@ -129,7 +129,7 @@ namespace DotNetDBF
                 new StringBuilder(header.Year + "/" + header.Month + "/"
                                   + header.Day + "\n"
                                   + "Total records: " + header.NumberOfRecords +
-                                  "\nHEader length: " + header.HeaderLength +
+                                  "\nHeader length: " + header.HeaderLength +
                                   "");
 
             for (int i = 0; i < header.FieldArray.Length; i++)
