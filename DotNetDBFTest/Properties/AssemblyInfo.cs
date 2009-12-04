@@ -1,28 +1,26 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
-[assembly : AssemblyTitle("DotNetDBF")]
-[assembly : AssemblyDescription("")]
-[assembly : AssemblyConfiguration("")]
-[assembly : AssemblyCompany("")]
-[assembly : AssemblyProduct("DotNetDBF")]
-[assembly : AssemblyCopyright("Copyright ©  2009")]
-[assembly : AssemblyTrademark("")]
-[assembly : AssemblyCulture("")]
+[assembly: AssemblyTitle("DotNetDBFTest")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("DotNetDBFTest")]
+[assembly: AssemblyCopyright("Copyright © 2009")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-
-[assembly : ComVisible(false)]
+[assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-
-[assembly : Guid("950dfc0d-63ac-43fc-8e58-77a7d9cca63a")]
+[assembly: Guid("d970c801-3241-4abd-b25d-cce14b93d542")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,6 +29,4 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-
-[assembly : AssemblyVersion("1.0.0.1")]
-[assembly : AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.*")]
