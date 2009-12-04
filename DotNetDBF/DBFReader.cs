@@ -20,8 +20,9 @@ namespace DotNetDBF
 {
     public class DBFReader : DBFBase, IDisposable
     {
-        private BinaryReader dataInputStream;
-        private DBFHeader header;
+        private BinaryReader _dataInputStream;
+        private DBFHeader _header;
+        private string _dataMemoLoc;
 
         /* Class specific variables */
         private bool isClosed = true;
@@ -41,28 +42,35 @@ namespace DotNetDBF
         {
             try
             {
-                dataInputStream = new BinaryReader(
+                _dataInputStream = new BinaryReader(
                     File.Open(anIn,
                               FileMode.Open,
                               FileAccess.Read,
                               FileShare.Read)
                     );
+
+                var dbtPath = Path.ChangeExtension(anIn, "dbt");
+                if (File.Exists(dbtPath))
+                {
+                    _dataMemoLoc = dbtPath;
+                }
+
                 isClosed = false;
-                header = new DBFHeader();
-                header.Read(dataInputStream);
+                _header = new DBFHeader();
+                _header.Read(_dataInputStream);
 
                 /* it might be required to leap to the start of records at times */
-                int t_dataStartIndex = header.HeaderLength
-                                       - (32 + (32 * header.FieldArray.Length))
+                int t_dataStartIndex = _header.HeaderLength
+                                       - (32 + (32 * _header.FieldArray.Length))
                                        - 1;
                 if (t_dataStartIndex > 0)
                 {
-                    dataInputStream.ReadBytes((t_dataStartIndex));
+                    _dataInputStream.ReadBytes((t_dataStartIndex));
                 }
             }
-            catch (IOException e)
+            catch (IOException ex)
             {
-                throw new DBFException("Failed To Read DBF", e);
+                throw new DBFException("Failed To Read DBF", ex);
             }
         }
 
@@ -70,18 +78,18 @@ namespace DotNetDBF
         {
             try
             {
-                dataInputStream = new BinaryReader(anIn);
+                _dataInputStream = new BinaryReader(anIn);
                 isClosed = false;
-                header = new DBFHeader();
-                header.Read(dataInputStream);
+                _header = new DBFHeader();
+                _header.Read(_dataInputStream);
 
                 /* it might be required to leap to the start of records at times */
-                int t_dataStartIndex = header.HeaderLength
-                                       - (32 + (32 * header.FieldArray.Length))
+                int t_dataStartIndex = _header.HeaderLength
+                                       - (32 + (32 * _header.FieldArray.Length))
                                        - 1;
                 if (t_dataStartIndex > 0)
                 {
-                    dataInputStream.ReadBytes((t_dataStartIndex));
+                    _dataInputStream.ReadBytes((t_dataStartIndex));
                 }
             }
             catch (IOException e)
@@ -96,7 +104,7 @@ namespace DotNetDBF
 
         public int RecordCount
         {
-            get { return header.NumberOfRecords; }
+            get { return _header.NumberOfRecords; }
         }
 
         /**
@@ -108,7 +116,7 @@ namespace DotNetDBF
 
         public DBFField[] Fields
         {
-            get { return header.FieldArray; }
+            get { return _header.FieldArray; }
         }
 
         #region IDisposable Members
@@ -126,15 +134,15 @@ namespace DotNetDBF
         public override String ToString()
         {
             StringBuilder sb =
-                new StringBuilder(header.Year + "/" + header.Month + "/"
-                                  + header.Day + "\n"
-                                  + "Total records: " + header.NumberOfRecords +
-                                  "\nHeader length: " + header.HeaderLength +
+                new StringBuilder(_header.Year + "/" + _header.Month + "/"
+                                  + _header.Day + "\n"
+                                  + "Total records: " + _header.NumberOfRecords +
+                                  "\nHeader length: " + _header.HeaderLength +
                                   "");
 
-            for (int i = 0; i < header.FieldArray.Length; i++)
+            for (int i = 0; i < _header.FieldArray.Length; i++)
             {
-                sb.Append(header.FieldArray[i].Name);
+                sb.Append(_header.FieldArray[i].Name);
                 sb.Append("\n");
             }
 
@@ -143,7 +151,7 @@ namespace DotNetDBF
 
         public void Close()
         {
-            dataInputStream.Close();
+            _dataInputStream.Close();
             isClosed = true;
         }
 
@@ -160,7 +168,7 @@ namespace DotNetDBF
                 throw new DBFException("Source is not open");
             }
 
-            Object[] recordObjects = new Object[header.FieldArray.Length
+            Object[] recordObjects = new Object[_header.FieldArray.Length
                 ];
 
             try
@@ -170,11 +178,11 @@ namespace DotNetDBF
                 {
                     if (isDeleted)
                     {
-                        dataInputStream.ReadBytes(header.RecordLength - 1);
+                        _dataInputStream.ReadBytes(_header.RecordLength - 1);
                     }
 
-                    int t_byte = dataInputStream.ReadByte();
-                    if (t_byte == DBFValue.EndOfData)
+                    int t_byte = _dataInputStream.ReadByte();
+                    if (t_byte == DBFFieldType.EndOfData)
                     {
                         return null;
                     }
@@ -182,16 +190,16 @@ namespace DotNetDBF
                     isDeleted = (t_byte == '*');
                 } while (isDeleted);
 
-                for (int i = 0; i < header.FieldArray.Length; i++)
+                for (int i = 0; i < _header.FieldArray.Length; i++)
                 {
-                    switch (header.FieldArray[i].DataType)
+                    switch (_header.FieldArray[i].DataType)
                     {
                         case NativeDbType.Char:
 
                             byte[] b_array = new byte[
-                                header.FieldArray[i].FieldLength
+                                _header.FieldArray[i].FieldLength
                                 ];
-                            dataInputStream.Read(b_array, 0, b_array.Length);
+                            _dataInputStream.Read(b_array, 0, b_array.Length);
 
                             recordObjects[i] = CharEncoding.GetString(b_array);
                             break;
@@ -199,17 +207,17 @@ namespace DotNetDBF
                         case NativeDbType.Date:
 
                             byte[] t_byte_year = new byte[4];
-                            dataInputStream.Read(t_byte_year,
+                            _dataInputStream.Read(t_byte_year,
                                                  0,
                                                  t_byte_year.Length);
 
                             byte[] t_byte_month = new byte[2];
-                            dataInputStream.Read(t_byte_month,
+                            _dataInputStream.Read(t_byte_month,
                                                  0,
                                                  t_byte_month.Length);
 
                             byte[] t_byte_day = new byte[2];
-                            dataInputStream.Read(t_byte_day,
+                            _dataInputStream.Read(t_byte_day,
                                                  0,
                                                  t_byte_day.Length);
 
@@ -237,14 +245,14 @@ namespace DotNetDBF
                             try
                             {
                                 byte[] t_float = new byte[
-                                    header.FieldArray[i].FieldLength
+                                    _header.FieldArray[i].FieldLength
                                     ];
-                                dataInputStream.Read(t_float, 0, t_float.Length);
+                                _dataInputStream.Read(t_float, 0, t_float.Length);
                                 t_float = Utils.trimLeftSpaces(t_float);
                                 String tParsed = CharEncoding.GetString(t_float);
 
                                 if (t_float.Length > 0
-                                    && !tParsed.Contains(DBFValue.Unknown))
+                                    && !tParsed.Contains(DBFFieldType.Unknown))
                                 {
                                     recordObjects[i] = Double.Parse(tParsed);
                                 }
@@ -266,16 +274,16 @@ namespace DotNetDBF
                             try
                             {
                                 byte[] t_numeric = new byte[
-                                    header.FieldArray[i].FieldLength
+                                    _header.FieldArray[i].FieldLength
                                     ];
-                                dataInputStream.Read(t_numeric,
+                                _dataInputStream.Read(t_numeric,
                                                      0,
                                                      t_numeric.Length);
                                 t_numeric = Utils.trimLeftSpaces(t_numeric);
                                 string tParsed =
                                     CharEncoding.GetString(t_numeric);
                                 if (t_numeric.Length > 0
-                                    && !tParsed.Contains(DBFValue.Unknown))
+                                    && !tParsed.Contains(DBFFieldType.Unknown))
                                 {
                                     recordObjects[i] = Decimal.Parse(tParsed);
                                 }
@@ -294,7 +302,7 @@ namespace DotNetDBF
 
                         case NativeDbType.Logical:
 
-                            byte t_logical = dataInputStream.ReadByte();
+                            byte t_logical = _dataInputStream.ReadByte();
                             //todo find out whats really valid
                             if (t_logical == 'Y' || t_logical == 't'
                                 || t_logical == 'T'
@@ -302,17 +310,33 @@ namespace DotNetDBF
                             {
                                 recordObjects[i] = true;
                             }
-                            else
+                            else if (t_logical == DBFFieldType.UnknownByte)
+                            {
+                                recordObjects[i] = DBNull.Value;
+                            }else
                             {
                                 recordObjects[i] = false;
                             }
                             break;
 
                         case NativeDbType.Memo:
-                            // TODO Later
-                            recordObjects[i] = DBNull.Value;
-                            break;
+                            if(string.IsNullOrEmpty(_dataMemoLoc))
+                                throw new Exception("Memo Location Not Set");
 
+
+                            var tRawMemoPointer = _dataInputStream.ReadBytes(10);
+                            var tMemoPoiner = CharEncoding.GetString(tRawMemoPointer);
+                            if(string.IsNullOrEmpty(tMemoPoiner))
+                            {
+                                recordObjects[i] = DBNull.Value;
+                                break;
+                            }
+
+                            var tBlock =long.Parse(tMemoPoiner);
+
+
+                            recordObjects[i] = new MemoValue(tBlock, this, _dataMemoLoc);
+                            break;
                         default:
                             recordObjects[i] = DBNull.Value;
                             break;

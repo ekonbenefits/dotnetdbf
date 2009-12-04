@@ -1,5 +1,5 @@
 /*
- DBFValue
+ DBFFieldType
  Class for reading the records assuming that the given
  InputStream comtains DBF data.
  
@@ -31,15 +31,15 @@ namespace DotNetDBF
         Double = (byte) 0x4F, //O in ASCII
     }
 
-    public class DBFValue
+    static public class DBFFieldType
     {
         public const byte EndOfData = 0x1A; //^Z End of File
         public const byte EndOfField = 0x0D; //End of Field
         public const byte False = 0x46; //F in Ascci
         public const byte Space = 0x20; //Space in ascii
         public const byte True = 0x54; //T in ascii
+        public const byte UnknownByte = 0x3F; //Unknown Bool value
         public const string Unknown = "?"; //Unknown value
-
         static public DbType FromNative(NativeDbType aByte)
         {
             switch (aByte)

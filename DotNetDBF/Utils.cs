@@ -64,7 +64,7 @@ namespace DotNetDBF
                             charEncoding,
                             length,
                             alignment,
-                            DBFValue.Space);
+                            DBFFieldType.Space);
         }
 
         static public byte[] textPadding(String text,

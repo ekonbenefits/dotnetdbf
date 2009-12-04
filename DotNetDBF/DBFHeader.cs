@@ -20,34 +20,57 @@ using System.IO;
 
 namespace DotNetDBF
 {
+
+    static public class DBFSigniture
+    {
+        public const byte NotSet = 0,
+                          WithMemo = 0x80,
+                          DBase3 = 0x03,
+                          DBase3WithMemo = DBase3 | WithMemo;
+
+    }
+
+    [Flags]
+    public enum MemoFlags : byte
+    {
+        
+    }
+
+
     public class DBFHeader
     {
-        public const byte SIG_DBASE_III = 0x03;
-        /* DBF structure start here */
 
-        private byte day; /* 3 */
-        private byte encryptionFlag; /* 15 */
-        private DBFField[] fieldArray; /* each 32 bytes */
-        private int freeRecordThread; /* 16-19 */
-        private short headerLength; /* 8-9 */
-        private byte incompleteTransaction; /* 14 */
-        private byte languageDriver; /* 29 */
-        private byte mdxFlag; /* 28 */
-        private byte month; /* 2 */
-        private int numberOfRecords; /* 4-7 */
-        private short recordLength; /* 10-11 */
-        private short reserv1; /* 12-13 */
-        private int reserv2; /* 20-23 */
-        private int reserv3; /* 24-27 */
+        public const byte HeaderRecordTerminator = 0x0D;
+
+        private byte _day; /* 3 */
+        private byte _encryptionFlag; /* 15 */
+        private DBFField[] _fieldArray; /* each 32 bytes */
+        private int _freeRecordThread; /* 16-19 */
+        private short _headerLength; /* 8-9 */
+        private byte _incompleteTransaction; /* 14 */
+        private byte _languageDriver; /* 29 */
+        private byte _mdxFlag; /* 28 */
+        private byte _month; /* 2 */
+        private int _numberOfRecords; /* 4-7 */
+        private short _recordLength; /* 10-11 */
+        private short _reserv1; /* 12-13 */
+        private int _reserv2; /* 20-23 */
+        private int _reserv3; /* 24-27 */
         private short reserv4; /* 30-31 */
-        private byte signature; /* 0 */
-        private byte terminator1; /* n+1 */
-        private byte year; /* 1 */
+        private byte _signature; /* 0 */
+        private byte _year; /* 1 */
 
         public DBFHeader()
         {
-            signature = SIG_DBASE_III;
-            terminator1 = 0x0D;
+            _signature = DBFSigniture.DBase3WithMemo;
+        }
+
+        internal byte Signiture
+        {
+            get
+            {
+                return _signature;
+            }
         }
 
         internal short Size
@@ -68,7 +91,7 @@ namespace DotNetDBF
                                 sizeof (byte) +
                                 sizeof (byte) +
                                 sizeof (short) +
-                                (DBFField.SIZE * fieldArray.Length) +
+                                (DBFField.SIZE * _fieldArray.Length) +
                                 sizeof (byte));
             }
         }
@@ -78,9 +101,9 @@ namespace DotNetDBF
             get
             {
                 int tRecordLength = 0;
-                for (int i = 0; i < fieldArray.Length; i++)
+                for (int i = 0; i < _fieldArray.Length; i++)
                 {
-                    tRecordLength += fieldArray[i].FieldLength;
+                    tRecordLength += _fieldArray[i].FieldLength;
                 }
 
                 return (short)(tRecordLength + 1);
@@ -89,78 +112,78 @@ namespace DotNetDBF
 
         internal short HeaderLength
         {
-            set { headerLength = value; }
+            set { _headerLength = value; }
 
-            get { return headerLength; }
+            get { return _headerLength; }
         }
 
         internal DBFField[] FieldArray
         {
-            set { fieldArray = value; }
+            set { _fieldArray = value; }
 
-            get { return fieldArray; }
+            get { return _fieldArray; }
         }
 
         internal byte Year
         {
-            set { year = value; }
+            set { _year = value; }
 
-            get { return year; }
+            get { return _year; }
         }
 
         internal byte Month
         {
-            set { month = value; }
+            set { _month = value; }
 
-            get { return month; }
+            get { return _month; }
         }
 
         internal byte Day
         {
-            set { day = value; }
+            set { _day = value; }
 
-            get { return day; }
+            get { return _day; }
         }
 
         internal int NumberOfRecords
         {
-            set { numberOfRecords = value; }
+            set { _numberOfRecords = value; }
 
-            get { return numberOfRecords; }
+            get { return _numberOfRecords; }
         }
 
         internal short RecordLength
         {
-            set { recordLength = value; }
+            set { _recordLength = value; }
 
-            get { return recordLength; }
+            get { return _recordLength; }
         }
 
         internal byte LanguageDriver
         {
-            get { return languageDriver; }
-            set { languageDriver = value; }
+            get { return _languageDriver; }
+            set { _languageDriver = value; }
         }
 
         internal void Read(BinaryReader dataInput)
         {
-            signature = dataInput.ReadByte(); /* 0 */
-            year = dataInput.ReadByte(); /* 1 */
-            month = dataInput.ReadByte(); /* 2 */
-            day = dataInput.ReadByte(); /* 3 */
-            numberOfRecords = dataInput.ReadInt32(); /* 4-7 */
+            _signature = dataInput.ReadByte(); /* 0 */
+            _year = dataInput.ReadByte(); /* 1 */
+            _month = dataInput.ReadByte(); /* 2 */
+            _day = dataInput.ReadByte(); /* 3 */
+            _numberOfRecords = dataInput.ReadInt32(); /* 4-7 */
 
-            headerLength = dataInput.ReadInt16(); /* 8-9 */
-            recordLength = dataInput.ReadInt16(); /* 10-11 */
+            _headerLength = dataInput.ReadInt16(); /* 8-9 */
+            _recordLength = dataInput.ReadInt16(); /* 10-11 */
 
-            reserv1 = dataInput.ReadInt16(); /* 12-13 */
-            incompleteTransaction = dataInput.ReadByte(); /* 14 */
-            encryptionFlag = dataInput.ReadByte(); /* 15 */
-            freeRecordThread = dataInput.ReadInt32(); /* 16-19 */
-            reserv2 = dataInput.ReadInt32(); /* 20-23 */
-            reserv3 = dataInput.ReadInt32(); /* 24-27 */
-            mdxFlag = dataInput.ReadByte(); /* 28 */
-            languageDriver = dataInput.ReadByte(); /* 29 */
+            _reserv1 = dataInput.ReadInt16(); /* 12-13 */
+            _incompleteTransaction = dataInput.ReadByte(); /* 14 */
+            _encryptionFlag = dataInput.ReadByte(); /* 15 */
+            _freeRecordThread = dataInput.ReadInt32(); /* 16-19 */
+            _reserv2 = dataInput.ReadInt32(); /* 20-23 */
+            _reserv3 = dataInput.ReadInt32(); /* 24-27 */
+            _mdxFlag = dataInput.ReadByte(); /* 28 */
+            _languageDriver = dataInput.ReadByte(); /* 29 */
             reserv4 = dataInput.ReadInt16(); /* 30-31 */
 
 
@@ -173,49 +196,49 @@ namespace DotNetDBF
                 field = DBFField.CreateField(dataInput);
             }
 
-            fieldArray = v_fields.ToArray();
-            //System.out.println( "Number of fields: " + fieldArray.length);
+            _fieldArray = v_fields.ToArray();
+            //System.out.println( "Number of fields: " + _fieldArray.length);
         }
 
         internal void Write(BinaryWriter dataOutput)
         {
-            dataOutput.Write(signature); /* 0 */
+            dataOutput.Write(_signature); /* 0 */
             DateTime tNow = DateTime.Now;
-            year = (byte) (tNow.Year - 1900);
-            month = (byte) (tNow.Month);
-            day = (byte) (tNow.Day);
+            _year = (byte) (tNow.Year - 1900);
+            _month = (byte) (tNow.Month);
+            _day = (byte) (tNow.Day);
 
-            dataOutput.Write(year); /* 1 */
-            dataOutput.Write(month); /* 2 */
-            dataOutput.Write(day); /* 3 */
+            dataOutput.Write(_year); /* 1 */
+            dataOutput.Write(_month); /* 2 */
+            dataOutput.Write(_day); /* 3 */
 
             //System.out.println( "Number of records in O/S: " + numberOfRecords);
-            dataOutput.Write(numberOfRecords); /* 4-7 */
+            dataOutput.Write(_numberOfRecords); /* 4-7 */
 
-            headerLength = Size;
-            dataOutput.Write(headerLength); /* 8-9 */
+            _headerLength = Size;
+            dataOutput.Write(_headerLength); /* 8-9 */
 
-            recordLength = RecordSize;
-            dataOutput.Write(recordLength); /* 10-11 */
+            _recordLength = RecordSize;
+            dataOutput.Write(_recordLength); /* 10-11 */
 
-            dataOutput.Write(reserv1); /* 12-13 */
-            dataOutput.Write(incompleteTransaction); /* 14 */
-            dataOutput.Write(encryptionFlag); /* 15 */
-            dataOutput.Write(freeRecordThread); /* 16-19 */
-            dataOutput.Write(reserv2); /* 20-23 */
-            dataOutput.Write(reserv3); /* 24-27 */
+            dataOutput.Write(_reserv1); /* 12-13 */
+            dataOutput.Write(_incompleteTransaction); /* 14 */
+            dataOutput.Write(_encryptionFlag); /* 15 */
+            dataOutput.Write(_freeRecordThread); /* 16-19 */
+            dataOutput.Write(_reserv2); /* 20-23 */
+            dataOutput.Write(_reserv3); /* 24-27 */
 
-            dataOutput.Write(mdxFlag); /* 28 */
-            dataOutput.Write(languageDriver); /* 29 */
+            dataOutput.Write(_mdxFlag); /* 28 */
+            dataOutput.Write(_languageDriver); /* 29 */
             dataOutput.Write(reserv4); /* 30-31 */
 
-            for (int i = 0; i < fieldArray.Length; i++)
+            for (int i = 0; i < _fieldArray.Length; i++)
             {
-                //System.out.println( "Length: " + fieldArray[i].getFieldLength());
-                fieldArray[i].Write(dataOutput);
+                //System.out.println( "Length: " + _fieldArray[i].getFieldLength());
+                _fieldArray[i].Write(dataOutput);
             }
 
-            dataOutput.Write(terminator1); /* n+1 */
+            dataOutput.Write(HeaderRecordTerminator); /* n+1 */
         }
     }
 }

@@ -24,6 +24,7 @@ namespace DotNetDBF
         private Stream raf;
         private int recordCount;
         private ArrayList v_records = new ArrayList();
+        private string _dataMemoLoc;
 
         /// Creates an empty Object.
         public DBFWriter()
@@ -42,6 +43,8 @@ namespace DotNetDBF
                     File.Open(dbfFile,
                               FileMode.OpenOrCreate,
                               FileAccess.ReadWrite);
+
+                _dataMemoLoc = Path.ChangeExtension(dbfFile, "dbt");
 
                 /* before proceeding check whether the passed in File object
 				 is an empty/non-existent file or not.
@@ -94,7 +97,13 @@ namespace DotNetDBF
             recordCount = header.NumberOfRecords;
         }
 
-	    public byte LanguageDriver
+        public string DataMemoLoc
+        {
+            get { return _dataMemoLoc; }
+            set { _dataMemoLoc = value; }
+        }
+
+        public byte LanguageDriver
 	    {
             set
             {
@@ -257,6 +266,13 @@ namespace DotNetDBF
                                                    + i);
                         }
                         break;
+                    case NativeDbType.Memo:
+                        if (!(values[i] is MemoValue))
+                        {
+                            throw new DBFException("Invalid value for field "
+                                                   + i);
+                        }
+                        break;
                 }
             }
 
@@ -300,7 +316,7 @@ namespace DotNetDBF
                     WriteRecord(outStream, t_values);
                 }
 
-                outStream.Write(DBFValue.EndOfData);
+                outStream.Write(DBFFieldType.EndOfData);
                 outStream.Flush();
             }
             catch (IOException e)
@@ -318,7 +334,7 @@ namespace DotNetDBF
                 raf.Seek(0, SeekOrigin.Begin);
                 header.Write(new BinaryWriter(raf));
                 raf.Seek(0, SeekOrigin.End);
-                raf.WriteByte(DBFValue.EndOfData);
+                raf.WriteByte(DBFFieldType.EndOfData);
                 raf.Close();
             }
         }
@@ -368,7 +384,7 @@ namespace DotNetDBF
                         else
                         {
                             dataOutput.Write(
-                                Utils.FillArray(new byte[8], DBFValue.Space));
+                                Utils.FillArray(new byte[8], DBFFieldType.Space));
                         }
 
                         break;
@@ -391,7 +407,7 @@ namespace DotNetDBF
                         {
                             dataOutput.Write(
                                 Utils.textPadding(
-                                    DBFValue.Unknown,
+                                    DBFFieldType.Unknown,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
@@ -419,7 +435,7 @@ namespace DotNetDBF
                         {
                             dataOutput.Write(
                                 Utils.textPadding(
-                                    DBFValue.Unknown,
+                                    DBFFieldType.Unknown,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
@@ -434,21 +450,43 @@ namespace DotNetDBF
                         {
                             if ((bool) objectArray[j])
                             {
-                                dataOutput.Write(DBFValue.True);
+                                dataOutput.Write(DBFFieldType.True);
                             }
                             else
                             {
-                                dataOutput.Write(DBFValue.False);
+                                dataOutput.Write(DBFFieldType.False);
                             }
                         }
                         else
                         {
-                            dataOutput.Write(DBFValue.Space);
+                            dataOutput.Write(DBFFieldType.UnknownByte);
                         }
 
                         break;
 
                     case NativeDbType.Memo:
+                         if (objectArray[j] != null)
+                        {
+                            var tMemoValue = ((MemoValue) objectArray[j]);
+
+                            tMemoValue.Write(this);
+
+                            dataOutput.Write(
+                                                        Utils.textPadding(tMemoValue.Block.ToString("##########"),
+                                                                          CharEncoding,
+                                                                          10
+                                                            )
+                                                        );
+                        }else
+                         {
+                             dataOutput.Write(
+                             Utils.textPadding("",
+                                               CharEncoding,
+                                               10
+                                 )
+                             );
+                         }
+
 
                         break;
 

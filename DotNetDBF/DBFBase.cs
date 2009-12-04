@@ -22,12 +22,19 @@ namespace DotNetDBF
     abstract public class DBFBase
     {
         protected Encoding _charEncoding = Encoding.GetEncoding("utf-8");
+        protected int _blockSize = 512;
 
         public Encoding CharEncoding
         {
             set { _charEncoding = value; }
 
             get { return _charEncoding; }
+        }
+        public int BlockSize
+        {
+            set { _blockSize = value; }
+
+            get { return _blockSize; }
         }
     }
 }
