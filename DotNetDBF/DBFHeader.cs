@@ -136,6 +136,12 @@ namespace DotNetDBF
             get { return recordLength; }
         }
 
+        internal byte LanguageDriver
+        {
+            get { return languageDriver; }
+            set { languageDriver = value; }
+        }
+
         internal void Read(BinaryReader dataInput)
         {
             signature = dataInput.ReadByte(); /* 0 */

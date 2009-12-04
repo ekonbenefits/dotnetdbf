@@ -1,0 +1,7 @@
+relre:^_ReSharper.*
+relre:.*obj/.*
+relre:.*bin/.*
+relre:.*\.user$
+relre:^_UpgradeReport_Files.*
+relre:.*\.suo$
+glob:UpgradeLog.XML

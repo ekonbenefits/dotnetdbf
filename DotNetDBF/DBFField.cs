@@ -143,7 +143,15 @@ namespace DotNetDBF
 
         public int FieldLength
         {
-            get { return fieldLength; }
+            get
+            {
+                if (DataType == NativeDbType.Char)
+                {
+                    return fieldLength + (decimalCount * 256);
+                }
+                
+                return fieldLength;
+            }
             /**
 			 Length of the field.
 			 This method should be called before calling setDecimalCount().
@@ -162,6 +170,13 @@ namespace DotNetDBF
                 {
                     throw new NotSupportedException(
                         "Cannot do this on a Date field");
+                }
+
+                if (DataType == NativeDbType.Char && value > 255)
+                {
+                    fieldLength = value % 256;
+                    decimalCount = (byte) (value / 256);
+                    return;
                 }
 
                 fieldLength = value;

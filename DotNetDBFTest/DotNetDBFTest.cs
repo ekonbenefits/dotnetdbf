@@ -1,45 +1,57 @@
 using System;
 using System.IO;
+using System.Linq;
 using DotNetDBF;
 using NUnit.Framework;
 
 namespace DotNetDBFTest
 {
     [TestFixture]
-    public class DotNetDBFTest
+    public class DotNetDBFTest: AssertionHelper
     {
         private string TestPath = Path.Combine(Path.GetTempPath(), "121212.dbf");
 
         private string TestRAFPath =
             Path.Combine(Path.GetTempPath(), "raf-1212.dbf");
 
-        private void print(String s)
-        {
-            Console.Write(s);
-        }
 
-        private void println(String s)
+        private string TestClipLongPath =
+    Path.Combine(Path.GetTempPath(), "cliplong.dbf");
+
+      
+
+        private string GetCharacters(int aLength)
+        {
+            var chars = new[]{"a","b","c","d","e","f","g"};
+            var returnval = string.Join(string.Empty,
+                                        Enumerable.Range(0, aLength).Select(it => chars[it % chars.Length]).ToArray());
+            Assert.That(returnval.Length, EqualTo(aLength), "GetCharacters() did not return correct length  string");
+            return returnval;
+        }
+        
+
+        private static void println(String s)
         {
             Console.WriteLine(s);
         }
 
+
         [Test]
         public void checkDataType_N()
         {
-            Decimal value;
+            Decimal writtenValue;
             using (
                 Stream fos =
                     File.Open(TestPath,
                               FileMode.OpenOrCreate,
                               FileAccess.ReadWrite))
             {
-                DBFWriter writer = new DBFWriter();
-                DBFField field = new DBFField("F1", NativeDbType.Numeric, 15, 0);
+                var writer = new DBFWriter();
+                var field = new DBFField("F1", NativeDbType.Numeric, 15, 0);
+                writer.Fields = new[] { field };
 
-                writer.Fields = new DBFField[] {field};
-                value = 123456789012345L;
-                writer.AddRecord(value);
-                print(" written=" + value);
+                writtenValue = 123456789012345L;
+                writer.AddRecord(writtenValue);
                 writer.Write(fos);
             }
             using (
@@ -48,27 +60,61 @@ namespace DotNetDBFTest
                               FileMode.OpenOrCreate,
                               FileAccess.ReadWrite))
             {
-                DBFReader reader = new DBFReader(fis);
+                var reader = new DBFReader(fis);
+           
+                var readValues = reader.NextRecord();
 
-                Object[] values = reader.NextRecord();
-                print(" read=" + (Decimal) values[0]);
-                println(" written == read ("
-                        + (((Decimal) values[0]).Equals(value)) + ")");
+                Assert.That(readValues[0], EqualTo(writtenValue),"Written Value Equals Read");
             }
         }
+
+
+        [Test]
+        public void checkLongCharLengthWithClipper()
+        {
+            var fieldLength = 750;
+            string writtenValue;
+            using (
+                Stream fos =
+                    File.Open(TestClipLongPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var writer = new DBFWriter();
+                var field = new DBFField("F1", NativeDbType.Char, fieldLength);
+                writer.Fields = new[] { field };
+
+                writtenValue = GetCharacters(750);
+                writer.AddRecord(writtenValue);
+                writer.Write(fos);
+            }
+            using (
+                Stream fis =
+                    File.Open(TestClipLongPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var reader = new DBFReader(fis);
+                Assert.That(reader.Fields.First().FieldLength, EqualTo(750));
+                var readValues = reader.NextRecord();
+
+                Assert.That(readValues[0], EqualTo(writtenValue), "Written Value not equaling Read");
+            }
+        }
+
 
         [Test]
         public void checkRAFwriting()
         {
-            print("Writing in RAF mode ... ");
+            println("Writing in RAF mode ... ");
 
             if (File.Exists(TestRAFPath))
             {
                 File.Delete(TestRAFPath);
             }
-            using (DBFWriter writer = new DBFWriter(TestRAFPath))
+            using (var writer = new DBFWriter(TestRAFPath))
             {
-                DBFField[] fields = new DBFField[2];
+                var fields = new DBFField[2];
 
                 fields[0] = new DBFField("F1", NativeDbType.Char, 10);
 
@@ -83,9 +129,9 @@ namespace DotNetDBFTest
 
             println("done.");
 
-            print("Appending to this file");
+            println("Appending to this file");
 
-            using (DBFWriter writer = new DBFWriter(TestRAFPath))
+            using (var writer = new DBFWriter(TestRAFPath))
             {
                 writer.WriteRecord("Green", 33);
 
@@ -100,33 +146,36 @@ namespace DotNetDBFTest
             println(TestPath);
 
             println(TestRAFPath);
+
+            println(TestClipLongPath);
         }
 
         [Test]
         public void test1()
         {
-            print("Creating an empty DBFWriter object... ");
-            DBFWriter writer = new DBFWriter();
-            println("OK.");
+
+            Assert.DoesNotThrow(() => { new DBFWriter(); }, "Can't Create empty DBFWriter Object");
+
         }
 
         [Test]
         public void test2()
         {
-            print("Creating an empty DBFField object... ");
-            DBFField field = new DBFField();
-            println("OK.");
+            Assert.DoesNotThrow(() => { new DBFField(); }, "Can't Create empty DBFWriter Object");
         }
+
 
         [Test]
         public void test3()
         {
-            print("Writing a sample DBF file ... ");
-            DBFField field = new DBFField();
-            field.Name = "F1";
-            field.DataType = NativeDbType.Numeric;
-            DBFWriter writer = new DBFWriter();
-            writer.Fields = new DBFField[] {field};
+            WriteSample();
+            ReadSample();
+        }
+       
+        public void WriteSample()
+        {
+            var field = new DBFField {Name = "F1", DataType = NativeDbType.Numeric};
+            var writer = new DBFWriter {Fields = new[] {field}};
             writer.AddRecord(3);
             using (
                 Stream fos =
@@ -137,18 +186,15 @@ namespace DotNetDBFTest
                 writer.Write(fos);
             }
 
-            println("OK.");
         }
 
-        [Test]
-        public void test4()
+       
+        public void ReadSample()
         {
-            print("Reading the written file ...");
-            using (DBFReader reader = new DBFReader(TestPath))
+            using (var reader = new DBFReader(TestPath))
             {
-                print("\tRecord count=" + reader.RecordCount);
+                Assert.That(reader.RecordCount, EqualTo(1));
             }
-            println(" OK.");
         }
     }
 }

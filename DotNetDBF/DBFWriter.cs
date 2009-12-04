@@ -21,8 +21,8 @@ namespace DotNetDBF
     public class DBFWriter : DBFBase, IDisposable
     {
         private DBFHeader header;
-        private Stream raf = null;
-        private int recordCount = 0;
+        private Stream raf;
+        private int recordCount;
         private ArrayList v_records = new ArrayList();
 
         /// Creates an empty Object.
@@ -94,18 +94,18 @@ namespace DotNetDBF
             recordCount = header.NumberOfRecords;
         }
 
-	public byte LanguageDriver
-	{
-        set
-        {
-                if (header.languageDriver != 0x00)
-                {
-                        throw new DBFException("LanguageDriver has already been set");
-                }
+	    public byte LanguageDriver
+	    {
+            set
+            {
+                if (header.LanguageDriver != 0x00)
+                    {
+                            throw new DBFException("LanguageDriver has already been set");
+                    }
 
-                header.languageDriver = value;
-        }
-	}
+                header.LanguageDriver = value;
+            }
+	    }
 	
 
 
