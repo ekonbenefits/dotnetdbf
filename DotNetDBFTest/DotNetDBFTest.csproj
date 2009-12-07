@@ -57,6 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DotNetDBF.Enumerable\DotNetDBF.Enumerable.csproj">
+      <Project>{3BB97ECD-325D-4288-B355-57CFC1404019}</Project>
+      <Name>DotNetDBF.Enumerable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj">
       <Project>{C5E9AE18-1EA3-4C90-AFAB-5323093BE4AC}</Project>
       <Name>DotNetDBF</Name>

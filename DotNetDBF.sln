@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetDBF", "DotNetDBF\DotN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetDBFTest", "DotNetDBFTest\DotNetDBFTest.csproj", "{8BBBC83C-14CB-4836-8406-A046DB0C4F17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetDBF.Enumerable", "DotNetDBF.Enumerable\DotNetDBF.Enumerable.csproj", "{3BB97ECD-325D-4288-B355-57CFC1404019}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{8BBBC83C-14CB-4836-8406-A046DB0C4F17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BBBC83C-14CB-4836-8406-A046DB0C4F17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BBBC83C-14CB-4836-8406-A046DB0C4F17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BB97ECD-325D-4288-B355-57CFC1404019}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BB97ECD-325D-4288-B355-57CFC1404019}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BB97ECD-325D-4288-B355-57CFC1404019}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BB97ECD-325D-4288-B355-57CFC1404019}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
