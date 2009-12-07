@@ -21,6 +21,9 @@ namespace DotNetDBFTest
         private string TestMemoPath =
 Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
 
+        private string TestSelectPath =
+Path.Combine(Path.GetTempPath(), "select.dbf");
+
         private string GetCharacters(int aLength)
         {
             var chars = new[]{"a","b","c","d","e","f","g"," "};
@@ -143,7 +146,46 @@ Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
             }
         }
 
+        [Test]
+        public void checkSelect()
+        {
+            var fieldLength = 2400;
+            string writtenValue;
+            using (
+                Stream fos =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var writer = new DBFWriter
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+                var field = new DBFField("F1", NativeDbType.Memo);
+                var field2 = new DBFField("F2", NativeDbType.Numeric,10);
+                var field3 = new DBFField("F3", NativeDbType.Char,10);
+                writer.Fields = new[] { field , field2, field3};
 
+                writtenValue = "alpha";
+                writer.AddRecord(new MemoValue(GetCharacters(fieldLength)),10,writtenValue);
+                writer.Write(fos);
+            }
+            using (
+                Stream fis =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var reader = new DBFReader(fis)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+                reader.SetSelectFields("F3");
+                var readValues = reader.NextRecord();
+
+                Assert.That(readValues[0], StartsWith(writtenValue), "Written Value not equaling Read");
+            }
+        }
 
         [Test]
         public void checkRAFwriting()
@@ -180,6 +222,8 @@ Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
                 writer.WriteRecord("Yellow", 44);
             }
             println("done.");
+
+
         }
 
         [Test]

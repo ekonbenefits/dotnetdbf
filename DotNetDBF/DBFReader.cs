@@ -15,7 +15,7 @@
 using System;
 using System.IO;
 using System.Text;
-
+using System.Linq;
 namespace DotNetDBF
 {
     public class DBFReader : DBFBase, IDisposable
@@ -24,6 +24,7 @@ namespace DotNetDBF
         private DBFHeader _header;
         private string _dataMemoLoc;
 
+        private int[] _selectFields = new int[]{};
         /* Class specific variables */
         private bool isClosed = true;
 
@@ -37,6 +38,22 @@ namespace DotNetDBF
 		 
 		 @param InputStream where the data is read from.
 		 */
+
+
+
+        public void SetSelectFields(params string[] aParams)
+        {
+            _selectFields =
+                aParams.Select(
+                    it =>
+                    Array.FindIndex(_header.FieldArray,
+                                    jt => jt.Name.Equals(it, StringComparison.InvariantCultureIgnoreCase))).ToArray();
+        }
+
+        public string[] GetSelectFields()
+        {
+            return _selectFields.Select(it => _header.FieldArray[it].Name).ToArray();
+        }
 
         public DBFReader(string anIn)
         {
@@ -180,8 +197,8 @@ namespace DotNetDBF
                 throw new DBFException("Source is not open");
             }
 
-            Object[] recordObjects = new Object[_header.FieldArray.Length
-                ];
+
+            var recordObjects = new Object[_header.FieldArray.Length];
 
             try
             {
@@ -202,13 +219,22 @@ namespace DotNetDBF
                     isDeleted = (t_byte == '*');
                 } while (isDeleted);
 
+               
                 for (int i = 0; i < _header.FieldArray.Length; i++)
                 {
+
+                    if(_selectFields.Any() && !_selectFields.Contains(i))
+                    {
+                        _dataInputStream.BaseStream.Seek(_header.FieldArray[i].FieldLength, SeekOrigin.Current);
+                        continue;
+                    }
+
+                  
                     switch (_header.FieldArray[i].DataType)
                     {
                         case NativeDbType.Char:
 
-                            byte[] b_array = new byte[
+                            var b_array = new byte[
                                 _header.FieldArray[i].FieldLength
                                 ];
                             _dataInputStream.Read(b_array, 0, b_array.Length);
@@ -353,6 +379,8 @@ namespace DotNetDBF
                             recordObjects[i] = DBNull.Value;
                             break;
                     }
+
+                 
                 }
             }
             catch (EndOfStreamException)
@@ -364,7 +392,7 @@ namespace DotNetDBF
                 throw new DBFException("Problem Reading File", e);
             }
 
-            return recordObjects;
+            return _selectFields.Any() ? _selectFields.Select(it=>recordObjects[it]).ToArray() : recordObjects;
         }
     }
 }
