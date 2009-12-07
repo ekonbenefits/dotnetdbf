@@ -31,9 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LinFu.Core, Version=2.2.0.19938, Culture=neutral, PublicKeyToken=a4c63a184389506f, processorArchitecture=MSIL">
+    <Reference Include="LinFu.DynamicTyping, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libraries\LinFu.Core.dll</HintPath>
+      <HintPath>..\Libraries\LinFu.DynamicTyping.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

@@ -4,9 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using LinFu.AOP.Interfaces;
-using LinFu.Proxy;
-using LinFu.Proxy.Interfaces;
+using LinFu.DynamicProxy;
 
 namespace DotNetDBF.Enumerable
 {
@@ -99,7 +97,7 @@ namespace DotNetDBF.Enumerable
             }
 
             #region Implementation of IInterceptor
-            public object Intercept(IInvocationInfo info)
+            public object Intercept(InvocationInfo info)
             {
                 if (info.TargetMethod.Name.Contains("get_"))
                 {
@@ -118,7 +116,7 @@ namespace DotNetDBF.Enumerable
 
             }
 
-            private object GetProperty(IInvocationInfo info)
+            private object GetProperty(InvocationInfo info)
             {
                 var tLookup = info.TargetMethod
                         .Name
