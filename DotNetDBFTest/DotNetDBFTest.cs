@@ -193,6 +193,26 @@ Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
         }
 
         [Test]
+        public void Test()
+        {
+            using (
+            Stream fis =
+                File.Open(@"f:\st\dev\testdata\p.dbf",
+                          FileMode.OpenOrCreate,
+                          FileAccess.ReadWrite))
+            {
+                var reader = new DBFReader(fis)
+                {
+                    DataMemoLoc = Path.ChangeExtension(@"f:\st\dev\testdata\p.dbf", "DBT")
+                };
+                var readValues = reader.NextRecord();
+
+               Console.WriteLine(readValues);
+            }
+        }
+
+
+        [Test]
         public void test1()
         {
 

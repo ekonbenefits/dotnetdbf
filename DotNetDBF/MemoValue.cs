@@ -8,7 +8,7 @@ namespace DotNetDBF
     public class MemoValue
     {
 
-        public const string MemoTerminator = "\x1A\x1A";
+        public const string MemoTerminator = "\x1A";
         private bool _loaded;
         private bool _new;
         
@@ -85,10 +85,8 @@ namespace DotNetDBF
                     }
                     _block = tPosition/aBase.BlockSize;
                     var tData = aBase.CharEncoding.GetBytes(tValue);
-                    var tDataLength = tData.Length + sizeof (int);
+                    var tDataLength = tData.Length;
                     var tNewDiff = (tDataLength%aBase.BlockSize);
-                    var tCount = (tDataLength/aBase.BlockSize) + (tNewDiff != 0 ? 1 : 0);
-                    tWriter.Write(tCount);
                     tWriter.Write(tData);
                     if (tNewDiff != 0)
                         tWriter.Seek(aBase.BlockSize - (tDataLength % aBase.BlockSize), SeekOrigin.Current);
@@ -113,13 +111,20 @@ namespace DotNetDBF
                             FileShare.Read)))
                         {
                             reader.BaseStream.Seek(_block*_base.BlockSize, SeekOrigin.Begin);
-                          
-                            var tCount =reader.ReadInt32();
-                            var tData = reader.ReadBytes((_base.BlockSize * tCount) - sizeof(int));
-                            var tString = _base.CharEncoding.GetString(tData);
-                            _value = tString.Substring(0,
-                                                     tString.IndexOf(MemoTerminator,
-                                                                     (tString.Length/_base.BlockSize)*_base.BlockSize));
+                            string tString;
+                            var tStringBuilder = new StringBuilder();
+                            int tIndex;
+                            do
+                            {
+                                var tData = reader.ReadBytes(_base.BlockSize);
+
+                                tString = _base.CharEncoding.GetString(tData);
+                                tIndex = tString.IndexOf(MemoTerminator);
+                                if (tIndex != -1)
+                                    tString = tString.Substring(0, tIndex);
+                                tStringBuilder.Append(tString);
+                            } while (tIndex == -1);
+                            _value = tStringBuilder.ToString();
                         }
                         _loaded = true;
                     }
