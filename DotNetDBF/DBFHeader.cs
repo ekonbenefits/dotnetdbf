@@ -62,7 +62,7 @@ namespace DotNetDBF
 
         public DBFHeader()
         {
-            _signature = DBFSigniture.DBase3WithMemo;
+            _signature = DBFSigniture.DBase3;
         }
 
         internal byte Signiture
@@ -70,6 +70,9 @@ namespace DotNetDBF
             get
             {
                 return _signature;
+            }set
+            {
+                _signature = value;
             }
         }
 

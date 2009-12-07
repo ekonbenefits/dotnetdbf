@@ -97,6 +97,17 @@ namespace DotNetDBF
             recordCount = header.NumberOfRecords;
         }
 
+        public byte Signiture
+        {
+            get
+            {
+                return header.Signiture;
+            }set
+            {
+                header.Signiture = value;
+            }
+        }
+
         public string DataMemoLoc
         {
             get { return _dataMemoLoc; }
