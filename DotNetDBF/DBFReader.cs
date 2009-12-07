@@ -13,6 +13,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Linq;
@@ -189,8 +190,12 @@ namespace DotNetDBF
 		 @returns The next row as an Object array. Types of the elements
 		 these arrays follow the convention mentioned in the class description.
 		 */
-
         public Object[] NextRecord()
+        {
+            return NextRecord(_selectFields);
+        }
+
+        internal Object[] NextRecord(IEnumerable<int> selectIndexes)
         {
             if (isClosed)
             {
@@ -223,7 +228,7 @@ namespace DotNetDBF
                 for (int i = 0; i < _header.FieldArray.Length; i++)
                 {
 
-                    if(_selectFields.Any() && !_selectFields.Contains(i))
+                    if (selectIndexes.Any() && !selectIndexes.Contains(i))
                     {
                         _dataInputStream.BaseStream.Seek(_header.FieldArray[i].FieldLength, SeekOrigin.Current);
                         continue;
@@ -392,7 +397,7 @@ namespace DotNetDBF
                 throw new DBFException("Problem Reading File", e);
             }
 
-            return _selectFields.Any() ? _selectFields.Select(it=>recordObjects[it]).ToArray() : recordObjects;
+            return selectIndexes.Any() ? selectIndexes.Select(it => recordObjects[it]).ToArray() : recordObjects;
         }
     }
 }

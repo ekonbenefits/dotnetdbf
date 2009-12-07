@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBTHeader.cs" />
+    <Compile Include="Linq.cs" />
     <Compile Include="MemoValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DBFBase.cs" />

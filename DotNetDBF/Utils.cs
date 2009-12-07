@@ -21,6 +21,7 @@ namespace DotNetDBF
 {
     static public class Utils
     {
+
         public const int ALIGN_LEFT = 10;
         public const int ALIGN_RIGHT = 12;
 

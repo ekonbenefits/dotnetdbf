@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using DotNetDBF;
 using NUnit.Framework;
+using DotNetDBF.Linq;
 
 namespace DotNetDBFTest
 {
@@ -184,6 +185,47 @@ Path.Combine(Path.GetTempPath(), "select.dbf");
                 var readValues = reader.NextRecord();
 
                 Assert.That(readValues[0], StartsWith(writtenValue), "Written Value not equaling Read");
+            }
+        }
+
+        [Test]
+        public void checkLinq()
+        {
+            var fieldLength = 2400;
+            string writtenValue;
+            using (
+                Stream fos =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var writer = new DBFWriter
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+                var field = new DBFField("F1", NativeDbType.Memo);
+                var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
+                var field3 = new DBFField("F3", NativeDbType.Char, 10);
+                writer.Fields = new[] { field, field2, field3 };
+
+                writtenValue = "alpha";
+                writer.AddRecord(new MemoValue(GetCharacters(fieldLength)), 10, writtenValue);
+                writer.Write(fos);
+            }
+            using (
+                Stream fis =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var reader = new DBFReader(fis)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+
+                var readValues = reader.AllRecords(new {F2 = default(decimal), F3 = default(string)});
+
+                Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
             }
         }
 
