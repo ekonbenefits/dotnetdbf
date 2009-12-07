@@ -52,13 +52,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBTHeader.cs" />
+    <Compile Include="MemoValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DBFBase.cs" />
     <Compile Include="DBFException.cs" />
     <Compile Include="DBFField.cs" />
     <Compile Include="DBFHeader.cs" />
     <Compile Include="DBFReader.cs" />
-    <Compile Include="DBFValue.cs" />
+    <Compile Include="DBFFieldType.cs" />
     <Compile Include="DBFWriter.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>

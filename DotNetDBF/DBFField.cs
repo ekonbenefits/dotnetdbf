@@ -120,17 +120,16 @@ namespace DotNetDBF
                 {
                     case NativeDbType.Date:
                         fieldLength = 8; /* fall through */
-                        goto case NativeDbType.Memo;
-                    case NativeDbType.Char:
-                    case NativeDbType.Logical:
-                    case NativeDbType.Numeric:
-                    case NativeDbType.Float:
+                        goto default;
                     case NativeDbType.Memo:
-                        dataType = (byte) value;
-                        break;
-
+                        fieldLength = 10;
+                        goto default;
+                    case NativeDbType.Logical:
+                        fieldLength = 1;
+                        goto default;
                     default:
-                        throw new ArgumentException("Unknown data type");
+                        dataType = (byte)value;
+                        break;
                 }
             }
         }
@@ -166,10 +165,10 @@ namespace DotNetDBF
                         "Field length should be a positive number");
                 }
 
-                if (DataType == NativeDbType.Date)
+                if (DataType == NativeDbType.Date || DataType == NativeDbType.Memo || DataType == NativeDbType.Logical)
                 {
                     throw new NotSupportedException(
-                        "Cannot do this on a Date field");
+                        "Cannot set length on this type of field");
                 }
 
                 if (DataType == NativeDbType.Char && value > 255)
@@ -224,7 +223,7 @@ namespace DotNetDBF
         public bool Read(BinaryReader aReader)
         {
             byte t_byte = aReader.ReadByte(); /* 0 */
-            if (t_byte == DBFValue.EndOfField)
+            if (t_byte == DBFFieldType.EndOfField)
             {
                 //System.out.println( "End of header found");
                 return false;

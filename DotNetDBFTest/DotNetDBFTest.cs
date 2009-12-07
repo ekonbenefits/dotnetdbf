@@ -18,11 +18,12 @@ namespace DotNetDBFTest
         private string TestClipLongPath =
     Path.Combine(Path.GetTempPath(), "cliplong.dbf");
 
-      
+        private string TestMemoPath =
+Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
 
         private string GetCharacters(int aLength)
         {
-            var chars = new[]{"a","b","c","d","e","f","g"};
+            var chars = new[]{"a","b","c","d","e","f","g"," "};
             var returnval = string.Join(string.Empty,
                                         Enumerable.Range(0, aLength).Select(it => chars[it % chars.Length]).ToArray());
             Assert.That(returnval.Length, EqualTo(aLength), "GetCharacters() did not return correct length  string");
@@ -84,7 +85,7 @@ namespace DotNetDBFTest
                 var field = new DBFField("F1", NativeDbType.Char, fieldLength);
                 writer.Fields = new[] { field };
 
-                writtenValue = GetCharacters(750);
+                writtenValue = GetCharacters(fieldLength);
                 writer.AddRecord(writtenValue);
                 writer.Write(fos);
             }
@@ -95,12 +96,53 @@ namespace DotNetDBFTest
                               FileAccess.ReadWrite))
             {
                 var reader = new DBFReader(fis);
-                Assert.That(reader.Fields.First().FieldLength, EqualTo(750));
+                Assert.That(reader.Fields.First().FieldLength, EqualTo(fieldLength));
                 var readValues = reader.NextRecord();
 
                 Assert.That(readValues[0], EqualTo(writtenValue), "Written Value not equaling Read");
             }
         }
+
+
+
+        [Test]
+        public void checkDataType_M()
+        {
+            var fieldLength = 2400;
+            MemoValue writtenValue;
+            using (
+                Stream fos =
+                    File.Open(TestMemoPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var writer = new DBFWriter
+                                 {
+                                     DataMemoLoc = Path.ChangeExtension(TestMemoPath, "DBT")
+                                 };
+                var field = new DBFField("F1", NativeDbType.Memo);
+                writer.Fields = new[] { field };
+
+                writtenValue = new MemoValue(GetCharacters(fieldLength));
+                writer.AddRecord(writtenValue);
+                writer.Write(fos);
+            }
+            using (
+                Stream fis =
+                    File.Open(TestMemoPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var reader = new DBFReader(fis)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestMemoPath, "DBT")
+                };
+                var readValues = reader.NextRecord();
+
+                Assert.That(readValues[0], EqualTo(writtenValue), "Written Value not equaling Read");
+            }
+        }
+
 
 
         [Test]
@@ -196,5 +238,7 @@ namespace DotNetDBFTest
                 Assert.That(reader.RecordCount, EqualTo(1));
             }
         }
+
+       
     }
 }

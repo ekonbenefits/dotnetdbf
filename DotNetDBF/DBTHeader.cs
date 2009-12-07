@@ -42,7 +42,7 @@ namespace DotNetDBF
           dataOutput.Write(_nextBlock);
           dataOutput.Write(new byte[12]);
           dataOutput.Write(_version);
-          dataOutput.Write(new byte[496]);
+          dataOutput.Write(new byte[495]);
         }
     }
 }

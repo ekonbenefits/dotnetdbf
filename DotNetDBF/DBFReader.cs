@@ -131,6 +131,18 @@ namespace DotNetDBF
 
         #endregion
 
+
+        public string DataMemoLoc
+        {
+            get
+            {
+                return _dataMemoLoc;
+            }set
+            {
+                _dataMemoLoc = value;
+            }
+        }
+
         public override String ToString()
         {
             StringBuilder sb =
