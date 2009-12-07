@@ -7,6 +7,24 @@ using NUnit.Framework;
 
 namespace DotNetDBFTest
 {
+    public interface ITestInterface
+    {
+        string F1
+        {
+            get;
+            set;
+        }
+        string F2
+        {
+            get;
+            set;
+        }
+        string F3
+        {
+            get;
+            set;
+        }
+    }
     [TestFixture]
     public class DotNetDBFTest: AssertionHelper
     {
@@ -229,23 +247,7 @@ Path.Combine(Path.GetTempPath(), "select.dbf");
             }
         }
 
-        public interface ITestInterface
-        {
-            string F1{
-                get;
-                set;
-            }
-            string F2
-            {
-                get;
-                set;
-            }
-            string F3
-            {
-                get;
-                set;
-            }
-        }
+ 
 
 
         [Test]

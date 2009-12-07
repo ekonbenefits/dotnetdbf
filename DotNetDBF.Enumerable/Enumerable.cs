@@ -57,20 +57,10 @@ namespace DotNetDBF.Enumerable
                 var tReturn = new List<T>();
                 object[] t = aReader.NextRecord(tProps);  
                 var tFactory = new ProxyFactory();
-                Type tNewType;
-                    if(tType.IsInterface)
-                    {
-
-                        tNewType = tFactory.CreateProxyType(
-                            typeof (object),
-                            new[] {tType , typeof (DBFIntercepter.IDBFObjectArrayWrapped)});
-
-                    }else
-                    {
-                        tNewType = tFactory.CreateProxyType(
+                Type tNewType = tFactory.CreateProxyType(
                            tType,
                            new[] { typeof(DBFIntercepter.IDBFObjectArrayWrapped) });
-                    }
+                  
 
             while (t != null)
                 {
