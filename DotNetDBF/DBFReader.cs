@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Linq;
@@ -297,7 +298,7 @@ namespace DotNetDBF
                                 if (t_float.Length > 0
                                     && !tParsed.Contains(DBFFieldType.Unknown))
                                 {
-                                    recordObjects[i] = Double.Parse(tParsed);
+                                    recordObjects[i] = Double.Parse(tParsed,NumberStyles.Float);
                                 }
                                 else
                                 {
@@ -328,7 +329,7 @@ namespace DotNetDBF
                                 if (t_numeric.Length > 0
                                     && !tParsed.Contains(DBFFieldType.Unknown))
                                 {
-                                    recordObjects[i] = Decimal.Parse(tParsed);
+                                    recordObjects[i] = Decimal.Parse(tParsed, NumberStyles.Float);
                                 }
                                 else
                                 {
