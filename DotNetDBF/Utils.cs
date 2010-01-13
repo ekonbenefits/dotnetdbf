@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 
 namespace DotNetDBF
 {
@@ -146,6 +147,28 @@ namespace DotNetDBF
             return
                 Array.Exists(arr,
                              delegate(byte anItem) { return anItem == value; });
+        }
+
+
+        static public Type TypeForNativeDBType(NativeDbType aType)
+        {
+            switch(aType)
+            {
+                case NativeDbType.Char:
+                    return typeof (string);
+                case NativeDbType.Date:
+                    return typeof (DateTime);
+                case NativeDbType.Numeric:
+                    return typeof (decimal);
+                case NativeDbType.Logical:
+                    return typeof (bool);
+                case NativeDbType.Float:
+                    return typeof (float);
+                case NativeDbType.Memo:
+                    return typeof (MemoValue);
+                default:
+                    throw new ArgumentException("Unsupported Type");
+            }
         }
     }
 }

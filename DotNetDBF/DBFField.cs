@@ -106,6 +106,15 @@ namespace DotNetDBF
 		 @return Data type as byte.
 		 */
 
+        public Type Type
+        {
+            get
+            {
+                return Utils.TypeForNativeDBType(DataType);
+            }
+        }
+
+
         public NativeDbType DataType
         {
             get

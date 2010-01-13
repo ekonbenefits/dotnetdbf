@@ -52,9 +52,11 @@ namespace DotNetDBF
                                     jt => jt.Name.Equals(it, StringComparison.InvariantCultureIgnoreCase))).ToArray();
         }
 
-        public string[] GetSelectFields()
+        public DBFField[] GetSelectFields()
         {
-            return _selectFields.Select(it => _header.FieldArray[it].Name).ToArray();
+            return _selectFields.Any()
+                ? _selectFields.Select(it => _header.FieldArray[it]).ToArray()
+                : _header.FieldArray;
         }
 
         public DBFReader(string anIn)
@@ -267,16 +269,20 @@ namespace DotNetDBF
 
                             try
                             {
+                                var tYear = CharEncoding.GetString(t_byte_year);
+                                var tMonth = CharEncoding.GetString(t_byte_month);
+                                var tDay = CharEncoding.GetString(t_byte_day);
+
                                 recordObjects[i] = new DateTime(
-                                    Int32.Parse(
-                                        CharEncoding.GetString(t_byte_year)),
-                                    Int32.Parse(
-                                        CharEncoding.GetString(t_byte_month)),
-                                    Int32.Parse(
-                                        CharEncoding.GetString(t_byte_day))
-                                    );
+                                    Int32.Parse(tYear),
+                                    Int32.Parse(tMonth),
+                                    Int32.Parse(tDay));
                             }
                             catch (FormatException)
+                            {
+                                recordObjects[i] = null;
+                            }
+                            catch (ArgumentOutOfRangeException)
                             {
                                 /* this field may be empty or may have improper value set */
                                 recordObjects[i] = null;
