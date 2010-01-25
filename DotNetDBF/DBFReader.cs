@@ -247,7 +247,7 @@ namespace DotNetDBF
                                 ];
                             _dataInputStream.Read(b_array, 0, b_array.Length);
 
-                            recordObjects[i] = CharEncoding.GetString(b_array);
+                            recordObjects[i] = CharEncoding.GetString(b_array).TrimEnd();
                             break;
 
                         case NativeDbType.Date:
