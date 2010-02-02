@@ -227,16 +227,16 @@ namespace DotNetDBF
                     isDeleted = (t_byte == '*');
                 } while (isDeleted);
 
-               
-                for (int i = 0; i < _header.FieldArray.Length; i++)
+                var tIndexes = selectIndexes.Any() ? selectIndexes.OrderBy(it=>it) : Enumerable.Range(0, _header.FieldArray.Length);
+
+                var tLastIndex = 0;
+                foreach (int i in tIndexes )
                 {
-
-                    if (selectIndexes.Any() && !selectIndexes.Contains(i))
+                    for (int j = tLastIndex; j < i; j++)
                     {
-                        _dataInputStream.BaseStream.Seek(_header.FieldArray[i].FieldLength, SeekOrigin.Current);
-                        continue;
+                            _dataInputStream.BaseStream.Seek(_header.FieldArray[i].FieldLength, SeekOrigin.Current);
                     }
-
+                    tLastIndex = i+1;
                   
                     switch (_header.FieldArray[i].DataType)
                     {
