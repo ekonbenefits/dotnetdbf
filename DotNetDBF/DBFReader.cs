@@ -233,7 +233,8 @@ namespace DotNetDBF
                 for (int i = 0; i < _header.FieldArray.Length; i++)
                 {
 
-                    if (tOrderdSelectIndexes.Count == j || (tOrderdSelectIndexes.Count > j && tOrderdSelectIndexes[j] > i && tOrderdSelectIndexes[j] != k))
+                    if (tOrderdSelectIndexes.Count == j && j != 0
+                        || (tOrderdSelectIndexes.Count > j && tOrderdSelectIndexes[j] > i && tOrderdSelectIndexes[j] != k))
                     {
                         _dataInputStream.BaseStream.Seek(_header.FieldArray[i].FieldLength, SeekOrigin.Current);
                         continue;
