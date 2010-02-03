@@ -198,13 +198,14 @@ namespace DotNetDBF
             return NextRecord(_selectFields);
         }
 
+      
         internal Object[] NextRecord(IEnumerable<int> selectIndexes)
         {
             if (isClosed)
             {
                 throw new DBFException("Source is not open");
             }
-
+            IList<int> tOrderdSelectIndexes = selectIndexes.OrderBy(it => it).ToArray();
 
             var recordObjects = new Object[_header.FieldArray.Length];
 
@@ -227,15 +228,19 @@ namespace DotNetDBF
                     isDeleted = (t_byte == '*');
                 } while (isDeleted);
 
-               
+                int j = 0;
+                int k = -1;
                 for (int i = 0; i < _header.FieldArray.Length; i++)
                 {
 
-                    if (selectIndexes.Any() && !selectIndexes.Contains(i))
+                    if (tOrderdSelectIndexes.Count == j || (tOrderdSelectIndexes.Count > j && tOrderdSelectIndexes[j] > i && tOrderdSelectIndexes[j] != k))
                     {
                         _dataInputStream.BaseStream.Seek(_header.FieldArray[i].FieldLength, SeekOrigin.Current);
                         continue;
                     }
+                    if (tOrderdSelectIndexes.Count > j)
+                        k = tOrderdSelectIndexes[j];
+                    j++;
 
                   
                     switch (_header.FieldArray[i].DataType)
