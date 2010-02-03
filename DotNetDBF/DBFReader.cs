@@ -309,13 +309,13 @@ namespace DotNetDBF
                                     _header.FieldArray[i].FieldLength
                                     ];
                                 _dataInputStream.Read(t_float, 0, t_float.Length);
-                                t_float = Utils.trimLeftSpaces(t_float);
                                 String tParsed = CharEncoding.GetString(t_float);
-
-                                if (t_float.Length > 0
-                                    && !tParsed.Contains(DBFFieldType.Unknown))
+                                var tLast = tParsed.Substring(tParsed.Length - 1);
+                                if (tParsed.Length > 0
+                                    && tLast != " "
+                                    && tLast != DBFFieldType.Unknown)
                                 {
-                                    recordObjects[i] = Double.Parse(tParsed,NumberStyles.Float);
+                                    recordObjects[i] = Double.Parse(tParsed, NumberStyles.Float | NumberStyles.AllowLeadingWhite);
                                 }
                                 else
                                 {
@@ -340,13 +340,14 @@ namespace DotNetDBF
                                 _dataInputStream.Read(t_numeric,
                                                      0,
                                                      t_numeric.Length);
-                                t_numeric = Utils.trimLeftSpaces(t_numeric);
                                 string tParsed =
                                     CharEncoding.GetString(t_numeric);
-                                if (t_numeric.Length > 0
-                                    && !tParsed.Contains(DBFFieldType.Unknown))
+                                var tLast = tParsed.Substring(tParsed.Length - 1);
+                                if (tParsed.Length > 0
+                                    && tLast != " "
+                                    && tLast != DBFFieldType.Unknown)
                                 {
-                                    recordObjects[i] = Decimal.Parse(tParsed, NumberStyles.Float);
+                                    recordObjects[i] = Decimal.Parse(tParsed, NumberStyles.Float | NumberStyles.AllowLeadingWhite);
                                 }
                                 else
                                 {
