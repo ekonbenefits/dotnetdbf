@@ -27,6 +27,7 @@ namespace DotNetDBF
         private string _dataMemoLoc;
 
         private int[] _selectFields = new int[]{};
+        private int[] _orderedSelectFields = new int[] { };
         /* Class specific variables */
         private bool isClosed = true;
 
@@ -50,6 +51,7 @@ namespace DotNetDBF
                     it =>
                     Array.FindIndex(_header.FieldArray,
                                     jt => jt.Name.Equals(it, StringComparison.InvariantCultureIgnoreCase))).ToArray();
+            _orderedSelectFields = _selectFields.OrderBy(it => it).ToArray();
         }
 
         public DBFField[] GetSelectFields()
@@ -195,17 +197,17 @@ namespace DotNetDBF
 		 */
         public Object[] NextRecord()
         {
-            return NextRecord(_selectFields);
+            return NextRecord(_selectFields, _orderedSelectFields);
         }
 
       
-        internal Object[] NextRecord(IEnumerable<int> selectIndexes)
+        internal Object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
         {
             if (isClosed)
             {
                 throw new DBFException("Source is not open");
             }
-            IList<int> tOrderdSelectIndexes = selectIndexes.OrderBy(it => it).ToArray();
+            IList<int> tOrderdSelectIndexes = sortedIndexes;
 
             var recordObjects = new Object[_header.FieldArray.Length];
 

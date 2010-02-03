@@ -106,14 +106,15 @@ namespace DotNetDBF.Enumerable
                     Array.FindIndex(aReader.Fields,
                                     jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 
+                var tOrderedProps = tProps.OrderBy(it => it).ToArray();
 
                 var tReturn = new List<T>();
-                object[] t = aReader.NextRecord(tProps);
+                object[] t = aReader.NextRecord(tProps,tOrderedProps);
                 while (t != null)
                 {
 
                     tReturn.Add((T)Activator.CreateInstance(tType, t));
-                    t = aReader.NextRecord(tProps);
+                    t = aReader.NextRecord(tProps, tOrderedProps);
                 }
 
 
@@ -135,9 +136,9 @@ namespace DotNetDBF.Enumerable
                     Array.FindIndex(aReader.Fields,
                                     jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 
-
+                var tOrderedProps = tProps.OrderBy(it => it).ToArray();
                 var tReturn = new List<T>();
-                object[] t = aReader.NextRecord(tProps);  
+                object[] t = aReader.NextRecord(tProps, tOrderedProps);  
                 var tFactory = new ProxyFactory();
                 Type tNewType = tFactory.CreateProxyType(
                            tType,
@@ -152,7 +153,7 @@ namespace DotNetDBF.Enumerable
 
 
                     tReturn.Add((T)proxyInstance);
-                    t = aReader.NextRecord(tProps);
+                    t = aReader.NextRecord(tProps, tOrderedProps);
                 }
 
 
@@ -186,9 +187,9 @@ namespace DotNetDBF.Enumerable
                 Array.FindIndex(aReader.Fields,
                                 jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 
-
+            var tOrderedProps = tProps.OrderBy(it => it).ToArray();
             var tReturn = new List<object>();
-            object[] t = aReader.NextRecord(tProps);
+            object[] t = aReader.NextRecord(tProps, tOrderedProps);
             var tFactory = new ProxyFactory();
             Type tNewType = tFactory.CreateProxyType(
                        tType,
@@ -201,7 +202,7 @@ namespace DotNetDBF.Enumerable
                 {
                     if(!t[tWhereColumn.Value].Equals(whereColumnEquals))
                     {
-                        t = aReader.NextRecord(tProps);
+                        t = aReader.NextRecord(tProps, tOrderedProps);
                         continue;
                     }
                 }
@@ -211,7 +212,7 @@ namespace DotNetDBF.Enumerable
           
 
                 tReturn.Add(proxyInstance);
-                t = aReader.NextRecord(tProps);
+                t = aReader.NextRecord(tProps, tOrderedProps);
             }
 
 
