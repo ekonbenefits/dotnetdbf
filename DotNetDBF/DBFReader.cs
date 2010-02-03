@@ -273,14 +273,20 @@ namespace DotNetDBF
                                 var tMonth = CharEncoding.GetString(t_byte_month);
                                 var tDay = CharEncoding.GetString(t_byte_day);
 
-                                recordObjects[i] = new DateTime(
-                                    Int32.Parse(tYear),
-                                    Int32.Parse(tMonth),
-                                    Int32.Parse(tDay));
-                            }
-                            catch (FormatException)
-                            {
-                                recordObjects[i] = null;
+                                int tIntYear, tIntMonth, tIntDay;
+                                if (Int32.TryParse(tYear, out tIntYear) &&
+                                    Int32.TryParse(tMonth, out tIntMonth) &&
+                                    Int32.TryParse(tDay, out tIntDay))
+                                {
+                                    recordObjects[i] = new DateTime(
+                                        tIntYear,
+                                        tIntMonth,
+                                        tIntDay);
+                                }
+                                else
+                                {
+                                    recordObjects[i] = null;
+                                }
                             }
                             catch (ArgumentOutOfRangeException)
                             {
