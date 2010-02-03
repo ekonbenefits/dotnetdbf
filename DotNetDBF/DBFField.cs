@@ -119,9 +119,7 @@ namespace DotNetDBF
         {
             get
             {
-                return
-                    (NativeDbType)
-                    Enum.ToObject(typeof (NativeDbType), dataType);
+                return (NativeDbType)dataType;
             }
             set
             {
