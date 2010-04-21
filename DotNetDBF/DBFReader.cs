@@ -310,10 +310,12 @@ namespace DotNetDBF
 
                         case NativeDbType.Memo:
                             // TODO Later
+                            dataInputStream.ReadBytes(header.FieldArray[i].FieldLength);
                             recordObjects[i] = DBNull.Value;
                             break;
 
                         default:
+                            dataInputStream.ReadBytes(header.FieldArray[i].FieldLength);
                             recordObjects[i] = DBNull.Value;
                             break;
                     }
