@@ -389,7 +389,7 @@ namespace DotNetDBF
                                 throw new Exception("Memo Location Not Set");
 
 
-                            var tRawMemoPointer = _dataInputStream.ReadBytes(10);
+                            var tRawMemoPointer = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
                             var tMemoPoiner = CharEncoding.GetString(tRawMemoPointer);
                             if(string.IsNullOrEmpty(tMemoPoiner))
                             {
@@ -403,6 +403,7 @@ namespace DotNetDBF
                             recordObjects[i] = new MemoValue(tBlock, this, _dataMemoLoc);
                             break;
                         default:
+                            _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
                             recordObjects[i] = DBNull.Value;
                             break;
                     }
