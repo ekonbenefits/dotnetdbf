@@ -51,10 +51,11 @@ namespace DotNetDBF.Enumerable
 
         static private Dictionary<string, Type> _typeHash = new Dictionary<string, Type>();
    
+        static private readonly object TypeHashLock = new object();
 
         static public Type DynamicType(this DBFReader aReader)
         {
-            lock ("com.dotnetdbf.typehash")
+            lock (TypeHashLock)
             {
                 var tFields = aReader.GetSelectFields();
                 var tHash = aReader.GetSelectFields().Aggregate("",(accum,each)=> string.Format("{0}|{1}:{2}", accum, each.Name.ToLower(), each.DataType));
