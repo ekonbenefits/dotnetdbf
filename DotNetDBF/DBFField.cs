@@ -14,11 +14,13 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
 namespace DotNetDBF
 {
+    [DebuggerDisplay("Field:{Name}, Length:{FieldLength}")]
     public class DBFField
     {
         public const int SIZE = 32;
@@ -73,10 +75,10 @@ namespace DotNetDBF
         }
 
         /**
-		 Returns the name of the field.
-		 
-		 @return Name of the field as String.
-		 */
+         Returns the name of the field.
+         
+         @return Name of the field as String.
+         */
 
         public String Name
         {
@@ -101,10 +103,10 @@ namespace DotNetDBF
         }
 
         /**
-		 Returns the data type of the field.
-		 
-		 @return Data type as byte.
-		 */
+         Returns the data type of the field.
+         
+         @return Data type as byte.
+         */
 
         public Type Type
         {
@@ -142,10 +144,10 @@ namespace DotNetDBF
         }
 
         /**
-		 Returns field length.
-		 
-		 @return field length as int.
-		 */
+         Returns field length.
+         
+         @return field length as int.
+         */
 
         public int FieldLength
         {
@@ -159,11 +161,11 @@ namespace DotNetDBF
                 return fieldLength;
             }
             /**
-			 Length of the field.
-			 This method should be called before calling setDecimalCount().
-			 
-			 @param Length of the field as int.
-			 */
+             Length of the field.
+             This method should be called before calling setDecimalCount().
+             
+             @param Length of the field as int.
+             */
             set
             {
                 if (value <= 0)
@@ -190,25 +192,25 @@ namespace DotNetDBF
         }
 
         /**
-		 Returns the decimal part. This is applicable
-		 only if the field type if of numeric in nature.
-		 
-		 If the field is specified to hold integral values
-		 the value returned by this method will be zero.
-		 
-		 @return decimal field size as int.
-		 */
+         Returns the decimal part. This is applicable
+         only if the field type if of numeric in nature.
+         
+         If the field is specified to hold integral values
+         the value returned by this method will be zero.
+         
+         @return decimal field size as int.
+         */
 
         public int DecimalCount
         {
             get { return decimalCount; }
             /**
-			 Sets the decimal place size of the field.
-			 Before calling this method the size of the field
-			 should be set by calling setFieldLength().
-			 
-			 @param Size of the decimal field.
-			 */
+             Sets the decimal place size of the field.
+             Before calling this method the size of the field
+             should be set by calling setFieldLength().
+             
+             @param Size of the decimal field.
+             */
             set
             {
                 if (value < 0)
@@ -263,12 +265,12 @@ namespace DotNetDBF
         }
 
         /**
-		 Writes the content of DBFField object into the stream as per
-		 DBF format specifications.
-		 
-		 @param os OutputStream
-		 @throws IOException if any stream related issues occur.
-		 */
+         Writes the content of DBFField object into the stream as per
+         DBF format specifications.
+         
+         @param os OutputStream
+         @throws IOException if any stream related issues occur.
+         */
 
         public void Write(BinaryWriter aWriter)
         {
@@ -292,15 +294,15 @@ namespace DotNetDBF
         }
 
         /**
-		 Creates a DBFField object from the data read from the given DataInputStream.
-		 
-		 The data in the DataInputStream object is supposed to be organised correctly
-		 and the stream "pointer" is supposed to be positioned properly.
-		 
-		 @param in DataInputStream
-		 @return Returns the created DBFField object.
-		 @throws IOException If any stream reading problems occures.
-		 */
+         Creates a DBFField object from the data read from the given DataInputStream.
+         
+         The data in the DataInputStream object is supposed to be organised correctly
+         and the stream "pointer" is supposed to be positioned properly.
+         
+         @param in DataInputStream
+         @return Returns the created DBFField object.
+         @throws IOException If any stream reading problems occures.
+         */
 
         static internal DBFField CreateField(BinaryReader aReader)
         {
