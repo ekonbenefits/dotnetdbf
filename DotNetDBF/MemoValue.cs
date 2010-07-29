@@ -114,17 +114,19 @@ namespace DotNetDBF
                             string tString;
                             var tStringBuilder = new StringBuilder();
                             int tIndex;
+                            var tSoftReturn = _base.CharEncoding.GetString(new byte[] {0x8d, 0x0a});
+
                             do
                             {
                                 var tData = reader.ReadBytes(_base.BlockSize);
-
+                               
                                 tString = _base.CharEncoding.GetString(tData);
                                 tIndex = tString.IndexOf(MemoTerminator);
                                 if (tIndex != -1)
                                     tString = tString.Substring(0, tIndex);
                                 tStringBuilder.Append(tString);
                             } while (tIndex == -1);
-                            _value = tStringBuilder.ToString();
+                            _value = tStringBuilder.ToString().Replace(tSoftReturn,String.Empty);
                         }
                         _loaded = true;
                     }
