@@ -119,7 +119,8 @@ namespace DotNetDBF
 
             for (int i = 0; i < sizeWholePart; i++)
             {
-                format.Append("#");
+
+                format.Append(sizeWholePart+1== sizeWholePart ? "0":"#");
             }
 
             if (sizeDecimalPart > 0)
@@ -136,7 +137,7 @@ namespace DotNetDBF
             return
                 textPadding(
                     doubleNum.ToString(format.ToString(),
-                                       NumberFormatInfo.CurrentInfo),
+                                       NumberFormatInfo.InvariantInfo),
                     charEncoding,
                     fieldLength,
                     ALIGN_RIGHT);
