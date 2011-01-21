@@ -2,18 +2,15 @@
 <package> 
   <metadata> 
     <id>dotnetdbf</id> 
-    <version>3.0.1.1</version> 
+    <version>3.0.1.4</version> 
     <authors>Anil Kumar, Jay Tuley</authors> 
     <owners>Jay Tuley</owners>
     <summary>This is a basic file parser for reading and writing xBase DBF files, particularly Clipper.</summary>
-    <description>This is a basic file parser for reading and writing xBase DBF files particularlly Clipper. For .net 4.0 projects there is an enumeration framework in which makes it easy to use Linq to Objects. Code derived from javadbf. </description> 
+    <description>This is a basic file parser for reading and writing xBase DBF files particularlly Clipper. Code derived from javadbf. </description> 
     <projectUrl>http://code.google.com/p/dotnetdbf/</projectUrl>
     <licenseUrl>http://www.gnu.org/licenses/lgpl.html</licenseUrl>
-    <tags>clipper dbf .net40 .net20</tags>
-    <language>en-US</language> 
-    <dependencies>
- 	<dependency id="ImpromptuInterface" version="[1.2,2.0)" />
-    </dependencies>
+    <tags>clipper dbf .net35</tags>
+    <language>en-US</language>
   </metadata> 
 </package>
 
