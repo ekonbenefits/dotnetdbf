@@ -6,3 +6,5 @@ relre:^_UpgradeReport_Files.*
 relre:.*\.suo$
 glob:UpgradeLog.XML
 glob:*.vs10x
+glob:nuget/dotnetdbf/lib/Net20/*
+glob:nuget/dotnetdbf/lib/Net40/*
