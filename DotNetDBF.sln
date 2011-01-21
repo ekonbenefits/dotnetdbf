@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetDBF", "DotNetDBF\DotNetDBF.csproj", "{C5E9AE18-1EA3-4C90-AFAB-5323093BE4AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetDBFTest", "DotNetDBFTest\DotNetDBFTest.csproj", "{8BBBC83C-14CB-4836-8406-A046DB0C4F17}"

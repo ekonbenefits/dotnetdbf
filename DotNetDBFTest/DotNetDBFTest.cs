@@ -292,6 +292,120 @@ Path.Combine(Path.GetTempPath(), "select.dbf");
         }
 
         [Test]
+        public void checkDynamicProxy()
+        {
+            var fieldLength = 2400;
+            string writtenValue;
+            using (
+                Stream fos =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var writer = new DBFWriter
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+                var field = new DBFField("F1", NativeDbType.Memo);
+                var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
+                var field3 = new DBFField("F3", NativeDbType.Char, 10);
+                writer.Fields = new[] { field, field2, field3 };
+
+                writtenValue = "alpha";
+                writer.AddRecord(new MemoValue(GetCharacters(fieldLength)), 10, writtenValue);
+                writer.Write(fos);
+            }
+            using (
+                Stream fis =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var reader = new DBFReader(fis)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+
+                var readValues = reader.DynamicAllRecords();
+
+                Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
+            }
+        }
+
+
+        [Test]
+        public void checkDynamicProxyWhere()
+        {
+            var fieldLength = 2400;
+            string writtenValue;
+            using (
+                Stream fos =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var writer = new DBFWriter
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+                var field = new DBFField("F1", NativeDbType.Memo);
+                var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
+                var field3 = new DBFField("F3", NativeDbType.Char, 10);
+                writer.Fields = new[] { field, field2, field3 };
+
+                writtenValue = "alpha";
+                writer.AddRecord(new MemoValue(GetCharacters(fieldLength)), 10, writtenValue);
+
+                writer.AddRecord(new MemoValue(GetCharacters(fieldLength)), 12, "beta");
+
+                writer.Write(fos);
+            }
+          
+                using(var reader = new DBFReader(TestSelectPath){
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")})
+                {
+
+                    var readValues = reader.DynamicAllRecords();
+
+                    Assert.That(Equals(readValues.Count(), 2), "All Records not matching");
+
+                }
+
+                using (var reader = new DBFReader(TestSelectPath)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")})
+                {
+
+                    var readValues = reader.DynamicAllRecords(whereColumn: "F2", whereColumnEquals: 10);
+
+                    Assert.That(Equals(readValues.Count(), 1), "All Records not matching");
+
+                }
+
+                using (var reader = new DBFReader(TestSelectPath)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")})
+                {
+
+                    var readValues = reader.DynamicAllRecords(whereColumn: "F2", whereColumnEquals: 12);
+
+                    Assert.That(Equals(readValues.Count(), 1), "All Records not matching");
+
+                }
+                using (var reader = new DBFReader(TestSelectPath)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")})
+                {
+
+                    var readValues = reader.DynamicAllRecords(whereColumn: "F2", whereColumnEquals: 13);
+
+                    Assert.That(Equals(readValues.Count(), 0), "All Records not matching");
+
+                }
+            
+        }
+
+        [Test]
         public void checkRAFwriting()
         {
             println("Writing in RAF mode ... ");

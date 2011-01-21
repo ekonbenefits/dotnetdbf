@@ -5,3 +5,4 @@ relre:.*\.user$
 relre:^_UpgradeReport_Files.*
 relre:.*\.suo$
 glob:UpgradeLog.XML
+glob:*.vs10x

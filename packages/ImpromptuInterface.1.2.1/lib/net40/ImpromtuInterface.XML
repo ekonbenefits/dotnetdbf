@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ImpromtuInterface</name>
+    </assembly>
+    <members>
+        <member name="T:ImpromptuInterface.IActLike">
+            <summary>
+            This interface can be used on your custom dynamic objects if you want impromptu interfaces without casting to object or using the static method syntax of ActLike.
+            Also if you want to change the behavior for slightly for specific types as this will take precident when using the dynamic keyword or your specific type is known staticly.
+            </summary>
+        </member>
+        <member name="M:ImpromptuInterface.Impromptu.ActLike``1(System.Object,System.Type[])">
+            <summary>
+            Extension Method that Wraps an existing object with an Explicit interface definition
+            </summary>
+            <typeparam name="TInterface">The type of the interface.</typeparam>
+            <param name="originalDynamic">The original object can be annoymous type, System.DynamicObject as well as any others.</param>
+            <param name="otherInterfaces">Optional other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.Impromptu.CallActLike``1(System.Object,System.Object,System.Type[])">
+            <summary>
+            This Extension method is called off the calling context to perserve permissions with the object wrapped with an explicit interface definition.
+            </summary>
+            <typeparam name="TInterface">The type of the interface.</typeparam>
+            <param name="caller">The caller.</param>
+            <param name="originalDynamic">The original dynamic.</param>
+            <param name="otherInterfaces">The other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.Impromptu.AllActLike``1(System.Collections.Generic.IEnumerable{System.Object},System.Type[])">
+            <summary>
+            Chainable Linq to Objects Method, allows you to wrap a list of objects with an Explict interface defintion
+            </summary>
+            <typeparam name="TInterface">The type of the interface.</typeparam>
+            <param name="originalDynamic">The original dynamic.</param>
+            <param name="otherInterfaces">The other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.Impromptu.DynamicActLike(System.Object,System.Type[])">
+            <summary>
+            Static Method that wraps an existing dyanmic object with a explicit interface type
+            </summary>
+            <param name="originalDynamic">The original dynamic.</param>
+            <param name="otherInterfaces">The other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.Impromptu.CallDynamicActLike(System.Object,System.Object,System.Type[])">
+            <summary>
+            This Extension method is called off the calling context to perserve permissions with the object wrapped with an explicit interface definition.
+            </summary>
+            <param name="caller">The caller.</param>
+            <param name="originalDynamic">The original dynamic.</param>
+            <param name="otherInterfaces">The other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.Impromptu.AllCallActLike``1(System.Collections.Generic.IEnumerable{System.Object},System.Object,System.Type[])">
+            <summary>
+            Chainable Linq to Objects Method, allows you to wrap a list of objects, and preserve method permissions with a caller, with an Explict interface defintion
+            </summary>
+            <typeparam name="TInterface">The type of the interface.</typeparam>
+            <param name="originalDynamic">The original dynamic.</param>
+            <param name="caller">The caller.</param>
+            <param name="otherInterfaces">The other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.TypeHash.#ctor(System.Collections.Generic.IEnumerable{System.Type})">
+            <summary>
+            Initializes a new instance of the <see cref="T:ImpromptuInterface.TypeHash"/> class.
+            </summary>
+            <param name="moreTypes">The more types.</param>
+        </member>
+        <member name="M:ImpromptuInterface.TypeHash.#ctor(System.Type,System.Type[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:ImpromptuInterface.TypeHash"/> class.
+            For use when you have must distinguish one type;
+            </summary>
+            <param name="type1">The type1.</param>
+            <param name="type2">The type2.</param>
+            <param name="moreTypes">The more types.</param>
+        </member>
+        <member name="T:ImpromptuInterface.ImpromptuObject">
+            <summary>
+            Dynamic Object that knows about the Impromtu Interface return types;
+            Override Typical Dynamic Object methods, and use TypeForName to get the return type of an interface member.
+            </summary>
+        </member>
+        <member name="T:ImpromptuInterface.IDynamicKnowLike">
+            <summary>
+            This interface can be used on your custom dynamic objects if you want to know the interface you are implementing
+            </summary>
+        </member>
+        <member name="M:ImpromptuInterface.ImpromptuObject.TryTypeForName(System.String,System.Type@)">
+            <summary>
+            Tries to get the type for the property name from the interface.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="returnType">The return Type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.ImpromptuObject.ActLike``1(System.Type[])">
+            <summary>
+            Allows ActLike to be called via dyanmic invocation
+            </summary>
+            <typeparam name="TInterface">The type of the interface.</typeparam>
+            <param name="otherInterfaces">The other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="P:ImpromptuInterface.ImpromptuObject.KnownInterfaces">
+            <summary>
+            Gets or sets the known interfaces.
+            Set should only be called be the factory methood
+            </summary>
+            <value>The known interfaces.</value>
+        </member>
+        <member name="T:ImpromptuInterface.IActLikeProxy">
+            <summary>
+            This interface can be used to access the original content of your emitted type;
+            </summary>
+        </member>
+        <member name="T:ImpromptuInterface.ActLikeProxy">
+            <summary>
+            Base class of Emited Proxies
+            </summary>
+        </member>
+        <member name="M:ImpromptuInterface.BuildProxy.WriteOutDll(System.String)">
+            <summary>
+            Writes the out DLL of types created between this call and dispose used for debugging of emitted IL code
+            </summary>
+            <param name="name">The name.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.BuildProxy.BuildType(System.Type,System.Type,System.Type[])">
+            <summary>
+            Builds the type for the static proxy or returns from cache
+            </summary>
+            <param name="contextType">Type of the context.</param>
+            <param name="mainInterface">The main interface.</param>
+            <param name="otherInterfaces">The other interfaces.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ImpromptuInterface.ImpromptuFactory">
+            <summary>
+            Base Class for making a fluent factory using an Impromptu Interface return type.
+            </summary>
+        </member>
+        <member name="M:ImpromptuInterface.ImpromptuFactory.CreateType(System.Type)">
+            <summary>
+            Constructs the type. Override for changing type intialization property changes.
+            </summary>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ImpromptuInterface.ImpromptuFactory.GetInstanceForDynamicMember(System.String)">
+            <summary>
+            Gets the instance for a dynamic member. Override for type constrcution behavoir changes based on property name.
+            </summary>
+            <param name="memberName">Name of the member.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ImpromptuInterface.ImpromptuSingleInstancesFactory">
+            <summary>
+            Base Class for making a singleton fluent factory using an Impromptu Interface return type.
+            </summary>
+        </member>
+    </members>
+</doc>

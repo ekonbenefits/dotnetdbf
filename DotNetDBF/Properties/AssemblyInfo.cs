@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 [assembly : AssemblyTitle("DotNetDBF")]
 [assembly : AssemblyDescription("")]
 [assembly : AssemblyConfiguration("")]
-[assembly : AssemblyCompany("")]
+[assembly : AssemblyCompany("Ekon Benefits")]
 [assembly : AssemblyProduct("DotNetDBF")]
-[assembly : AssemblyCopyright("Copyright ©  2009")]
+[assembly : AssemblyCopyright("Copyright © 2009-2011")]
 [assembly : AssemblyTrademark("")]
 [assembly : AssemblyCulture("")]
 
@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 [assembly: InternalsVisibleTo("DotNetDBF.Enumerable")]
-[assembly : AssemblyVersion("2.0.0.6")]
+[assembly : AssemblyVersion("3.0.1.*")]

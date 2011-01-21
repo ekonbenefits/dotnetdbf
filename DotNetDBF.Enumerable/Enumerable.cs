@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Dynamic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Text;
-using LinFu.DynamicProxy;
+using ImpromptuInterface;
 
 namespace DotNetDBF.Enumerable
 {
@@ -15,88 +11,7 @@ namespace DotNetDBF.Enumerable
     {
 
 
-         static private ModuleBuilder _builder;
-        static public ModuleBuilder Builder
-        {
-            get
-            {
-                if (_builder == null) {
-                    var tPlainName = "DotNetDBFEnumProxyInterfaceDynamicAssembly";
-                    var tName = new AssemblyName(tPlainName);
-
-
-#if DEBUG
-                    var access = AssemblyBuilderAccess.RunAndSave;
-#else
-            var access = AssemblyBuilderAccess.Run;
-#endif
-                    var ab =
-                            AppDomain.CurrentDomain.DefineDynamicAssembly(
-                                    tName,
-                                    access);
-#if DEBUG
-                    _builder =
-                            ab.DefineDynamicModule(tName.Name,String.Format(
-                  "{0}.mod", tPlainName), true);
-                    
-#else
-           _builder =
-                            ab.DefineDynamicModule(tName.Name);
-#endif
-                }
-                return _builder;
-            }
-        }
-
-
-        static private Dictionary<string, Type> _typeHash = new Dictionary<string, Type>();
-   
-        static private readonly object TypeHashLock = new object();
-
-        static public Type DynamicType(this DBFReader aReader)
-        {
-            lock (TypeHashLock)
-            {
-                var tFields = aReader.GetSelectFields();
-                var tHash = aReader.GetSelectFields().Aggregate("",(accum,each)=> string.Format("{0}|{1}:{2}", accum, each.Name.ToLower(), each.DataType));
-
-                if (_typeHash.ContainsKey(tHash))
-                {
-                    return _typeHash[tHash];
-                }
-                var tDataSet = tFields;
-
-                var tb = Builder.DefineType(
-                        "A" + Guid.NewGuid().ToString("N"),
-                        TypeAttributes.Abstract | TypeAttributes.Public | TypeAttributes.Class,
-                        typeof(object));
-
-                foreach (DBFField tColumn in tDataSet)
-                {
-                    var tPropName = tColumn.Name.ToLower();
-                    var tPropType = tColumn.Type;
-                    var pb = tb.DefineProperty(
-                            tPropName, System.Reflection.PropertyAttributes.None, tPropType, null);
-
-
-                    var tGet = tb.DefineMethod(
-                            "get_" + tPropName,
-                            MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.SpecialName
-                            | MethodAttributes.Public,
-                            tPropType,
-                            null);
-
-                    pb.SetGetMethod(tGet);
-                }
-
-                var tType = tb.CreateType();
-                _typeHash.Add(tHash, tType);
-                return tType;
-            }
-        }
-
-
-        static public IEnumerable<T> AllRecords<T>(this DBFReader aReader, T aTemplate)
+        static public IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype) where T : class 
         {
             var tType = typeof(T);
             if (tType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any())
@@ -104,18 +19,18 @@ namespace DotNetDBF.Enumerable
                 var tProps = tType.GetProperties()
                     .Select(
                     it =>
-                    Array.FindIndex(aReader.Fields,
+                    Array.FindIndex(reader.Fields,
                                     jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 
                 var tOrderedProps = tProps.OrderBy(it => it).ToArray();
 
                 var tReturn = new List<T>();
-                object[] t = aReader.NextRecord(tProps,tOrderedProps);
+                object[] t = reader.NextRecord(tProps,tOrderedProps);
                 while (t != null)
                 {
 
                     tReturn.Add((T)Activator.CreateInstance(tType, t));
-                    t = aReader.NextRecord(tProps, tOrderedProps);
+                    t = reader.NextRecord(tProps, tOrderedProps);
                 }
 
 
@@ -123,10 +38,18 @@ namespace DotNetDBF.Enumerable
                 return tReturn;
             }
 
-            return AllRecords<T>(aReader);
+            return AllRecords<T>(reader);
         }
 
-        static public IEnumerable<T> AllRecords<T>(this DBFReader aReader)
+
+
+        /// <summary>
+        /// Return all the records T should be interface with getter properties that match types and names of the database.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader">A reader.</param>
+        /// <returns></returns>
+        static public IEnumerable<T> AllRecords<T>(this DBFReader reader) where T:class 
         {
             var tType = typeof(T);
 
@@ -134,27 +57,20 @@ namespace DotNetDBF.Enumerable
                 var tProps = tProperties
                     .Select(
                     it =>
-                    Array.FindIndex(aReader.Fields,
+                    Array.FindIndex(reader.Fields,
                                     jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 
                 var tOrderedProps = tProps.OrderBy(it => it).ToArray();
                 var tReturn = new List<T>();
-                object[] t = aReader.NextRecord(tProps, tOrderedProps);  
-                var tFactory = new ProxyFactory();
-                Type tNewType = tFactory.CreateProxyType(
-                           tType,
-                           new[] { typeof(DBFIntercepter.IDBFObjectArrayWrapped) });
-                  
+                object[] t = reader.NextRecord(tProps, tOrderedProps);  
 
             while (t != null)
                 {
-                  
-                     var proxyInstance = (IProxy)Activator.CreateInstance(tNewType);
-                    proxyInstance.Interceptor = new DBFIntercepter(t, tProperties);
 
+                    var tIntercepter = new DBFIntercepter(t, tProperties.Select(it => it.Name).ToArray());
 
-                    tReturn.Add((T)proxyInstance);
-                    t = aReader.NextRecord(tProps, tOrderedProps);
+                    tReturn.Add(tIntercepter.ActLike<T>(typeof(IDBFIntercepter)));
+                    t = reader.NextRecord(tProps, tOrderedProps);
                 }
 
 
@@ -163,118 +79,94 @@ namespace DotNetDBF.Enumerable
             
         }
 
-        static public IEnumerable<object> DynamicAllRecords(this DBFReader aReader, Type type)
+ 
+
+        static public IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null, dynamic whereColumnEquals = null)
         {
-            return DynamicAllRecords(aReader, type, null, null);
-        }
-
-
-        static public IEnumerable<object> DynamicAllRecords(this DBFReader aReader, Type type, string whereColumn, object whereColumnEquals)
-        {
-            var tType = type;
-
-            var tProperties = tType.GetProperties();
+           
+            var tProperties = reader.Fields.Select(it=>it.Name).ToArray();
 
             int? tWhereColumn=null;
             if(!String.IsNullOrEmpty(whereColumn))
             {
-                tWhereColumn = Array.FindIndex(aReader.Fields,
-                                it => it.Name.Equals(whereColumn, StringComparison.InvariantCultureIgnoreCase));
+                tWhereColumn = Array.FindIndex(tProperties,
+                                it => it.Equals(whereColumn, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            var tProps = tProperties
-                .Select(
-                it =>
-                Array.FindIndex(aReader.Fields,
-                                jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).ToArray();
-
-            var tOrderedProps = tProps.OrderBy(it => it).ToArray();
+      
             var tReturn = new List<object>();
-            object[] t = aReader.NextRecord(tProps, tOrderedProps);
-            var tFactory = new ProxyFactory();
-            Type tNewType = tFactory.CreateProxyType(
-                       tType,
-                       new[] { typeof(DBFIntercepter.IDBFObjectArrayWrapped) });
-
+            object[] t = reader.NextRecord();
 
             while (t != null)
             {
                 if (tWhereColumn.HasValue)
                 {
-                    if(!t[tWhereColumn.Value].Equals(whereColumnEquals))
+                    dynamic tO = t[tWhereColumn.Value];
+                    if(!tO.Equals(whereColumnEquals))
                     {
-                        t = aReader.NextRecord(tProps, tOrderedProps);
+                        t = reader.NextRecord();
                         continue;
                     }
                 }
 
-                var proxyInstance = (IProxy)Activator.CreateInstance(tNewType);
-                proxyInstance.Interceptor = new DBFIntercepter(t, tProperties);
-          
 
-                tReturn.Add(proxyInstance);
-                t = aReader.NextRecord(tProps, tOrderedProps);
+                var tIntercepter = new DBFIntercepter(t, tProperties);
+
+
+                tReturn.Add(tIntercepter);
+                t = reader.NextRecord();
             }
-
 
 
             return tReturn;
 
         }
 
-
-        public class DBFIntercepter : IInterceptor
+        public interface IDBFIntercepter
         {
-            public interface IDBFObjectArrayWrapped
+            object[] GetDataRow();
+        }
+
+        public class DBFIntercepter : ImpromptuObject
+        {
+            private readonly string[] _fieldNames;
+            private readonly object[] _wrappedArray;
+
+            public DBFIntercepter(object[] wrappedObj, string[] fieldNames)
             {
-                object[] GetDataRow();
+                _wrappedArray = wrappedObj;
+                _fieldNames = fieldNames;
+
             }
-          
 
-
-            private object[] _wrapper;
-            private PropertyInfo[] _props;
-
-            public DBFIntercepter(object[] aWrapper,PropertyInfo[] aProps)
+            public override bool  TryGetMember(GetMemberBinder binder, out object result)
             {
-                _wrapper = aWrapper;
-                _props = aProps;
-            }
+                result = null;
+                var tLookup = binder.Name;
+                var tIndex = Array.FindIndex(_fieldNames,
+                                             it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
 
-            #region Implementation of IInterceptor
-            public object Intercept(InvocationInfo info)
-            {
-                if (info.TargetMethod.Name.Contains("get_"))
+                if(tIndex <0)
+                    return false;
+
+
+                result = _wrappedArray[tIndex];
+
+                if (result == null)
                 {
-                    return GetProperty(info);
+                    Type outType;
+                    if (TryTypeForName(tLookup, out outType) && outType.IsValueType)
+                    {
+                        result = Activator.CreateInstance(outType);
+                    }
                 }
-
-                if (info.TargetMethod.Name.Equals("GetDataRow"))
-                {
-                    return _wrapper;
-                }
-                   var tNewArgs =
-                        info.Arguments.Select(
-                                it => it.GetType() == info.Target.GetType()
-                                    ? ((IDBFObjectArrayWrapped)it).GetDataRow() : it).ToArray();
-                return info.TargetMethod.Invoke(_wrapper, tNewArgs);
-
+                return true;
             }
 
-            private object GetProperty(InvocationInfo info)
+            public object[] GetDataRow()
             {
-                var tLookup = info.TargetMethod
-                        .Name
-                        .Replace("get_",
-                                 String.Empty)
-                        .ToLower();
-                var tIndex = Array.FindIndex(_props,
-                                             it => it.Name.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
-
-                return _wrapper[tIndex] ?? Activator.CreateInstance(info.TargetMethod.ReturnType);
+                return _wrappedArray;
             }
-
-            #endregion
         }
     }
 }
