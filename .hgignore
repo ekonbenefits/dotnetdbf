@@ -10,3 +10,4 @@ glob:nuget/dotnetdbf/lib/Net20/*
 glob:nuget/dotnetdbf/lib/Net40/*
 glob:nuget/NuGet.exe
 glob:nuget/*.nupkg
+glob:dist/*
