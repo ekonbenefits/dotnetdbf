@@ -80,7 +80,7 @@ namespace DotNetDBF.Enumerable
         static public IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null, dynamic whereColumnEquals = null)
         {
            
-            var tProperties = reader.Fields.Select(it=>it.Name).ToArray();
+            var tProperties = reader.GetSelectFields().Select(it=>it.Name).ToArray();
 
             int? tWhereColumn=null;
             if(!String.IsNullOrEmpty(whereColumn))

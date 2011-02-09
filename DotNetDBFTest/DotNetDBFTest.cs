@@ -207,6 +207,50 @@ Path.Combine(Path.GetTempPath(), "select.dbf");
         }
 
         [Test]
+        public void checkSelectDynamic()
+        {
+            var fieldLength = 2400;
+            string writtenValue;
+            string writtenMemo;
+            using (
+                Stream fos =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var writer = new DBFWriter
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+                var field = new DBFField("F1", NativeDbType.Memo);
+                var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
+                var field3 = new DBFField("F3", NativeDbType.Char, 10);
+                writer.Fields = new[] { field, field2, field3 };
+
+                writtenValue = "alpha";
+                writtenMemo = GetCharacters(fieldLength);
+                writer.AddRecord(new MemoValue(writtenMemo), 10, writtenValue);
+                writer.Write(fos);
+            }
+            using (
+                Stream fis =
+                    File.Open(TestSelectPath,
+                              FileMode.OpenOrCreate,
+                              FileAccess.ReadWrite))
+            {
+                var reader = new DBFReader(fis)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                };
+                reader.SetSelectFields("F1","F3");
+                var readValues = reader.DynamicAllRecords().First();
+
+                Assert.That(readValues.F1.ToString(), EqualTo(writtenMemo), "Written Value not equaling Read");
+                Assert.That(readValues.F3, EqualTo(writtenValue), "Written Value not equaling Read");
+            }
+        }
+
+        [Test]
         public void checkAnnoymous()
         {
             var fieldLength = 2400;
