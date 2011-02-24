@@ -48,6 +48,9 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -97,7 +100,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\nuget\dotnetdbf.nuspec">
+      <Link>Properties\dotnetdbf.nuspec</Link>
+    </None>
     <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)tools\nuget.exe" pack "$(SolutionDir)nuget\dotnetdbf.nuspec"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

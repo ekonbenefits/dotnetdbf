@@ -37,9 +37,12 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\DotNetDBF.Enumerable.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImpromtuInterface">
-      <HintPath>..\packages\ImpromptuInterface.1.2.1\lib\net40\ImpromtuInterface.dll</HintPath>
+    <Reference Include="ImpromptuInterface">
+      <HintPath>..\packages\ImpromptuInterface.2.0.0\lib\net40\ImpromptuInterface.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -66,9 +69,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\nuget\dotnetdbf.enumerable.nuspec">
+      <Link>Properties\dotnetdbf.enumerable.nuspec</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)tools\nuget.exe" pack "$(SolutionDir)nuget\dotnetdbf.enumerable.nuspec"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
