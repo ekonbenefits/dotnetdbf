@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using ImpromptuInterface;
-
+using ImpromptuInterface.Dynamic;
 namespace DotNetDBF.Enumerable
 {
+    /// <summary>
+    /// Enumerable API
+    /// </summary>
     static public class Enuemrable
     {
 
@@ -118,11 +120,21 @@ namespace DotNetDBF.Enumerable
 
         }
 
+        /// <summary>
+        /// Interface to get the contents of the DBF Wrapper
+        /// </summary>
         public interface IDBFIntercepter
         {
+            /// <summary>
+            /// Gets the data row.
+            /// </summary>
+            /// <returns></returns>
             object[] GetDataRow();
         }
 
+        /// <summary>
+        /// DBF Dynamic Wrapper
+        /// </summary>
         public class DBFIntercepter : ImpromptuObject, IDBFIntercepter
         {
             private readonly string[] _fieldNames;
