@@ -41,9 +41,9 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImpromptuInterface, Version=2.1.1.18606, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ImpromptuInterface, Version=3.1.1.14415, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ImpromptuInterface.2.1.1\lib\net40\ImpromptuInterface.dll</HintPath>
+      <HintPath>..\packages\ImpromptuInterface.3.1.1\lib\net40\ImpromptuInterface.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
