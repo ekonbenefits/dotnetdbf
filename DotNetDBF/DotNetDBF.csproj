@@ -102,6 +102,7 @@
   <ItemGroup>
     <None Include="..\nuget\dotnetdbf.nuspec">
       <Link>Properties\dotnetdbf.nuspec</Link>
+      <SubType>Designer</SubType>
     </None>
     <None Include="app.config" />
   </ItemGroup>
