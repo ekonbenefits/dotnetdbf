@@ -239,7 +239,7 @@ namespace DotNetDBF
                 switch (header.FieldArray[i].DataType)
                 {
                     case NativeDbType.Char:
-                        if (!(values[i] is String))
+                        if (!(values[i] is String) && !(values[i] is DBNull))
                         {
                             throw new DBFException("Invalid value for field "
                                                    + i);
@@ -247,7 +247,7 @@ namespace DotNetDBF
                         break;
 
                     case NativeDbType.Logical:
-                        if (!(values[i] is Boolean))
+                        if (!(values[i] is Boolean) && !(values[i] is DBNull))
                         {
                             throw new DBFException("Invalid value for field "
                                                    + i);
@@ -255,7 +255,7 @@ namespace DotNetDBF
                         break;
 
                     case NativeDbType.Numeric:
-                        if (!(values[i] is IConvertible))
+                        if (!(values[i] is IConvertible) && !(values[i] is DBNull))
                         {
                             throw new DBFException("Invalid value for field "
                                                    + i);
@@ -263,7 +263,7 @@ namespace DotNetDBF
                         break;
 
                     case NativeDbType.Date:
-                        if (!(values[i] is DateTime))
+                        if (!(values[i] is DateTime) && !(values[i] is DBNull))
                         {
                             throw new DBFException("Invalid value for field "
                                                    + i);
@@ -271,14 +271,14 @@ namespace DotNetDBF
                         break;
 
                     case NativeDbType.Float:
-                        if (!(values[i] is IConvertible))
+                        if (!(values[i] is IConvertible) && !(values[i] is DBNull))
                         {
                             throw new DBFException("Invalid value for field "
                                                    + i);
                         }
                         break;
                     case NativeDbType.Memo:
-                        if (!(values[i] is MemoValue))
+                        if (!(values[i] is MemoValue) && !(values[i] is DBNull))
                         {
                             throw new DBFException("Invalid value for field "
                                                    + i);
@@ -360,7 +360,7 @@ namespace DotNetDBF
                 switch (header.FieldArray[j].DataType)
                 {
                     case NativeDbType.Char:
-                        if (objectArray[j] != null)
+                        if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
                             String str_value = objectArray[j].ToString();
                             dataOutput.Write(
@@ -385,7 +385,7 @@ namespace DotNetDBF
                         break;
 
                     case NativeDbType.Date:
-                        if (objectArray[j] != null)
+                        if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
                             DateTime tDate = (DateTime) objectArray[j];
 
@@ -402,7 +402,7 @@ namespace DotNetDBF
 
                     case NativeDbType.Float:
 
-                        if (objectArray[j] != null)
+                        if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
                             Double tDouble = Convert.ToDouble(objectArray[j]);
                             dataOutput.Write(
@@ -430,7 +430,7 @@ namespace DotNetDBF
 
                     case NativeDbType.Numeric:
 
-                        if (objectArray[j] != null)
+                        if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
                             Decimal tDecimal = Convert.ToDecimal(objectArray[j]);
                             dataOutput.Write(
@@ -457,7 +457,7 @@ namespace DotNetDBF
                         break;
                     case NativeDbType.Logical:
 
-                        if (objectArray[j] != null)
+                        if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
                             if ((bool) objectArray[j])
                             {
@@ -476,7 +476,7 @@ namespace DotNetDBF
                         break;
 
                     case NativeDbType.Memo:
-                         if (objectArray[j] != null)
+                        if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
                             var tMemoValue = ((MemoValue) objectArray[j]);
 

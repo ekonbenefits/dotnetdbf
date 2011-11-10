@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 [assembly: InternalsVisibleTo("DotNetDBF.Enumerable")]
-[assembly : AssemblyVersion("3.0.1.*")]
+[assembly : AssemblyVersion("3.0.5.*")]

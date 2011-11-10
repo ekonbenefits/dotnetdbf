@@ -396,8 +396,13 @@ namespace DotNetDBF
                                 recordObjects[i] = DBNull.Value;
                                 break;
                             }
-
-                            var tBlock =long.Parse(tMemoPoiner);
+                            long tBlock;
+                            if(!long.TryParse(tMemoPoiner, out tBlock))
+                            {  //Because Memo files can vary and are often the least importat data, 
+                                //we will return null when it doesn't match our format.
+                                recordObjects[i] = DBNull.Value;
+                                break;
+                            }
 
 
                             recordObjects[i] = new MemoValue(tBlock, this, _dataMemoLoc);
