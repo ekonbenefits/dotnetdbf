@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: InternalsVisibleTo("DotNetDBF.Enumerable")]
-[assembly : AssemblyVersion("3.0.5.*")]
+[assembly: InternalsVisibleTo("DotNetDBF.Enumerable,PublicKey=859f68cd621a0776")]
+[assembly : AssemblyVersion("3.0.6.*")]

@@ -12,3 +12,5 @@ glob:nuget/NuGet.exe
 glob:nuget/*.nupkg
 glob:dist/*
 glob:nuget/dotnetdbf.enumerable/lib/Net40/*
+syntax: glob
+packages/*

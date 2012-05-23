@@ -200,7 +200,7 @@ namespace DotNetDBF
             return NextRecord(_selectFields, _orderedSelectFields);
         }
 
-      
+
         internal Object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
         {
             if (isClosed)
