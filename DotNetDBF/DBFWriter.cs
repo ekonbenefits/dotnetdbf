@@ -482,12 +482,7 @@ namespace DotNetDBF
 
                             tMemoValue.Write(this);
 
-                            dataOutput.Write(
-                                                        Utils.textPadding(tMemoValue.Block.ToString("##########"),
-                                                                          CharEncoding,
-                                                                          10
-                                                            )
-                                                        );
+                            dataOutput.Write( Utils.NumericFormating(tMemoValue.Block,CharEncoding,10,0));
                         }else
                          {
                              dataOutput.Write(

@@ -2,7 +2,7 @@
 <package> 
   <metadata> 
     <id>dotnetdbf.enumerable</id> 
-    <version>4.1.0</version> 
+    <version>4.3.0</version> 
     <authors>Jay Tuley</authors> 
     <owners>Jay Tuley</owners>
     <description>For dotnetdbf projects using .net 4.0 projects this is an enumeration framework in which makes it easy to use Linq to Objects.</description> 
@@ -11,7 +11,7 @@
     <tags>clipper dbf .net40</tags>
     <language>en-US</language> 
     <dependencies>
-	<dependency id="dotnetdbf" version="3.1.0" />
+	<dependency id="dotnetdbf" version="3.1.2" />
  	<dependency id="ImpromptuInterface" version="6.0.6" />
     </dependencies>
   </metadata>

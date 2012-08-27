@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ImpromptuInterface;
 using ImpromptuInterface.Dynamic;
 namespace DotNetDBF.Enumerable
 {
@@ -126,6 +127,11 @@ namespace DotNetDBF.Enumerable
         public interface IDBFIntercepter
         {
             /// <summary>
+            /// Does field exist in row
+            /// </summary>
+            /// <returns></returns>
+            bool Exists(string fieldName);
+            /// <summary>
             /// Gets the data row.
             /// </summary>
             /// <returns></returns>
@@ -152,6 +158,11 @@ namespace DotNetDBF.Enumerable
                 return _fieldNames;
             }
 
+            public bool Exists(string fieldName)
+            {
+                return _fieldNames.Contains(fieldName);
+            }
+
             public override bool  TryGetMember(GetMemberBinder binder, out object result)
             {
                 result = null;
@@ -165,14 +176,13 @@ namespace DotNetDBF.Enumerable
 
                 result = _wrappedArray[tIndex];
 
-                if (result == null)
-                {
+                
                     Type outType;
-                    if (TryTypeForName(tLookup, out outType) && outType.IsValueType)
+                    if (TryTypeForName(tLookup, out outType))
                     {
-                        result = Activator.CreateInstance(outType);
+                        result = Impromptu.CoerceConvert(result, outType);
                     }
-                }
+                
                 return true;
             }
 
