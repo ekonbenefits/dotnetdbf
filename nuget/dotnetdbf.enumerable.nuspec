@@ -12,7 +12,7 @@
     <language>en-US</language> 
     <dependencies>
 	<dependency id="dotnetdbf" version="3.1.2" />
- 	<dependency id="ImpromptuInterface" version="6.0.6" />
+ 	<dependency id="ImpromptuInterface" version="6.1.1" />
     </dependencies>
   </metadata>
   <files>
