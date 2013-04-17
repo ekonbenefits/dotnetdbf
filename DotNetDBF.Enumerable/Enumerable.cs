@@ -186,6 +186,26 @@ namespace DotNetDBF.Enumerable
                 return true;
             }
 
+            public override bool  TrySetMember(SetMemberBinder binder, object value){
+
+                var tLookup = binder.Name;
+                var tIndex = Array.FindIndex(_fieldNames,
+                                             it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
+
+                if (tIndex < 0)
+                    return false;
+
+                Type outType;
+                if (TryTypeForName(tLookup, out outType))
+                {
+                    value = Impromptu.CoerceConvert(value, outType);
+                }
+
+                _wrappedArray[tIndex] = value;
+
+                return true;
+            }
+
             public object[] GetDataRow()
             {
                 return _wrappedArray;
