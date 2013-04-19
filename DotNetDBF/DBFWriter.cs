@@ -97,14 +97,14 @@ namespace DotNetDBF
             recordCount = header.NumberOfRecords;
         }
 
-        public byte Signiture
+        public byte Signature
         {
             get
             {
-                return header.Signiture;
+                return header.Signature;
             }set
             {
-                header.Signiture = value;
+                header.Signature = value;
             }
         }
 
@@ -127,11 +127,15 @@ namespace DotNetDBF
             }
 	    }
 	
-
-
-        ///Sets fields.
+     
         public DBFField[] Fields
         {
+            get
+            {
+              return header.FieldArray; 
+            }
+
+
             set
             {
                 if (header.FieldArray != null)

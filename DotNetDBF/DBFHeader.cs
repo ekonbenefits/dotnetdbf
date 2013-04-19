@@ -65,7 +65,7 @@ namespace DotNetDBF
             _signature = DBFSigniture.DBase3;
         }
 
-        internal byte Signiture
+        internal byte Signature
         {
             get
             {

@@ -10,10 +10,41 @@ namespace DotNetDBF.Enumerable
     /// <summary>
     /// Enumerable API
     /// </summary>
-    static public class Enuemrable
+    static public class DBFEnumerable
     {
 
+        /// <summary>
+        /// New Blank Row Dynamic object that matches writer;
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        /// <returns></returns>
+        public static dynamic NewBlankRow(this DBFWriter writer)
+        {
+            var fields = writer.Fields.Select(it => it.Name).ToArray();
+            var obj = new object[fields.Length];
+            return new DBFIntercepter(obj, fields);
+        }
 
+
+        /// <summary>
+        /// Writes the record.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        /// <param name="value">The value.</param>
+        public static void WriteRecord(this DBFWriter writer, IDBFIntercepter value)
+        {
+            writer.WriteRecord(value.GetDataRow());
+        }
+
+        /// <summary>
+        /// Adds the record.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        /// <param name="value">The value.</param>
+        public static void AddRecord(this DBFWriter writer, IDBFIntercepter value)
+        {
+            writer.AddRecord(value.GetDataRow());
+        }
 
         /// <summary>
         /// Return all the records. T should be interface with getter properties that match types and names of the database. 
