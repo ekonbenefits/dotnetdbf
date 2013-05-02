@@ -12,4 +12,4 @@ Code derived from javadbf.
 Located in the Mecurial Repository
 
 ##Get The Binaries
-Use [NuGet](http://nuget.org) from Visual Studio or get the Zip file from the Downloads section.
+Use [NuGet](http://nuget.org/packages/dotnetdbf/) from Visual Studio
