@@ -120,7 +120,7 @@ namespace DotNetDBF
             for (int i = 0; i < sizeWholePart; i++)
             {
 
-                format.Append(sizeWholePart+1== sizeWholePart ? "0":"#");
+                format.Append(i+1== sizeWholePart ? "0":"#");
             }
 
             if (sizeDecimalPart > 0)
