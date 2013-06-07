@@ -344,7 +344,7 @@ namespace DotNetDBF
         {
             /* everything is written already. just update the header for record count and the END_OF_DATA mark */
             header.NumberOfRecords = recordCount;
-            if (raf != null)
+            if (raf != null && header != null)
             {
                 raf.Seek(0, SeekOrigin.Begin);
                 header.Write(new BinaryWriter(raf));
