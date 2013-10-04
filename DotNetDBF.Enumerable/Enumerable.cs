@@ -8,9 +8,101 @@ using ImpromptuInterface.Dynamic;
 namespace DotNetDBF.Enumerable
 {
     /// <summary>
+    /// Interface to get the contents of the DBF Wrapper
+    /// </summary>
+    public interface IDBFIntercepter
+    {
+        /// <summary>
+        /// Does field exist in row
+        /// </summary>
+        /// <returns></returns>
+        bool Exists(string fieldName);
+        /// <summary>
+        /// Gets the data row.
+        /// </summary>
+        /// <returns></returns>
+        object[] GetDataRow();
+    }
+
+    /// <summary>
+    /// DBF Dynamic Wrapper
+    /// </summary>
+    public class DBFIntercepter : ImpromptuObject, IDBFIntercepter
+    {
+        private readonly string[] _fieldNames;
+        private readonly object[] _wrappedArray;
+
+        public DBFIntercepter(object[] wrappedObj, string[] fieldNames)
+        {
+            _wrappedArray = wrappedObj;
+            _fieldNames = fieldNames;
+
+        }
+
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return _fieldNames;
+        }
+
+        public bool Exists(string fieldName)
+        {
+            return _fieldNames.Contains(fieldName);
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = null;
+            var tLookup = binder.Name;
+            var tIndex = Array.FindIndex(_fieldNames,
+                                         it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
+
+            if (tIndex < 0)
+                return false;
+
+
+            result = _wrappedArray[tIndex];
+
+
+            Type outType;
+            if (TryTypeForName(tLookup, out outType))
+            {
+                result = Impromptu.CoerceConvert(result, outType);
+            }
+
+            return true;
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+
+            var tLookup = binder.Name;
+            var tIndex = Array.FindIndex(_fieldNames,
+                                         it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
+
+            if (tIndex < 0)
+                return false;
+
+            Type outType;
+            if (TryTypeForName(tLookup, out outType))
+            {
+                value = Impromptu.CoerceConvert(value, outType);
+            }
+
+            _wrappedArray[tIndex] = value;
+
+            return true;
+        }
+
+        public object[] GetDataRow()
+        {
+            return _wrappedArray;
+        }
+    }
+
+    /// <summary>
     /// Enumerable API
     /// </summary>
-    static public class DBFEnumerable
+    public static partial class DBFEnumerable
     {
 
         /// <summary>
@@ -102,8 +194,6 @@ namespace DotNetDBF.Enumerable
             
         }
 
-
-
         /// <summary>
         /// Returns a list of dynamic objects whose properties and types match up with that database name.
         /// </summary>
@@ -152,95 +242,6 @@ namespace DotNetDBF.Enumerable
 
         }
 
-        /// <summary>
-        /// Interface to get the contents of the DBF Wrapper
-        /// </summary>
-        public interface IDBFIntercepter
-        {
-            /// <summary>
-            /// Does field exist in row
-            /// </summary>
-            /// <returns></returns>
-            bool Exists(string fieldName);
-            /// <summary>
-            /// Gets the data row.
-            /// </summary>
-            /// <returns></returns>
-            object[] GetDataRow();
-        }
-
-        /// <summary>
-        /// DBF Dynamic Wrapper
-        /// </summary>
-        public class DBFIntercepter : ImpromptuObject, IDBFIntercepter
-        {
-            private readonly string[] _fieldNames;
-            private readonly object[] _wrappedArray;
-
-            public DBFIntercepter(object[] wrappedObj, string[] fieldNames)
-            {
-                _wrappedArray = wrappedObj;
-                _fieldNames = fieldNames;
-
-            }
-
-            public override IEnumerable<string> GetDynamicMemberNames()
-            {
-                return _fieldNames;
-            }
-
-            public bool Exists(string fieldName)
-            {
-                return _fieldNames.Contains(fieldName);
-            }
-
-            public override bool  TryGetMember(GetMemberBinder binder, out object result)
-            {
-                result = null;
-                var tLookup = binder.Name;
-                var tIndex = Array.FindIndex(_fieldNames,
-                                             it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
-
-                if(tIndex <0)
-                    return false;
-
-
-                result = _wrappedArray[tIndex];
-
-                
-                    Type outType;
-                    if (TryTypeForName(tLookup, out outType))
-                    {
-                        result = Impromptu.CoerceConvert(result, outType);
-                    }
-                
-                return true;
-            }
-
-            public override bool  TrySetMember(SetMemberBinder binder, object value){
-
-                var tLookup = binder.Name;
-                var tIndex = Array.FindIndex(_fieldNames,
-                                             it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
-
-                if (tIndex < 0)
-                    return false;
-
-                Type outType;
-                if (TryTypeForName(tLookup, out outType))
-                {
-                    value = Impromptu.CoerceConvert(value, outType);
-                }
-
-                _wrappedArray[tIndex] = value;
-
-                return true;
-            }
-
-            public object[] GetDataRow()
-            {
-                return _wrappedArray;
-            }
-        }
+      
     }
 }
