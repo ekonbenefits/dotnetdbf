@@ -24,15 +24,23 @@ namespace DotNetDBF.Enumerable
         object[] GetDataRow();
     }
 
+    public class DBFIntercepter : DBFEnumerable.DBFIntercepter
+    {
+        public DBFIntercepter(object[] wrappedObj, string[] fieldNames) : base(wrappedObj, fieldNames)
+        {
+        }
+    }
+
+
     /// <summary>
     /// DBF Dynamic Wrapper
     /// </summary>
-    public class DBFIntercepter : ImpromptuObject, IDBFIntercepter
+    public abstract class BaseDBFIntercepter : ImpromptuObject, IDBFIntercepter
     {
         private readonly string[] _fieldNames;
         private readonly object[] _wrappedArray;
 
-        public DBFIntercepter(object[] wrappedObj, string[] fieldNames)
+        protected BaseDBFIntercepter(object[] wrappedObj, string[] fieldNames)
         {
             _wrappedArray = wrappedObj;
             _fieldNames = fieldNames;
@@ -114,7 +122,7 @@ namespace DotNetDBF.Enumerable
         {
             var fields = writer.Fields.Select(it => it.Name).ToArray();
             var obj = new object[fields.Length];
-            return new DBFIntercepter(obj, fields);
+            return new Enumerable.DBFIntercepter(obj, fields);
         }
 
 
@@ -123,7 +131,7 @@ namespace DotNetDBF.Enumerable
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="value">The value.</param>
-        public static void WriteRecord(this DBFWriter writer, IDBFIntercepter value)
+        public static void WriteRecord(this DBFWriter writer, Enumerable.IDBFIntercepter value)
         {
             writer.WriteRecord(value.GetDataRow());
         }
@@ -133,7 +141,7 @@ namespace DotNetDBF.Enumerable
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="value">The value.</param>
-        public static void AddRecord(this DBFWriter writer, IDBFIntercepter value)
+        public static void AddRecord(this DBFWriter writer, Enumerable.IDBFIntercepter value)
         {
             writer.AddRecord(value.GetDataRow());
         }
@@ -182,9 +190,9 @@ namespace DotNetDBF.Enumerable
             while (t != null)
                 {
 
-                    var tIntercepter = new DBFIntercepter(t, tProperties.Select(it => it.Name).ToArray());
+                    var tIntercepter = new Enumerable.DBFIntercepter(t, tProperties.Select(it => it.Name).ToArray());
 
-                    tReturn.Add(tIntercepter.ActLike<T>(typeof(IDBFIntercepter)));
+                    tReturn.Add(tIntercepter.ActLike<T>(typeof(Enumerable.IDBFIntercepter)));
                     t = reader.NextRecord(tProps, tOrderedProps);
                 }
 
@@ -230,7 +238,7 @@ namespace DotNetDBF.Enumerable
                 }
 
 
-                var tIntercepter = new DBFIntercepter(t, tProperties);
+                var tIntercepter = new Enumerable.DBFIntercepter(t, tProperties);
 
 
                 tReturn.Add(tIntercepter);

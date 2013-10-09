@@ -13,7 +13,7 @@ namespace DotNetDBF.Enumerable
         }
 
         [Obsolete("DotNetDBF.Enumerable.DBFIntercepter is the new class name")]
-        public class DBFIntercepter : DotNetDBF.Enumerable.DBFIntercepter
+        public class DBFIntercepter : DotNetDBF.Enumerable.Enuemrable.DBFIntercepter, IDBFIntercepter
         {
             public DBFIntercepter(object[] wrappedObj, string[] fieldNames)
                 : base(wrappedObj, fieldNames)
@@ -94,7 +94,7 @@ namespace DotNetDBF.Enumerable
         }
 
         [Obsolete("DotNetDBF.Enumerable.DBFIntercepter is the new class name")]
-        public class DBFIntercepter : DotNetDBF.Enumerable.DBFIntercepter
+        public class DBFIntercepter : DotNetDBF.Enumerable.BaseDBFIntercepter, IDBFIntercepter
         {
             public DBFIntercepter(object[] wrappedObj, string[] fieldNames)
                 : base(wrappedObj, fieldNames)
