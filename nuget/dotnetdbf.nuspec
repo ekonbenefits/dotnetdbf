@@ -2,7 +2,7 @@
 <package> 
   <metadata> 
     <id>dotnetdbf</id> 
-    <version>3.1.9</version> 
+    <version>3.1.10</version> 
     <authors>Anil Kumar, Jay Tuley</authors> 
     <owners>Jay Tuley</owners>
     <summary>This is a basic file parser for reading and writing xBase DBF files, particularly Clipper.</summary>

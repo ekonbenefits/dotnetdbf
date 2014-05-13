@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -76,9 +77,10 @@ namespace DotNetDBF
                                          byte paddingByte)
         {
             Encoding tEncoding = charEncoding;
-            if (text.Length >= length)
+            var inputBytes = tEncoding.GetBytes(text);
+            if (inputBytes.Length >= length)
             {
-                return tEncoding.GetBytes(text.Substring(0, length));
+                return inputBytes.Take(length).ToArray();
             }
 
             byte[] byte_array = FillArray(new byte[length], paddingByte);
@@ -86,20 +88,20 @@ namespace DotNetDBF
             switch (alignment)
             {
                 case ALIGN_LEFT:
-                    Array.Copy(tEncoding.GetBytes(text),
+                    Array.Copy(inputBytes,
                                0,
                                byte_array,
                                0,
-                               text.Length);
+                               inputBytes.Length);
                     break;
 
                 case ALIGN_RIGHT:
                     int t_offset = length - text.Length;
-                    Array.Copy(tEncoding.GetBytes(text),
+                    Array.Copy(inputBytes,
                                0,
                                byte_array,
                                t_offset,
-                               text.Length);
+                               inputBytes.Length);
                     break;
             }
 

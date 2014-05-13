@@ -14,11 +14,13 @@ namespace DotNetDBFTest
             get;
             set;
         }
+
         string F2
         {
             get;
             set;
         }
+
         string F3
         {
             get;
@@ -34,14 +36,11 @@ namespace DotNetDBFTest
             Path.Combine(Path.GetTempPath(), "raf-1212.dbf");
 
 
-        private string TestClipLongPath =
-    Path.Combine(Path.GetTempPath(), "cliplong.dbf");
+        private string TestClipLongPath = Path.Combine(Path.GetTempPath(), "cliplong.dbf");
 
-        private string TestMemoPath =
-Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
+        private string TestMemoPath = Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
 
-        private string TestSelectPath =
-Path.Combine(Path.GetTempPath(), "select.dbf");
+        private string TestSelectPath = Path.Combine(Path.GetTempPath(), "select.dbf");
 
         private string GetCharacters(int aLength)
         {
