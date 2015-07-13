@@ -158,13 +158,17 @@ namespace DotNetDBF.Enumerable
         static public IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype =null) where T : class 
         {
             var tType = typeof(T);
-            
-            var tProperties = tType.GetProperties();
+
+            var tProperties = tType.GetProperties()
+                .Where(
+                    it =>
+                        Array.FindIndex(reader.Fields,
+                            f => f.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase)) >= 0);
             var tProps = tProperties
                 .Select(
                 it =>
                 Array.FindIndex(reader.Fields,
-                                jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).ToArray();
+                                jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).Where(it=> it >= 0).ToArray();
             
             var tOrderedProps = tProps.OrderBy(it => it).ToArray();
             var tReturn = new List<T>();
