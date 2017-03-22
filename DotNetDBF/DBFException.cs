@@ -16,6 +16,9 @@ using System.IO;
 
 namespace DotNetDBF
 {
+    /// <summary>
+    ///  Represents exceptions happen in the <see cref="DotNetDBF"/> classes.
+    /// </summary>
     public class DBFException : IOException
     {
         public DBFException() : base()

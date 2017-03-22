@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using ImpromptuInterface;
 using ImpromptuInterface.Dynamic;
+
 namespace DotNetDBF.Enumerable
 {
     /// <summary>
@@ -17,6 +19,7 @@ namespace DotNetDBF.Enumerable
         /// </summary>
         /// <returns></returns>
         bool Exists(string fieldName);
+
         /// <summary>
         /// Gets the data row.
         /// </summary>
@@ -44,7 +47,6 @@ namespace DotNetDBF.Enumerable
         {
             _wrappedArray = wrappedObj;
             _fieldNames = fieldNames;
-
         }
 
         public override IEnumerable<string> GetDynamicMemberNames()
@@ -67,9 +69,7 @@ namespace DotNetDBF.Enumerable
             if (tIndex < 0)
                 return false;
 
-
             result = _wrappedArray[tIndex];
-
 
             Type outType;
             if (TryTypeForName(tLookup, out outType))
@@ -82,7 +82,6 @@ namespace DotNetDBF.Enumerable
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-
             var tLookup = binder.Name;
             var tIndex = Array.FindIndex(_fieldNames,
                                          it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
@@ -112,7 +111,6 @@ namespace DotNetDBF.Enumerable
     /// </summary>
     public static partial class DBFEnumerable
     {
-
         /// <summary>
         /// New Blank Row Dynamic object that matches writer;
         /// </summary>
@@ -124,7 +122,6 @@ namespace DotNetDBF.Enumerable
             var obj = new object[fields.Length];
             return new Enumerable.DBFIntercepter(obj, fields);
         }
-
 
         /// <summary>
         /// Writes the record.
@@ -151,59 +148,48 @@ namespace DotNetDBF.Enumerable
         /// Optionally instead of T being and interface you can pass in an annoymous object with properties that match that 
         /// database and then you'll get an IEnumerable of that annonymous type with the data filled in.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Interface with getter properties that match types and names of the database</typeparam>
         /// <param name="reader">The reader.</param>
         /// <param name="prototype">The prototype. Anonymous class instance</param>
         /// <returns></returns>
-        static public IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype =null) where T : class 
+        static public IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype = null) where T : class
         {
-            var tType = typeof(T);
+            Type tType = typeof(T);
 
-            var tProperties = tType.GetProperties()
-                .Where(
-                    it =>
-                        Array.FindIndex(reader.Fields,
-                            f => f.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase)) >= 0);
-            var tProps = tProperties
-                .Select(
-                it =>
-                Array.FindIndex(reader.Fields,
-                                jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).Where(it=> it >= 0).ToArray();
-            
-            var tOrderedProps = tProps.OrderBy(it => it).ToArray();
-            var tReturn = new List<T>();
+            IEnumerable<PropertyInfo> tProperties = tType
+                .GetProperties()
+                .Where(it => Array.FindIndex(reader.Fields, f => f.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase)) >= 0);
+            int[] tProps = tProperties
+                .Select(it => Array.FindIndex(reader.Fields, jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase)))
+                .Where(it => it >= 0)
+                .ToArray();
 
+            int[] orderedProps = tProps.OrderBy(it => it).ToArray();
+            List<T> result = new List<T>();
 
             if (tType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any())
             {
-                object[] tAnon = reader.NextRecord(tProps, tOrderedProps);
+                object[] tAnon = reader.NextRecord(tProps, orderedProps);
                 while (tAnon != null)
                 {
 
-                    tReturn.Add((T)Activator.CreateInstance(tType, tAnon));
-                    tAnon = reader.NextRecord(tProps, tOrderedProps);
+                    result.Add((T)Activator.CreateInstance(tType, tAnon));
+                    tAnon = reader.NextRecord(tProps, orderedProps);
                 }
-
-
-
-                return tReturn;
+                return result;
             }
-               
-            var t = reader.NextRecord(tProps, tOrderedProps);  
 
-            while (t != null)
-                {
+            object[] nextRecord = reader.NextRecord(tProps, orderedProps);
+            while (nextRecord != null)
+            {
+                Enumerable.DBFIntercepter tIntercepter = 
+                    new Enumerable.DBFIntercepter(nextRecord, tProperties.Select(it => it.Name).ToArray());
 
-                    var tIntercepter = new Enumerable.DBFIntercepter(t, tProperties.Select(it => it.Name).ToArray());
+                result.Add(tIntercepter.ActLike<T>(typeof(Enumerable.IDBFIntercepter)));
+                nextRecord = reader.NextRecord(tProps, orderedProps);
+            }
 
-                    tReturn.Add(tIntercepter.ActLike<T>(typeof(Enumerable.IDBFIntercepter)));
-                    t = reader.NextRecord(tProps, tOrderedProps);
-                }
-
-
-
-                return tReturn;
-            
+            return result;
         }
 
         /// <summary>
@@ -215,45 +201,37 @@ namespace DotNetDBF.Enumerable
         /// <returns></returns>
         static public IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null, dynamic whereColumnEquals = null)
         {
-           
-            var tProperties = reader.GetSelectFields().Select(it=>it.Name).ToArray();
+            var tProperties = reader.GetSelectFields().Select(it => it.Name).ToArray();
 
-            int? tWhereColumn=null;
-            if(!String.IsNullOrEmpty(whereColumn))
+            int? tWhereColumn = null;
+            if(!string.IsNullOrEmpty(whereColumn))
             {
                 tWhereColumn = Array.FindIndex(tProperties,
                                 it => it.Equals(whereColumn, StringComparison.InvariantCultureIgnoreCase));
             }
-
       
-            var tReturn = new List<object>();
-            object[] t = reader.NextRecord();
+            List<object> result = new List<object>();
+            object[] nextRecord = reader.NextRecord();
 
-            while (t != null)
+            while (nextRecord != null)
             {
                 if (tWhereColumn.HasValue)
                 {
-                    dynamic tO = t[tWhereColumn.Value];
-                    if(!tO.Equals(whereColumnEquals))
+                    dynamic cellValue = nextRecord[tWhereColumn.Value];
+                    if(!cellValue.Equals(whereColumnEquals))
                     {
-                        t = reader.NextRecord();
+                        nextRecord = reader.NextRecord();
                         continue;
                     }
                 }
 
+                var tIntercepter = new Enumerable.DBFIntercepter(nextRecord, tProperties);
 
-                var tIntercepter = new Enumerable.DBFIntercepter(t, tProperties);
-
-
-                tReturn.Add(tIntercepter);
-                t = reader.NextRecord();
+                result.Add(tIntercepter);
+                nextRecord = reader.NextRecord();
             }
 
-
-            return tReturn;
-
+            return result;
         }
-
-      
     }
 }
