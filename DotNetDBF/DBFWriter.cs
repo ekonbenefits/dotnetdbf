@@ -97,7 +97,7 @@ namespace DotNetDBF
             recordCount = header.NumberOfRecords;
         }
 
-        public byte Signature
+        public DBFSignature Signature
         {
             get
             {

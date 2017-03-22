@@ -20,9 +20,12 @@ using System.Text;
 
 namespace DotNetDBF
 {
-    [DebuggerDisplay("Field:{Name}, Length:{FieldLength}")]
+    /// <summary>
+    /// Class represents a "field" (or a column) definition of a DBF data structure.
+    /// </summary>
     public class DBFField
     {
+        #region Fields
         public const int SIZE = 32;
         public byte dataType; /* 11 */
         public byte decimalCount; /* 17 */
@@ -38,48 +41,12 @@ namespace DotNetDBF
         public byte[] reserv4 = new byte[7]; /* 24-30 */
         public byte setFieldsFlag; /* 23 */
         public byte workAreaId; /* 20 */
+        #endregion
 
-        public DBFField()
-        {
-        }
-
-        public DBFField(string aFieldName, NativeDbType aType)
-        {
-            Name = aFieldName;
-            DataType = aType;
-        }
-
-        public DBFField(string aFieldName,
-                        NativeDbType aType,
-                        Int32 aFieldLength)
-        {
-            Name = aFieldName;
-            DataType = aType;
-            FieldLength = aFieldLength;
-        }
-
-        public DBFField(string aFieldName,
-                        NativeDbType aType,
-                        Int32 aFieldLength,
-                        Int32 aDecimalCount)
-        {
-            Name = aFieldName;
-            DataType = aType;
-            FieldLength = aFieldLength;
-            DecimalCount = aDecimalCount;
-        }
-
-        public int Size
-        {
-            get { return SIZE; }
-        }
-
-        /**
-         Returns the name of the field.
-         
-         @return Name of the field as String.
-         */
-
+        #region Properties
+        /// <summary>
+        /// Gets or sets the name of the field.
+        /// </summary>
         public String Name
         {
             get { return Encoding.ASCII.GetString(fieldName, 0, nameNullIndex); }
@@ -87,14 +54,12 @@ namespace DotNetDBF
             {
                 if (value == null)
                 {
-                    throw new ArgumentException("Field name cannot be null");
+                    throw new ArgumentException("Field name cannot be null.");
                 }
 
-                if (value.Length == 0
-                    || value.Length > 10)
+                if (value.Length == 0 || value.Length > 10)
                 {
-                    throw new ArgumentException(
-                        "Field name should be of length 0-10");
+                    throw new ArgumentException("Field name should be of length 0-10.");
                 }
 
                 fieldName = Encoding.ASCII.GetBytes(value);
@@ -102,12 +67,9 @@ namespace DotNetDBF
             }
         }
 
-        /**
-         Returns the data type of the field.
-         
-         @return Data type as byte.
-         */
-
+        /// <summary>
+        /// Gets the data type of the field.
+        /// </summary>
         public Type Type
         {
             get
@@ -115,7 +77,6 @@ namespace DotNetDBF
                 return Utils.TypeForNativeDBType(DataType);
             }
         }
-
 
         public NativeDbType DataType
         {
@@ -143,12 +104,10 @@ namespace DotNetDBF
             }
         }
 
-        /**
-         Returns field length.
-         
-         @return field length as int.
-         */
-
+        /// <summary>
+        /// Gets or sets the field length.
+        /// <para><see cref="DecimalCount"/> must be set before setting value to this property.</para>
+        /// </summary>
         public int FieldLength
         {
             get
@@ -157,33 +116,25 @@ namespace DotNetDBF
                 {
                     return fieldLength + (decimalCount * 256);
                 }
-                
+
                 return fieldLength;
             }
-            /**
-             Length of the field.
-             This method should be called before calling setDecimalCount().
-             
-             @param Length of the field as int.
-             */
             set
             {
                 if (value <= 0)
                 {
-                    throw new ArgumentException(
-                        "Field length should be a positive number");
+                    throw new ArgumentException("Field length should be a positive number.");
                 }
 
                 if (DataType == NativeDbType.Date || DataType == NativeDbType.Memo || DataType == NativeDbType.Logical)
                 {
-                    throw new NotSupportedException(
-                        "Cannot set length on this type of field");
+                    throw new NotSupportedException("Cannot set length on this type of field.");
                 }
 
                 if (DataType == NativeDbType.Char && value > 255)
                 {
                     fieldLength = value % 256;
-                    decimalCount = (byte) (value / 256);
+                    decimalCount = (byte)(value / 256);
                     return;
                 }
 
@@ -191,26 +142,13 @@ namespace DotNetDBF
             }
         }
 
-        /**
-         Returns the decimal part. This is applicable
-         only if the field type if of numeric in nature.
-         
-         If the field is specified to hold integral values
-         the value returned by this method will be zero.
-         
-         @return decimal field size as int.
-         */
-
+        /// <summary>
+        /// Gets or sets the decimal part for fields, which type is of numeric nature.
+        /// <para>If the field type is any integer, the returned value will be zero.</para>
+        /// </summary>
         public int DecimalCount
         {
             get { return decimalCount; }
-            /**
-             Sets the decimal place size of the field.
-             Before calling this method the size of the field
-             should be set by calling setFieldLength().
-             
-             @param Size of the decimal field.
-             */
             set
             {
                 if (value < 0)
@@ -225,20 +163,50 @@ namespace DotNetDBF
                         "Decimal length should be less than field length");
                 }
 
-                decimalCount = (byte) value;
+                decimalCount = (byte)value;
             }
         }
 
-        public bool Read(BinaryReader aReader)
+        public int Size
         {
-            byte t_byte = aReader.ReadByte(); /* 0 */
+            get { return SIZE; }
+        }
+        #endregion
+
+        #region Constructors
+        public DBFField()
+        {
+        }
+
+        public DBFField(string fieldName, NativeDbType fieldType)
+        {
+            Name = fieldName;
+            DataType = fieldType;
+        }
+
+        public DBFField(string fieldName, NativeDbType fieldType, Int32 fieldLength)
+            : this(fieldName, fieldType)
+        {
+            FieldLength = fieldLength;
+        }
+
+        public DBFField(string fieldName, NativeDbType fieldType, Int32 fieldLength, Int32 decimalCount)
+            :this(fieldName, fieldType, fieldLength)
+        {
+            DecimalCount = decimalCount;
+        }
+        #endregion
+
+        public bool Read(BinaryReader br)
+        {
+            byte t_byte = br.ReadByte(); /* 0 */
             if (t_byte == DBFFieldType.EndOfField)
             {
                 //System.out.println( "End of header found");
                 return false;
             }
 
-            aReader.Read(fieldName, 1, 10); /* 1-10 */
+            br.Read(fieldName, 1, 10); /* 1-10 */
             fieldName[0] = t_byte;
 
             for (int i = 0; i < fieldName.Length; i++)
@@ -251,63 +219,59 @@ namespace DotNetDBF
                 }
             }
 
-            dataType = aReader.ReadByte(); /* 11 */
-            reserv1 = aReader.ReadInt32(); /* 12-15 */
-            fieldLength = aReader.ReadByte(); /* 16 */
-            decimalCount = aReader.ReadByte(); /* 17 */
-            reserv2 = aReader.ReadInt16(); /* 18-19 */
-            workAreaId = aReader.ReadByte(); /* 20 */
-            reserv3 = aReader.ReadInt16(); /* 21-22 */
-            setFieldsFlag = aReader.ReadByte(); /* 23 */
-            aReader.Read(reserv4, 0, 7); /* 24-30 */
-            indexFieldFlag = aReader.ReadByte(); /* 31 */
+            dataType = br.ReadByte(); /* 11 */
+            reserv1 = br.ReadInt32(); /* 12-15 */
+            fieldLength = br.ReadByte(); /* 16 */
+            decimalCount = br.ReadByte(); /* 17 */
+            reserv2 = br.ReadInt16(); /* 18-19 */
+            workAreaId = br.ReadByte(); /* 20 */
+            reserv3 = br.ReadInt16(); /* 21-22 */
+            setFieldsFlag = br.ReadByte(); /* 23 */
+            br.Read(reserv4, 0, 7); /* 24-30 */
+            indexFieldFlag = br.ReadByte(); /* 31 */
             return true;
         }
 
-        /**
-         Writes the content of DBFField object into the stream as per
-         DBF format specifications.
-         
-         @param os OutputStream
-         @throws IOException if any stream related issues occur.
-         */
-
-        public void Write(BinaryWriter aWriter)
+        /// <summary>
+        /// Writes the content of DBFField object into the stream as per DBF format specifications.
+        /// </summary>
+        /// <param name="bw">Output stream.</param>
+        /// <exception cref="IOException">If any stream related issues occur.</exception>
+        public void Write(BinaryWriter bw)
         {
             // Field Name
-            aWriter.Write(fieldName); /* 0-10 */
-            aWriter.Write(new byte[11 - fieldName.Length],
+            bw.Write(fieldName); /* 0-10 */
+            bw.Write(new byte[11 - fieldName.Length],
                           0,
                           11 - fieldName.Length);
 
             // data type
-            aWriter.Write(dataType); /* 11 */
-            aWriter.Write(reserv1); /* 12-15 */
-            aWriter.Write((byte) fieldLength); /* 16 */
-            aWriter.Write(decimalCount); /* 17 */
-            aWriter.Write(reserv2); /* 18-19 */
-            aWriter.Write(workAreaId); /* 20 */
-            aWriter.Write(reserv3); /* 21-22 */
-            aWriter.Write(setFieldsFlag); /* 23 */
-            aWriter.Write(reserv4); /* 24-30*/
-            aWriter.Write(indexFieldFlag); /* 31 */
+            bw.Write(dataType); /* 11 */
+            bw.Write(reserv1); /* 12-15 */
+            bw.Write((byte) fieldLength); /* 16 */
+            bw.Write(decimalCount); /* 17 */
+            bw.Write(reserv2); /* 18-19 */
+            bw.Write(workAreaId); /* 20 */
+            bw.Write(reserv3); /* 21-22 */
+            bw.Write(setFieldsFlag); /* 23 */
+            bw.Write(reserv4); /* 24-30*/
+            bw.Write(indexFieldFlag); /* 31 */
         }
 
-        /**
-         Creates a DBFField object from the data read from the given DataInputStream.
-         
-         The data in the DataInputStream object is supposed to be organised correctly
-         and the stream "pointer" is supposed to be positioned properly.
-         
-         @param in DataInputStream
-         @return Returns the created DBFField object.
-         @throws IOException If any stream reading problems occures.
-         */
-
-        static internal DBFField CreateField(BinaryReader aReader)
+        /// <summary>
+        /// Creates a DBFField object from the data read from the given DataInputStream.
+        /// <para>
+        /// The data in the DataInputStream object is supposed to be organised correctly
+        /// and the stream "pointer" is supposed to be positioned properly.
+        /// </para>
+        /// </summary>
+        /// <param name="br">Data input stream.</param>
+        /// <returns>New DBFField object.</returns>
+        /// <exception cref="IOException">If any stream reading problems occures.</exception>
+        static internal DBFField CreateField(BinaryReader br)
         {
             DBFField field = new DBFField();
-            if (field.Read(aReader))
+            if (field.Read(br))
             {
                 return field;
             }
@@ -315,6 +279,11 @@ namespace DotNetDBF
             {
                 return null;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Field: {0}, Length: {1}", Name, FieldLength);
         }
     }
 }

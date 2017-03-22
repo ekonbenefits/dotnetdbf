@@ -12,29 +12,36 @@
  ported to C# (DotNetDBF): Jay Tuley <jay+dotnetdbf@tuley.name> 6/28/2007
  
  */
-/**
- Base class for DBFReader and DBFWriter.
- */
+using System.Globalization;
 using System.Text;
 
 namespace DotNetDBF
 {
-    abstract public class DBFBase
+    /// <summary>
+    /// Base class for <see cref="DBFReader"/> and <see cref="DBFWriter"/>.
+    /// </summary>
+    public abstract class DBFBase
     {
         protected Encoding _charEncoding = Encoding.GetEncoding("utf-8");
         protected int _blockSize = 512;
+        protected NumberFormatInfo _numberFormatProvider = NumberFormatInfo.InvariantInfo;
 
         public Encoding CharEncoding
         {
-            set { _charEncoding = value; }
-
             get { return _charEncoding; }
+            set { _charEncoding = value; }
         }
+
         public int BlockSize
         {
-            set { _blockSize = value; }
-
             get { return _blockSize; }
+            set { _blockSize = value; }
+        }
+
+        public NumberFormatInfo NumberFormatProvider
+        {
+            get { return _numberFormatProvider; }
+            set { _numberFormatProvider = value; }
         }
     }
 }
