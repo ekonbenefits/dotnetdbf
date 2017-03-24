@@ -21,7 +21,7 @@ using System.IO;
 namespace DotNetDBF
 {
 
-    static public class DBFSigniture
+    public static class DBFSigniture
     {
         public const byte NotSet = 0,
                           WithMemo = 0x80,

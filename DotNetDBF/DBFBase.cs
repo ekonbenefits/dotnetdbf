@@ -19,7 +19,7 @@ using System.Text;
 
 namespace DotNetDBF
 {
-    abstract public class DBFBase
+    public abstract class DBFBase
     {
         protected Encoding _charEncoding = Encoding.GetEncoding("utf-8");
         protected int _blockSize = 512;

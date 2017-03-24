@@ -31,7 +31,7 @@ namespace DotNetDBF
         Double = (byte) 0x4F, //O in ASCII
     }
 
-    static public class DBFFieldType
+    public static class DBFFieldType
     {
         public const byte EndOfData = 0x1A; //^Z End of File
         public const byte EndOfField = 0x0D; //End of Field
@@ -40,7 +40,7 @@ namespace DotNetDBF
         public const byte True = 0x54; //T in ascii
         public const byte UnknownByte = 0x3F; //Unknown Bool value
         public const string Unknown = "?"; //Unknown value
-        static public DbType FromNative(NativeDbType aByte)
+        public static DbType FromNative(NativeDbType aByte)
         {
             switch (aByte)
             {
@@ -62,7 +62,7 @@ namespace DotNetDBF
             }
         }
 
-        static public NativeDbType FromDbType(DbType dbType)
+        public static NativeDbType FromDbType(DbType dbType)
         {
             switch (dbType)
             {

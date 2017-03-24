@@ -304,7 +304,7 @@ namespace DotNetDBF
          @throws IOException If any stream reading problems occures.
          */
 
-        static internal DBFField CreateField(BinaryReader aReader)
+        internal static DBFField CreateField(BinaryReader aReader)
         {
             DBFField field = new DBFField();
             if (field.Read(aReader))

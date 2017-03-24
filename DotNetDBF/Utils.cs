@@ -21,13 +21,13 @@ using System.Threading;
 
 namespace DotNetDBF
 {
-    static public class Utils
+    public static class Utils
     {
 
         public const int ALIGN_LEFT = 10;
         public const int ALIGN_RIGHT = 12;
 
-        static public byte[] FillArray(byte[] anArray, byte value)
+        public static byte[] FillArray(byte[] anArray, byte value)
         {
             for (int i = 0; i < anArray.Length; i++)
             {
@@ -36,7 +36,7 @@ namespace DotNetDBF
             return anArray;
         }
 
-        static public byte[] trimLeftSpaces(byte[] arr)
+        public static byte[] trimLeftSpaces(byte[] arr)
         {
             List<byte> tList = new List<byte>(arr.Length);
 
@@ -50,14 +50,14 @@ namespace DotNetDBF
             return tList.ToArray();
         }
 
-        static public byte[] textPadding(String text,
+        public static byte[] textPadding(String text,
                                          Encoding charEncoding,
                                          int length)
         {
             return textPadding(text, charEncoding, length, ALIGN_LEFT);
         }
 
-        static public byte[] textPadding(String text,
+        public static byte[] textPadding(String text,
                                          Encoding charEncoding,
                                          int length,
                                          int alignment)
@@ -70,7 +70,7 @@ namespace DotNetDBF
                             DBFFieldType.Space);
         }
 
-        static public byte[] textPadding(String text,
+        public static byte[] textPadding(String text,
                                          Encoding charEncoding,
                                          int length,
                                          int alignment,
@@ -108,7 +108,7 @@ namespace DotNetDBF
             return byte_array;
         }
 
-        static public byte[] NumericFormating(IFormattable doubleNum,
+        public static byte[] NumericFormating(IFormattable doubleNum,
                                               Encoding charEncoding,
                                               int fieldLength,
                                               int sizeDecimalPart)
@@ -145,7 +145,7 @@ namespace DotNetDBF
                     ALIGN_RIGHT);
         }
 
-        static public bool contains(byte[] arr, byte value)
+        public static bool contains(byte[] arr, byte value)
         {
             return
                 Array.Exists(arr,
@@ -153,7 +153,7 @@ namespace DotNetDBF
         }
 
 
-        static public Type TypeForNativeDBType(NativeDbType aType)
+        public static Type TypeForNativeDBType(NativeDbType aType)
         {
             switch(aType)
             {
