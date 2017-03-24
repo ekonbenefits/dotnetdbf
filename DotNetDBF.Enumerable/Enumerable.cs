@@ -155,7 +155,7 @@ namespace DotNetDBF.Enumerable
         /// <param name="reader">The reader.</param>
         /// <param name="prototype">The prototype. Anonymous class instance</param>
         /// <returns></returns>
-        static public IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype =null) where T : class 
+        public static IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype =null) where T : class 
         {
             var tType = typeof(T);
 
@@ -213,7 +213,7 @@ namespace DotNetDBF.Enumerable
         /// <param name="whereColumn">The where column name.</param>
         /// <param name="whereColumnEquals">What the were column should equal.</param>
         /// <returns></returns>
-        static public IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null, dynamic whereColumnEquals = null)
+        public static IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null, dynamic whereColumnEquals = null)
         {
            
             var tProperties = reader.GetSelectFields().Select(it=>it.Name).ToArray();

@@ -66,7 +66,7 @@ namespace DotNetDBF.Enumerable
         /// <param name="reader">The reader.</param>
         /// <param name="prototype">The prototype. Anonymous class instance</param>
         /// <returns></returns>
-        static public IEnumerable<T> AllRecords<T>(DBFReader reader, T prototype = null) where T : class
+        public static IEnumerable<T> AllRecords<T>(DBFReader reader, T prototype = null) where T : class
         {
 
             return reader.AllRecords(prototype);
