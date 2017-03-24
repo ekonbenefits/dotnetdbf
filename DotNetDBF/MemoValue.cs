@@ -33,10 +33,7 @@ namespace DotNetDBF
         private readonly string _fileLoc;
         private string _value;
 
-        internal long Block
-        {
-            get { return _block; }
-        }
+        internal long Block => _block;
 
         internal void Write(DBFWriter aBase)
         {

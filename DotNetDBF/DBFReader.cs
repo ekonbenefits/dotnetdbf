@@ -30,7 +30,7 @@ namespace DotNetDBF
         private int[] _selectFields = new int[] {};
         private int[] _orderedSelectFields = new int[] {};
         /* Class specific variables */
-        private bool isClosed = true;
+        private bool _isClosed = true;
 
         /**
 		 Initializes a DBFReader object.
@@ -78,7 +78,7 @@ namespace DotNetDBF
                     _dataMemoLoc = dbtPath;
                 }
 
-                isClosed = false;
+                _isClosed = false;
                 _header = new DBFHeader();
                 _header.Read(_dataInputStream);
 
@@ -102,7 +102,7 @@ namespace DotNetDBF
             try
             {
                 _dataInputStream = new BinaryReader(anIn);
-                isClosed = false;
+                _isClosed = false;
                 _header = new DBFHeader();
                 _header.Read(_dataInputStream);
 
@@ -125,10 +125,7 @@ namespace DotNetDBF
 		 Returns the number of records in the DBF.
 		 */
 
-        public int RecordCount
-        {
-            get { return _header.NumberOfRecords; }
-        }
+        public int RecordCount => _header.NumberOfRecords;
 
         /**
 		 Returns the asked Field. In case of an invalid index,
@@ -137,10 +134,7 @@ namespace DotNetDBF
 		 @param index. Index of the field. Index of the first field is zero.
 		 */
 
-        public DBFField[] Fields
-        {
-            get { return _header.FieldArray; }
-        }
+        public DBFField[] Fields => _header.FieldArray;
 
         #region IDisposable Members
 
@@ -181,7 +175,7 @@ namespace DotNetDBF
         public void Close()
         {
             _dataInputStream.Close();
-            isClosed = true;
+            _isClosed = true;
         }
 
         /**
@@ -198,7 +192,7 @@ namespace DotNetDBF
 
         internal Object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
         {
-            if (isClosed)
+            if (_isClosed)
             {
                 throw new DBFException("Source is not open");
             }

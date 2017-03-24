@@ -67,28 +67,22 @@ namespace DotNetDBF
             set { _signature = value; }
         }
 
-        internal short Size
-        {
-            get
-            {
-                return (short) (sizeof(byte) +
-                                sizeof(byte) + sizeof(byte) + sizeof(byte) +
-                                sizeof(int) +
-                                sizeof(short) +
-                                sizeof(short) +
-                                sizeof(short) +
-                                sizeof(byte) +
-                                sizeof(byte) +
-                                sizeof(int) +
-                                sizeof(int) +
-                                sizeof(int) +
-                                sizeof(byte) +
-                                sizeof(byte) +
-                                sizeof(short) +
-                                (DBFField.SIZE * _fieldArray.Length) +
-                                sizeof(byte));
-            }
-        }
+        internal short Size => (short) (sizeof(byte) +
+                                        sizeof(byte) + sizeof(byte) + sizeof(byte) +
+                                        sizeof(int) +
+                                        sizeof(short) +
+                                        sizeof(short) +
+                                        sizeof(short) +
+                                        sizeof(byte) +
+                                        sizeof(byte) +
+                                        sizeof(int) +
+                                        sizeof(int) +
+                                        sizeof(int) +
+                                        sizeof(byte) +
+                                        sizeof(byte) +
+                                        sizeof(short) +
+                                        (DBFField.SIZE * _fieldArray.Length) +
+                                        sizeof(byte));
 
         internal short RecordSize
         {

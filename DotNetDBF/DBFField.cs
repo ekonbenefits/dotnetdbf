@@ -69,10 +69,7 @@ namespace DotNetDBF
             DecimalCount = aDecimalCount;
         }
 
-        public int Size
-        {
-            get { return SIZE; }
-        }
+        public int Size => SIZE;
 
         /**
          Returns the name of the field.
@@ -108,13 +105,7 @@ namespace DotNetDBF
          @return Data type as byte.
          */
 
-        public Type Type
-        {
-            get
-            {
-                return Utils.TypeForNativeDBType(DataType);
-            }
-        }
+        public Type Type => Utils.TypeForNativeDBType(DataType);
 
 
         public NativeDbType DataType
