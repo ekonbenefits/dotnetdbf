@@ -13,6 +13,7 @@
 
 using System.Data;
 
+
 namespace DotNetDBF
 {
     public enum NativeDbType : byte

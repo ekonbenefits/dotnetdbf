@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace DotNetDBF
@@ -23,14 +24,18 @@ namespace DotNetDBF
         private DBFHeader header;
         private Stream raf;
         private int recordCount;
-        private ArrayList v_records = new ArrayList();
+        private List<object> v_records = new List<object>();
         private string _dataMemoLoc;
+        private Stream _dataMemo;
 
         /// Creates an empty Object.
         public DBFWriter()
         {
             header = new DBFHeader();
         }
+
+#if NET35
+        
 
         /// Creates a DBFWriter which can append to records to an existing DBF file.
         /// @param dbfFile. The file passed in shouls be a valid DBF file.
@@ -44,7 +49,7 @@ namespace DotNetDBF
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite);
 
-                _dataMemoLoc = Path.ChangeExtension(dbfFile, "dbt");
+                DataMemoLoc = Path.ChangeExtension(dbfFile, "dbt");
 
                 /* before proceeding check whether the passed in File object
 				 is an empty/non-existent file or not.
@@ -72,6 +77,7 @@ namespace DotNetDBF
             }
             recordCount = header.NumberOfRecords;
         }
+#endif
 
         public DBFWriter(Stream dbfFile)
         {
@@ -103,10 +109,27 @@ namespace DotNetDBF
             set { header.Signature = value; }
         }
 
+#if NET35
+        
         public string DataMemoLoc
         {
             get { return _dataMemoLoc; }
-            set { _dataMemoLoc = value; }
+            set
+            {
+                _dataMemoLoc = value;
+                
+                _dataMemo?.Close();
+                _dataMemo = File.Open(_dataMemoLoc,
+                    FileMode.OpenOrCreate,
+                    FileAccess.ReadWrite);
+            }
+        }
+#endif
+
+        public Stream DataMemo
+        {
+            get { return _dataMemo; }
+            set { _dataMemo = value; }
         }
 
         public byte LanguageDriver
@@ -342,8 +365,22 @@ namespace DotNetDBF
                 header.Write(new BinaryWriter(raf));
                 raf.Seek(0, SeekOrigin.End);
                 raf.WriteByte(DBFFieldType.EndOfData);
+#if NET35
                 raf.Close();
+#else
+                raf.Dispose();
+#endif
             }
+
+#if NET35
+
+
+            if (!String.IsNullOrEmpty(DataMemoLoc))
+            {
+                DataMemo.Close();
+            }
+#endif
+
         }
 
         private void WriteRecord(BinaryWriter dataOutput, Object[] objectArray)

@@ -25,8 +25,8 @@ namespace DotNetDBF
     {
         private BinaryReader _dataInputStream;
         private DBFHeader _header;
+        private Stream _dataMemo;
         private string _dataMemoLoc;
-
         private int[] _selectFields = new int[] {};
         private int[] _orderedSelectFields = new int[] {};
         /* Class specific variables */
@@ -50,7 +50,7 @@ namespace DotNetDBF
                 aParams.Select(
                     it =>
                         Array.FindIndex(_header.FieldArray,
-                            jt => jt.Name.Equals(it, StringComparison.InvariantCultureIgnoreCase))).ToArray();
+                            jt => jt.Name.Equals(it, StringComparison.OrdinalIgnoreCase))).ToArray();
             _orderedSelectFields = _selectFields.OrderBy(it => it).ToArray();
         }
 
@@ -60,6 +60,8 @@ namespace DotNetDBF
                 ? _selectFields.Select(it => _header.FieldArray[it]).ToArray()
                 : _header.FieldArray;
         }
+
+#if NET35
 
         public DBFReader(string anIn)
         {
@@ -96,6 +98,7 @@ namespace DotNetDBF
                 throw new DBFException("Failed To Read DBF", ex);
             }
         }
+#endif
 
         public DBFReader(Stream anIn)
         {
@@ -148,10 +151,38 @@ namespace DotNetDBF
 
         #endregion
 
+#if NET35
         public string DataMemoLoc
         {
             get { return _dataMemoLoc; }
             set { _dataMemoLoc = value; }
+        }
+#endif
+
+        public delegate Stream LazyStream();
+
+        private Stream loadedStream;
+        private LazyStream GetLazyStreamFromLocation()
+        {
+#if NET35
+            if (_dataMemo == null && !String.IsNullOrEmpty(_dataMemoLoc))
+            {
+                return  () => loadedStream ??
+                                  (loadedStream = File.Open(_dataMemoLoc, FileMode.Open, FileAccess.Read,
+                                      FileShare.Read));
+            }else
+#endif
+            if (_dataMemo != null)
+            {
+                return () => _dataMemo;
+            }
+            return null;
+        }
+
+        public Stream DataMemo
+        {
+            get { return _dataMemo; }
+            set { _dataMemo = value; }
         }
 
         public override String ToString()
@@ -174,7 +205,14 @@ namespace DotNetDBF
 
         public void Close()
         {
+#if NET35
+            
             _dataInputStream.Close();
+#else
+            _dataInputStream.Dispose();
+#endif
+
+
             _isClosed = true;
         }
 
@@ -308,7 +346,8 @@ namespace DotNetDBF
                                     && tLast != DBFFieldType.Unknown)
                                 {
                                     recordObjects[i] = Double.Parse(tParsed,
-                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite, NumberFormatInfo.InvariantInfo);
+                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite,
+                                        NumberFormatInfo.InvariantInfo);
                                 }
                                 else
                                 {
@@ -341,7 +380,8 @@ namespace DotNetDBF
                                     && tLast != DBFFieldType.Unknown)
                                 {
                                     recordObjects[i] = Decimal.Parse(tParsed,
-                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite, NumberFormatInfo.InvariantInfo);
+                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite,
+                                        NumberFormatInfo.InvariantInfo);
                                 }
                                 else
                                 {
@@ -377,7 +417,7 @@ namespace DotNetDBF
                             break;
 
                         case NativeDbType.Memo:
-                            if (string.IsNullOrEmpty(_dataMemoLoc))
+                            if (String.IsNullOrEmpty(_dataMemoLoc) && _dataMemo == null)
                                 throw new Exception("Memo Location Not Set");
 
 
@@ -398,7 +438,7 @@ namespace DotNetDBF
                             }
 
 
-                            recordObjects[i] = new MemoValue(tBlock, this, _dataMemoLoc);
+                            recordObjects[i] = new MemoValue(tBlock, this, _dataMemoLoc, GetLazyStreamFromLocation());
                             break;
                         default:
                             _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);

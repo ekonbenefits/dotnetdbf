@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using DotNetDBF;
 using DotNetDBF.Enumerable;
 using NUnit.Framework;
@@ -19,17 +20,21 @@ namespace DotNetDBFTest
     [TestFixture]
     public class DotNetDBFTest : AssertionHelper
     {
-        private string TestPath = Path.Combine(Path.GetTempPath(), "121212.dbf");
+        private string TestPath([CallerMemberName] string name = null)
+            => Path.Combine(Path.GetTempPath(), name + "_121212.dbf");
 
-        private string TestRAFPath =
-            Path.Combine(Path.GetTempPath(), "raf-1212.dbf");
+        private string TestRAFPath([CallerMemberName] string name = null)
+            => Path.Combine(Path.GetTempPath(), name + "_raf-1212.dbf");
 
 
-        private string TestClipLongPath = Path.Combine(Path.GetTempPath(), "cliplong.dbf");
+        private string TestClipLongPath([CallerMemberName] string name = null)
+            => Path.Combine(Path.GetTempPath(), name + "_cliplong.dbf");
 
-        private string TestMemoPath = Path.Combine(Path.GetTempPath(), "clipmemo.dbf");
+        private string TestMemoPath([CallerMemberName] string name = null)
+            => Path.Combine(Path.GetTempPath(), name + "_clipmemo.dbf");
 
-        private string TestSelectPath = Path.Combine(Path.GetTempPath(), "select.dbf");
+        private string TestSelectPath([CallerMemberName] string name = null)
+            => Path.Combine(Path.GetTempPath(), name + "_select.dbf");
 
         private string GetCharacters(int aLength)
         {
@@ -53,11 +58,11 @@ namespace DotNetDBFTest
             Decimal writtenValue;
             using (
                 Stream fos =
-                    File.Open(TestPath,
+                    File.Open(TestPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
+            using (var writer = new DBFWriter())
             {
-                var writer = new DBFWriter();
                 var field = new DBFField("F1", NativeDbType.Numeric, 15, 0);
                 writer.Fields = new[] {field};
 
@@ -67,12 +72,11 @@ namespace DotNetDBFTest
             }
             using (
                 Stream fis =
-                    File.Open(TestPath,
-                        FileMode.OpenOrCreate,
-                        FileAccess.ReadWrite))
+                    File.Open(TestPath(),
+                        FileMode.Open,
+                        FileAccess.Read))
+            using (var reader = new DBFReader(fis))
             {
-                var reader = new DBFReader(fis);
-
                 var readValues = reader.NextRecord();
 
                 Assert.That(readValues[0], EqualTo(writtenValue), "Written Value Equals Read");
@@ -87,7 +91,7 @@ namespace DotNetDBFTest
             string writtenValue;
             using (
                 Stream fos =
-                    File.Open(TestClipLongPath,
+                    File.Open(TestClipLongPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
@@ -101,7 +105,7 @@ namespace DotNetDBFTest
             }
             using (
                 Stream fis =
-                    File.Open(TestClipLongPath,
+                    File.Open(TestClipLongPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
@@ -119,16 +123,12 @@ namespace DotNetDBFTest
         {
             var fieldLength = 2400;
             MemoValue writtenValue;
-            using (
-                Stream fos =
-                    File.Open(TestMemoPath,
-                        FileMode.OpenOrCreate,
-                        FileAccess.ReadWrite))
+            using (Stream fos = File.Open(TestMemoPath(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var writer = new DBFWriter
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(TestMemoPath(), "DBT")
+                                })
             {
-                var writer = new DBFWriter
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestMemoPath, "DBT")
-                             };
                 var field = new DBFField("F1", NativeDbType.Memo);
                 writer.Fields = new[] {field};
 
@@ -136,16 +136,12 @@ namespace DotNetDBFTest
                 writer.AddRecord(writtenValue);
                 writer.Write(fos);
             }
-            using (
-                Stream fis =
-                    File.Open(TestMemoPath,
-                        FileMode.OpenOrCreate,
-                        FileAccess.ReadWrite))
+            using (Stream fis = File.Open(TestMemoPath(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var reader = new DBFReader(fis)
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(TestMemoPath(), "DBT")
+                                })
             {
-                var reader = new DBFReader(fis)
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestMemoPath, "DBT")
-                             };
                 var readValues = reader.NextRecord();
 
                 Assert.That(readValues[0], EqualTo(writtenValue), "Written Value not equaling Read");
@@ -159,13 +155,13 @@ namespace DotNetDBFTest
             string writtenValue;
             using (
                 Stream fos =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
                 var writer = new DBFWriter
                              {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                              };
                 var field = new DBFField("F1", NativeDbType.Memo);
                 var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
@@ -178,13 +174,13 @@ namespace DotNetDBFTest
             }
             using (
                 Stream fis =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
                 var reader = new DBFReader(fis)
                              {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                              };
                 reader.SetSelectFields("F3");
                 var readValues = reader.NextRecord();
@@ -201,14 +197,14 @@ namespace DotNetDBFTest
             string writtenMemo;
             using (
                 Stream fos =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
+            using (var writer = new DBFWriter
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
+                                })
             {
-                var writer = new DBFWriter
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
-                             };
                 var field = new DBFField("F1", NativeDbType.Memo);
                 var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
                 var field3 = new DBFField("F3", NativeDbType.Char, 10);
@@ -221,14 +217,14 @@ namespace DotNetDBFTest
             }
             using (
                 Stream fis =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
+            using (var reader = new DBFReader(fis)
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
+                                })
             {
-                var reader = new DBFReader(fis)
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
-                             };
                 reader.SetSelectFields("F1", "F3");
                 var readValues = reader.DynamicAllRecords().First();
 
@@ -244,13 +240,13 @@ namespace DotNetDBFTest
             string writtenValue;
             using (
                 Stream fos =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
                 var writer = new DBFWriter
                              {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                              };
                 var field = new DBFField("F1", NativeDbType.Memo);
                 var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
@@ -263,13 +259,13 @@ namespace DotNetDBFTest
             }
             using (
                 Stream fis =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
                 var reader = new DBFReader(fis)
                              {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                              };
 
                 var readValues = reader.AllRecords(new {F2 = default(decimal), F3 = default(string)});
@@ -286,13 +282,13 @@ namespace DotNetDBFTest
             string writtenValue;
             using (
                 Stream fos =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
                 var writer = new DBFWriter
                              {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                              };
                 var field = new DBFField("F1", NativeDbType.Memo);
                 var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
@@ -305,13 +301,13 @@ namespace DotNetDBFTest
             }
             using (
                 Stream fis =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
                 var reader = new DBFReader(fis)
                              {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                              };
 
                 var readValues = reader.AllRecords<ITestInterface>();
@@ -327,14 +323,14 @@ namespace DotNetDBFTest
             string writtenValue;
             using (
                 Stream fos =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
+            using (var writer = new DBFWriter
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
+                                })
             {
-                var writer = new DBFWriter
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
-                             };
                 var field = new DBFField("F1", NativeDbType.Memo);
                 var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
                 var field3 = new DBFField("F3", NativeDbType.Char, 10);
@@ -346,15 +342,14 @@ namespace DotNetDBFTest
             }
             using (
                 Stream fis =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
+            using (var reader = new DBFReader(fis)
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
+                                })
             {
-                var reader = new DBFReader(fis)
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
-                             };
-
                 var readValues = reader.DynamicAllRecords();
 
                 Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
@@ -369,14 +364,14 @@ namespace DotNetDBFTest
             string writtenValue;
             using (
                 Stream fos =
-                    File.Open(TestSelectPath,
+                    File.Open(TestSelectPath(),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
+            using (var writer = new DBFWriter
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
+                                })
             {
-                var writer = new DBFWriter
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
-                             };
                 var field = new DBFField("F1", NativeDbType.Memo);
                 var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
                 var field3 = new DBFField("F3", NativeDbType.Char, 10);
@@ -390,9 +385,9 @@ namespace DotNetDBFTest
                 writer.Write(fos);
             }
 
-            using (var reader = new DBFReader(TestSelectPath)
+            using (var reader = new DBFReader(TestSelectPath())
                                 {
-                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                                 })
             {
                 var readValues = reader.DynamicAllRecords();
@@ -400,9 +395,9 @@ namespace DotNetDBFTest
                 Assert.That(Equals(readValues.Count(), 2), "All Records not matching");
             }
 
-            using (var reader = new DBFReader(TestSelectPath)
+            using (var reader = new DBFReader(TestSelectPath())
                                 {
-                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                                 })
             {
                 var readValues = reader.DynamicAllRecords(whereColumn: "F2", whereColumnEquals: 10);
@@ -410,18 +405,18 @@ namespace DotNetDBFTest
                 Assert.That(Equals(readValues.Count(), 1), "All Records not matching");
             }
 
-            using (var reader = new DBFReader(TestSelectPath)
+            using (var reader = new DBFReader(TestSelectPath())
                                 {
-                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                                 })
             {
                 var readValues = reader.DynamicAllRecords(whereColumn: "F2", whereColumnEquals: 12);
 
                 Assert.That(Equals(readValues.Count(), 1), "All Records not matching");
             }
-            using (var reader = new DBFReader(TestSelectPath)
+            using (var reader = new DBFReader(TestSelectPath())
                                 {
-                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath, "DBT")
+                                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
                                 })
             {
                 var readValues = reader.DynamicAllRecords(whereColumn: "F2", whereColumnEquals: 13);
@@ -435,11 +430,11 @@ namespace DotNetDBFTest
         {
             println("Writing in RAF mode ... ");
 
-            if (File.Exists(TestRAFPath))
+            if (File.Exists(TestRAFPath()))
             {
-                File.Delete(TestRAFPath);
+                File.Delete(TestRAFPath());
             }
-            using (var writer = new DBFWriter(TestRAFPath))
+            using (var writer = new DBFWriter(TestRAFPath()))
             {
                 var fields = new DBFField[2];
 
@@ -458,7 +453,7 @@ namespace DotNetDBFTest
 
             println("Appending to this file");
 
-            using (var writer = new DBFWriter(TestRAFPath))
+            using (var writer = new DBFWriter(TestRAFPath()))
             {
                 writer.WriteRecord("Green", 33);
 
@@ -470,11 +465,11 @@ namespace DotNetDBFTest
         [Test]
         public void ShowPaths()
         {
-            println(TestPath);
+            println(TestPath());
 
-            println(TestRAFPath);
+            println(TestRAFPath());
 
-            println(TestClipLongPath);
+            println(TestClipLongPath());
         }
 
         [Test]
@@ -485,11 +480,11 @@ namespace DotNetDBFTest
                     File.Open(@"f:\st\dev\testdata\p.dbf",
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
+            using (var reader = new DBFReader(fis)
+                                {
+                                    DataMemoLoc = Path.ChangeExtension(@"f:\st\dev\testdata\p.dbf", "DBT")
+                                })
             {
-                var reader = new DBFReader(fis)
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(@"f:\st\dev\testdata\p.dbf", "DBT")
-                             };
                 var readValues = reader.NextRecord();
 
                 Console.WriteLine(readValues);
@@ -517,14 +512,14 @@ namespace DotNetDBFTest
             ReadSample();
         }
 
-        public void WriteSample()
+        public void WriteSample([CallerMemberName] string name = null)
         {
             var field = new DBFField {Name = "F1", DataType = NativeDbType.Numeric};
             var writer = new DBFWriter {Fields = new[] {field}};
             writer.AddRecord(3);
             using (
                 Stream fos =
-                    File.Open(TestPath,
+                    File.Open(TestPath(name),
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
@@ -533,9 +528,9 @@ namespace DotNetDBFTest
         }
 
 
-        public void ReadSample()
+        public void ReadSample([CallerMemberName] string name = null)
         {
-            using (var reader = new DBFReader(TestPath))
+            using (var reader = new DBFReader(TestPath(name)))
             {
                 Assert.That(reader.RecordCount, EqualTo(1));
             }

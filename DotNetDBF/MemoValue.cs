@@ -19,12 +19,13 @@ namespace DotNetDBF
         }
 
 
-        internal MemoValue(long block, DBFBase aBase, string fileLoc)
+        internal MemoValue(long block, DBFBase aBase, string fileLoc, DBFReader.LazyStream fileStream)
         {
             _block = block;
             _base = aBase;
             _fileLoc = fileLoc;
-            _lockName = $"DotNetDBF.Memo.read.{_fileLoc}.{_block}.";
+            _fileStream = fileStream;
+            _lockName = $"DotNetDBF.Memo.read.{_fileLoc?? Guid.NewGuid().ToString() }.{_block}.";
         }
 
         private readonly DBFBase _base;
@@ -32,6 +33,7 @@ namespace DotNetDBF
         private long _block;
         private readonly string _fileLoc;
         private string _value;
+        private readonly DBFReader.LazyStream _fileStream;
 
         internal long Block => _block;
 
@@ -41,21 +43,19 @@ namespace DotNetDBF
             {
                 if (!_new)
                     return;
-                if (string.IsNullOrEmpty(aBase.DataMemoLoc))
-                    throw new Exception("No Memo Location Set");
 
-                var raf =
-                    File.Open(aBase.DataMemoLoc,
-                        FileMode.OpenOrCreate,
-                        FileAccess.ReadWrite);
+                var raf = aBase.DataMemo;
 
                 /* before proceeding check whether the passed in File object
                     is an empty/non-existent file or not.
                     */
-
-
-                using (var tWriter = new BinaryWriter(raf, aBase.CharEncoding))
+                if (raf == null)
                 {
+                    throw new InvalidDataException("Null Memo Field Stream from Writer");
+                }
+
+                    var tWriter = new BinaryWriter(raf, aBase.CharEncoding); //Don't close the stream could be used else where;
+                
                     if (raf.Length == 0)
                     {
                         var tHeader = new DBTHeader();
@@ -81,7 +81,7 @@ namespace DotNetDBF
                     tWriter.Write(tData);
                     if (tNewDiff != 0)
                         tWriter.Seek(aBase.BlockSize - (tDataLength % aBase.BlockSize), SeekOrigin.Current);
-                }
+                
             }
         }
 
@@ -94,11 +94,8 @@ namespace DotNetDBF
                 {
                     if (!_new && !_loaded)
                     {
-                        using (var reader = new BinaryReader(
-                            File.Open(_fileLoc,
-                                FileMode.Open,
-                                FileAccess.Read,
-                                FileShare.Read)))
+                        var fileStream = _fileStream();
+                        using (var reader = new BinaryReader(fileStream))
                         {
                             reader.BaseStream.Seek(_block * _base.BlockSize, SeekOrigin.Begin);
                             string tString;
@@ -111,7 +108,7 @@ namespace DotNetDBF
                                 var tData = reader.ReadBytes(_base.BlockSize);
 
                                 tString = _base.CharEncoding.GetString(tData);
-                                tIndex = tString.IndexOf(MemoTerminator);
+                                tIndex = tString.IndexOf(MemoTerminator, StringComparison.Ordinal);
                                 if (tIndex != -1)
                                     tString = tString.Substring(0, tIndex);
                                 tStringBuilder.Append(tString);
