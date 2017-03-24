@@ -314,7 +314,7 @@ namespace DotNetDBF
                                     && tLast != DBFFieldType.Unknown)
                                 {
                                     recordObjects[i] = Double.Parse(tParsed,
-                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite);
+                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite, NumberFormatInfo.InvariantInfo);
                                 }
                                 else
                                 {
@@ -347,7 +347,7 @@ namespace DotNetDBF
                                     && tLast != DBFFieldType.Unknown)
                                 {
                                     recordObjects[i] = Decimal.Parse(tParsed,
-                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite);
+                                        NumberStyles.Float | NumberStyles.AllowLeadingWhite, NumberFormatInfo.InvariantInfo);
                                 }
                                 else
                                 {
