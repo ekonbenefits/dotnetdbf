@@ -15,7 +15,7 @@ using System.Data;
 
 namespace DotNetDBF
 {
-    public enum NativeDbType :byte
+    public enum NativeDbType : byte
     {
         Autoincrement = (byte) 0x2B, //+ in ASCII
         Timestamp = (byte) 0x40, //@ in ASCII
@@ -40,6 +40,7 @@ namespace DotNetDBF
         public const byte True = 0x54; //T in ascii
         public const byte UnknownByte = 0x3F; //Unknown Bool value
         public const string Unknown = "?"; //Unknown value
+
         public static DbType FromNative(NativeDbType aByte)
         {
             switch (aByte)

@@ -15,6 +15,7 @@
 /**
  Base class for DBFReader and DBFWriter.
  */
+
 using System.Text;
 
 namespace DotNetDBF
@@ -30,6 +31,7 @@ namespace DotNetDBF
 
             get { return _charEncoding; }
         }
+
         public int BlockSize
         {
             set { _blockSize = value; }

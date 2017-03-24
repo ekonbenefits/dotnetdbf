@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace DotNetDBF.Enumerable
 {
-
     public static partial class DBFEnumerable
     {
         [Obsolete("DotNetDBF.Enumerable.IDBFIntercepter is the new interface name")]
         public interface IDBFIntercepter : DotNetDBF.Enumerable.IDBFIntercepter
         {
-
         }
 
         [Obsolete("DotNetDBF.Enumerable.DBFIntercepter is the new class name")]
@@ -54,7 +52,7 @@ namespace DotNetDBF.Enumerable
         /// <param name="value">The value.</param>
         public static void AddRecord(DBFWriter writer, IDBFIntercepter value)
         {
-            writer.AddRecord(writer,value);
+            writer.AddRecord(writer, value);
         }
 
         /// <summary>
@@ -68,7 +66,6 @@ namespace DotNetDBF.Enumerable
         /// <returns></returns>
         public static IEnumerable<T> AllRecords<T>(DBFReader reader, T prototype = null) where T : class
         {
-
             return reader.AllRecords(prototype);
         }
 
@@ -80,17 +77,15 @@ namespace DotNetDBF.Enumerable
         /// <param name="whereColumnEquals">What the were column should equal.</param>
         /// <returns></returns>
         public static IEnumerable<dynamic> DynamicAllRecords(DBFReader reader, string whereColumn = null,
-                                                             dynamic whereColumnEquals = null)
+            dynamic whereColumnEquals = null)
         {
-
-            return reader.DynamicAllRecords(whereColumn, (object)whereColumnEquals);
+            return reader.DynamicAllRecords(whereColumn, (object) whereColumnEquals);
         }
 
 
         [Obsolete("DotNetDBF.Enumerable.IDBFIntercepter is the new interface name")]
         public interface IDBFIntercepter : DotNetDBF.Enumerable.IDBFIntercepter
         {
-
         }
 
         [Obsolete("DotNetDBF.Enumerable.DBFIntercepter is the new class name")]
@@ -101,6 +96,5 @@ namespace DotNetDBF.Enumerable
             {
             }
         }
-
     }
 }

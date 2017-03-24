@@ -41,8 +41,8 @@ namespace DotNetDBF
             {
                 raf =
                     File.Open(dbfFile,
-                              FileMode.OpenOrCreate,
-                              FileAccess.ReadWrite);
+                        FileMode.OpenOrCreate,
+                        FileAccess.ReadWrite);
 
                 _dataMemoLoc = Path.ChangeExtension(dbfFile, "dbt");
 
@@ -60,7 +60,7 @@ namespace DotNetDBF
 
                 /* position file pointer at the end of the raf */
                 raf.Seek(-1, SeekOrigin.End);
-                    /* to ignore the END_OF_DATA byte at EoF */
+                /* to ignore the END_OF_DATA byte at EoF */
             }
             catch (FileNotFoundException e)
             {
@@ -91,7 +91,7 @@ namespace DotNetDBF
 
             /* position file pointer at the end of the raf */
             raf.Seek(-1, SeekOrigin.End);
-                /* to ignore the END_OF_DATA byte at EoF */
+            /* to ignore the END_OF_DATA byte at EoF */
 
 
             recordCount = header.NumberOfRecords;
@@ -99,13 +99,8 @@ namespace DotNetDBF
 
         public byte Signature
         {
-            get
-            {
-                return header.Signature;
-            }set
-            {
-                header.Signature = value;
-            }
+            get { return header.Signature; }
+            set { header.Signature = value; }
         }
 
         public string DataMemoLoc
@@ -115,25 +110,22 @@ namespace DotNetDBF
         }
 
         public byte LanguageDriver
-	    {
+        {
             set
             {
                 if (header.LanguageDriver != 0x00)
-                    {
-                            throw new DBFException("LanguageDriver has already been set");
-                    }
+                {
+                    throw new DBFException("LanguageDriver has already been set");
+                }
 
                 header.LanguageDriver = value;
             }
-	    }
-	
-     
+        }
+
+
         public DBFField[] Fields
         {
-            get
-            {
-              return header.FieldArray; 
-            }
+            get { return header.FieldArray; }
 
 
             set
@@ -172,7 +164,7 @@ namespace DotNetDBF
                 }
                 catch (IOException e)
                 {
-                    throw new DBFException("Error accesing file",e);
+                    throw new DBFException("Error accesing file", e);
                 }
             }
         }
@@ -369,21 +361,21 @@ namespace DotNetDBF
                             var str_value = objectArray[j].ToString();
                             dataOutput.Write(
                                 Utils.textPadding(str_value,
-                                                  CharEncoding,
-                                                  header.FieldArray[j].
-                                                      FieldLength
-                                    )
-                                );
+                                    CharEncoding,
+                                    header.FieldArray[j].
+                                        FieldLength
+                                )
+                            );
                         }
                         else
                         {
                             dataOutput.Write(
                                 Utils.textPadding("",
-                                                  CharEncoding,
-                                                  header.FieldArray[j].
-                                                      FieldLength
-                                    )
-                                );
+                                    CharEncoding,
+                                    header.FieldArray[j].
+                                        FieldLength
+                                )
+                            );
                         }
 
                         break;
@@ -415,8 +407,8 @@ namespace DotNetDBF
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     header.FieldArray[j].DecimalCount
-                                    )
-                                );
+                                )
+                            );
                         }
                         else
                         {
@@ -426,8 +418,8 @@ namespace DotNetDBF
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
-                                    )
-                                );
+                                )
+                            );
                         }
 
                         break;
@@ -443,8 +435,8 @@ namespace DotNetDBF
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     header.FieldArray[j].DecimalCount
-                                    )
-                                );
+                                )
+                            );
                         }
                         else
                         {
@@ -454,8 +446,8 @@ namespace DotNetDBF
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
-                                    )
-                                );
+                                )
+                            );
                         }
 
                         break;
@@ -486,16 +478,17 @@ namespace DotNetDBF
 
                             tMemoValue.Write(this);
 
-                            dataOutput.Write( Utils.NumericFormating(tMemoValue.Block,CharEncoding,10,0));
-                        }else
-                         {
-                             dataOutput.Write(
-                             Utils.textPadding("",
-                                               CharEncoding,
-                                               10
-                                 )
-                             );
-                         }
+                            dataOutput.Write(Utils.NumericFormating(tMemoValue.Block, CharEncoding, 10, 0));
+                        }
+                        else
+                        {
+                            dataOutput.Write(
+                                Utils.textPadding("",
+                                    CharEncoding,
+                                    10
+                                )
+                            );
+                        }
 
 
                         break;
