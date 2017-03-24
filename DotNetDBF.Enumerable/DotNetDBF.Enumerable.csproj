@@ -1,101 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3BB97ECD-325D-4288-B355-57CFC1404019}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotNetDBF.Enumerable</RootNamespace>
-    <AssemblyName>DotNetDBF.Enumerable</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\DotNetDBF.Enumerable.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\DotNetDBF.Enumerable.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>net40</TargetFramework>
+    <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
+    <PackageId>dotnetdbf.enumerable</PackageId>
+    <Authors>Jay Tuley</Authors>
+    <Company>Ekon Benefits</Company>
+    <Description>For dotnetdbf projects using .net 4.0 projects this is an enumeration framework in which makes it easy to use Linq to Objects.</Description>
+    <PackageLicenseUrl>http://www.gnu.org/licenses/lgpl.html</PackageLicenseUrl>
+    <PackageProjectUrl>http://code.google.com/p/dotnetdbf/</PackageProjectUrl>
+    <PackageTags>clipper xbase dbf linq</PackageTags>
+    <PackageIconUrl>https://github.com/ekonbenefits/dotnetdbf</PackageIconUrl>
+    <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf.git</RepositoryUrl>
+    <RepositoryType>gits</RepositoryType>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>4.3.11.0</Version>
+    <AssemblyVersion>4.3.11.0</AssemblyVersion>
+    <FileVersion>4.3.11.0</FileVersion>
+    <IncludeSymbols>True</IncludeSymbols>
+    <IncludeSource>True</IncludeSource>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ImpromptuInterface, Version=6.1.3.0, Culture=neutral, PublicKeyToken=0b1781c923b2975b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ImpromptuInterface.6.1.3\lib\net40\ImpromptuInterface.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Obsolete.cs" />
-    <Compile Include="Enumerable.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <PackageReference Include="ImpromptuInterface" Version="6.2.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj">
-      <Project>{C5E9AE18-1EA3-4C90-AFAB-5323093BE4AC}</Project>
-      <Name>DotNetDBF</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\nuget\dotnetdbf.enumerable.nuspec">
-      <Link>Properties\dotnetdbf.enumerable.nuspec</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-    <None Include="sn.snk" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)tools\nuget.exe" pack "$(SolutionDir)nuget\dotnetdbf.enumerable.nuspec"</PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+      
 </Project>
