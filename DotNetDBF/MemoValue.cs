@@ -16,7 +16,7 @@ namespace DotNetDBF
 
         public MemoValue(string aValue)
         {
-            _lockName = string.Format("DotNetDBF.Memo.new.{0}", Guid.NewGuid());
+            _lockName = $"DotNetDBF.Memo.new.{Guid.NewGuid()}";
             Value = aValue;
          
         }
@@ -27,7 +27,7 @@ namespace DotNetDBF
             _block = block;
             _base = aBase;
             _fileLoc = fileLoc;
-            _lockName = string.Format("DotNetDBF.Memo.read.{0}.{1}.", _fileLoc, _block);
+            _lockName = $"DotNetDBF.Memo.read.{_fileLoc}.{_block}.";
         }
 
         private readonly DBFBase _base;

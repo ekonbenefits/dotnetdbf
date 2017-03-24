@@ -58,7 +58,7 @@ namespace DotNetDBF
                     return DbType.AnsiString;
                 default:
                     throw new DBFException(
-                        string.Format("Unsupported Native Type {0}", aByte));
+                        $"Unsupported Native Type {aByte}");
             }
         }
 
@@ -78,7 +78,7 @@ namespace DotNetDBF
                     return NativeDbType.Memo;
                 default:
                     throw new DBFException(
-                        string.Format("Unsupported Type {0}", dbType));
+                        $"Unsupported Type {dbType}");
             }
         }
     }
