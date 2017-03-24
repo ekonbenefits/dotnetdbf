@@ -149,7 +149,7 @@ namespace DotNetDBF
                     throw new DBFException("Should have at least one field");
                 }
 
-                for (int i = 0; i < value.Length; i++)
+                for (var i = 0; i < value.Length; i++)
                 {
                     if (value[i] == null)
                     {
@@ -233,7 +233,7 @@ namespace DotNetDBF
                     "Invalid record. Invalid number of fields in row");
             }
 
-            for (int i = 0; i < header.FieldArray.Length; i++)
+            for (var i = 0; i < header.FieldArray.Length; i++)
             {
                 if (values[i] == null)
                 {
@@ -315,18 +315,18 @@ namespace DotNetDBF
         {
             try
             {
-                BinaryWriter outStream = new BinaryWriter(tOut);
+                var outStream = new BinaryWriter(tOut);
 
                 header.NumberOfRecords = v_records.Count;
                 header.Write(outStream);
 
                 /* Now write all the records */
-                int t_recCount = v_records.Count;
-                for (int i = 0; i < t_recCount; i++)
+                var t_recCount = v_records.Count;
+                for (var i = 0; i < t_recCount; i++)
                 {
                     /* iterate through records */
 
-                    Object[] t_values = (Object[]) v_records[i];
+                    var t_values = (Object[]) v_records[i];
 
                     WriteRecord(outStream, t_values);
                 }
@@ -357,7 +357,7 @@ namespace DotNetDBF
         private void WriteRecord(BinaryWriter dataOutput, Object[] objectArray)
         {
             dataOutput.Write((byte) ' ');
-            for (int j = 0; j < header.FieldArray.Length; j++)
+            for (var j = 0; j < header.FieldArray.Length; j++)
             {
                 /* iterate throught fields */
 
@@ -366,7 +366,7 @@ namespace DotNetDBF
                     case NativeDbType.Char:
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            String str_value = objectArray[j].ToString();
+                            var str_value = objectArray[j].ToString();
                             dataOutput.Write(
                                 Utils.textPadding(str_value,
                                                   CharEncoding,
@@ -391,7 +391,7 @@ namespace DotNetDBF
                     case NativeDbType.Date:
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            DateTime tDate = (DateTime) objectArray[j];
+                            var tDate = (DateTime) objectArray[j];
 
                             dataOutput.Write(
                                 CharEncoding.GetBytes(tDate.ToString("yyyyMMdd")));
@@ -408,7 +408,7 @@ namespace DotNetDBF
 
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            Double tDouble = Convert.ToDouble(objectArray[j]);
+                            var tDouble = Convert.ToDouble(objectArray[j]);
                             dataOutput.Write(
                                 Utils.NumericFormating(
                                     tDouble,
@@ -436,7 +436,7 @@ namespace DotNetDBF
 
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            Decimal tDecimal = Convert.ToDecimal(objectArray[j]);
+                            var tDecimal = Convert.ToDecimal(objectArray[j]);
                             dataOutput.Write(
                                 Utils.NumericFormating(
                                     tDecimal,

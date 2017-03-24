@@ -103,8 +103,8 @@ namespace DotNetDBF
         {
             get
             {
-                int tRecordLength = 0;
-                for (int i = 0; i < _fieldArray.Length; i++)
+                var tRecordLength = 0;
+                for (var i = 0; i < _fieldArray.Length; i++)
                 {
                     tRecordLength += _fieldArray[i].FieldLength;
                 }
@@ -190,9 +190,9 @@ namespace DotNetDBF
             reserv4 = dataInput.ReadInt16(); /* 30-31 */
 
 
-            List<DBFField> v_fields = new List<DBFField>();
+            var v_fields = new List<DBFField>();
 
-            DBFField field = DBFField.CreateField(dataInput); /* 32 each */
+            var field = DBFField.CreateField(dataInput); /* 32 each */
             while (field != null)
             {
                 v_fields.Add(field);
@@ -206,7 +206,7 @@ namespace DotNetDBF
         internal void Write(BinaryWriter dataOutput)
         {
             dataOutput.Write(_signature); /* 0 */
-            DateTime tNow = DateTime.Now;
+            var tNow = DateTime.Now;
             _year = (byte) (tNow.Year - 1900);
             _month = (byte) (tNow.Month);
             _day = (byte) (tNow.Day);
@@ -235,7 +235,7 @@ namespace DotNetDBF
             dataOutput.Write(_languageDriver); /* 29 */
             dataOutput.Write(reserv4); /* 30-31 */
 
-            for (int i = 0; i < _fieldArray.Length; i++)
+            for (var i = 0; i < _fieldArray.Length; i++)
             {
                 //System.out.println( "Length: " + _fieldArray[i].getFieldLength());
                 _fieldArray[i].Write(dataOutput);

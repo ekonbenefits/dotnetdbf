@@ -83,7 +83,7 @@ namespace DotNetDBF
                 _header.Read(_dataInputStream);
 
                 /* it might be required to leap to the start of records at times */
-                int t_dataStartIndex = _header.HeaderLength
+                var t_dataStartIndex = _header.HeaderLength
                                        - (32 + (32 * _header.FieldArray.Length))
                                        - 1;
                 if (t_dataStartIndex > 0)
@@ -107,7 +107,7 @@ namespace DotNetDBF
                 _header.Read(_dataInputStream);
 
                 /* it might be required to leap to the start of records at times */
-                int t_dataStartIndex = _header.HeaderLength
+                var t_dataStartIndex = _header.HeaderLength
                                        - (32 + (32 * _header.FieldArray.Length))
                                        - 1;
                 if (t_dataStartIndex > 0)
@@ -168,14 +168,14 @@ namespace DotNetDBF
 
         public override String ToString()
         {
-            StringBuilder sb =
+            var sb =
                 new StringBuilder(_header.Year + "/" + _header.Month + "/"
                                   + _header.Day + "\n"
                                   + "Total records: " + _header.NumberOfRecords +
                                   "\nHeader length: " + _header.HeaderLength +
                                   "");
 
-            for (int i = 0; i < _header.FieldArray.Length; i++)
+            for (var i = 0; i < _header.FieldArray.Length; i++)
             {
                 sb.Append(_header.FieldArray[i].Name);
                 sb.Append("\n");
@@ -207,13 +207,13 @@ namespace DotNetDBF
             {
                 throw new DBFException("Source is not open");
             }
-            IList<int> tOrderdSelectIndexes = sortedIndexes;
+            var tOrderdSelectIndexes = sortedIndexes;
 
             var recordObjects = new Object[_header.FieldArray.Length];
 
             try
             {
-                bool isDeleted = false;
+                var isDeleted = false;
                 do
                 {
                     if (isDeleted)
@@ -230,9 +230,9 @@ namespace DotNetDBF
                     isDeleted = (t_byte == '*');
                 } while (isDeleted);
 
-                int j = 0;
-                int k = -1;
-                for (int i = 0; i < _header.FieldArray.Length; i++)
+                var j = 0;
+                var k = -1;
+                for (var i = 0; i < _header.FieldArray.Length; i++)
                 {
 
                     if (tOrderdSelectIndexes.Count == j && j != 0
@@ -260,17 +260,17 @@ namespace DotNetDBF
 
                         case NativeDbType.Date:
 
-                            byte[] t_byte_year = new byte[4];
+                            var t_byte_year = new byte[4];
                             _dataInputStream.Read(t_byte_year,
                                                  0,
                                                  t_byte_year.Length);
 
-                            byte[] t_byte_month = new byte[2];
+                            var t_byte_month = new byte[2];
                             _dataInputStream.Read(t_byte_month,
                                                  0,
                                                  t_byte_month.Length);
 
-                            byte[] t_byte_day = new byte[2];
+                            var t_byte_day = new byte[2];
                             _dataInputStream.Read(t_byte_day,
                                                  0,
                                                  t_byte_day.Length);
@@ -308,11 +308,11 @@ namespace DotNetDBF
 
                             try
                             {
-                                byte[] t_float = new byte[
+                                var t_float = new byte[
                                     _header.FieldArray[i].FieldLength
                                     ];
                                 _dataInputStream.Read(t_float, 0, t_float.Length);
-                                String tParsed = CharEncoding.GetString(t_float);
+                                var tParsed = CharEncoding.GetString(t_float);
                                 var tLast = tParsed.Substring(tParsed.Length - 1);
                                 if (tParsed.Length > 0
                                     && tLast != " "
@@ -337,13 +337,13 @@ namespace DotNetDBF
 
                             try
                             {
-                                byte[] t_numeric = new byte[
+                                var t_numeric = new byte[
                                     _header.FieldArray[i].FieldLength
                                     ];
                                 _dataInputStream.Read(t_numeric,
                                                      0,
                                                      t_numeric.Length);
-                                string tParsed =
+                                var tParsed =
                                     CharEncoding.GetString(t_numeric);
                                 var tLast = tParsed.Substring(tParsed.Length - 1);
                                 if (tParsed.Length > 0
@@ -367,7 +367,7 @@ namespace DotNetDBF
 
                         case NativeDbType.Logical:
 
-                            byte t_logical = _dataInputStream.ReadByte();
+                            var t_logical = _dataInputStream.ReadByte();
                             //todo find out whats really valid
                             if (t_logical == 'Y' || t_logical == 't'
                                 || t_logical == 'T'

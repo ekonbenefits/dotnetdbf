@@ -29,7 +29,7 @@ namespace DotNetDBF
 
         public static byte[] FillArray(byte[] anArray, byte value)
         {
-            for (int i = 0; i < anArray.Length; i++)
+            for (var i = 0; i < anArray.Length; i++)
             {
                 anArray[i] = value;
             }
@@ -38,9 +38,9 @@ namespace DotNetDBF
 
         public static byte[] trimLeftSpaces(byte[] arr)
         {
-            List<byte> tList = new List<byte>(arr.Length);
+            var tList = new List<byte>(arr.Length);
 
-            for (int i = 0; i < arr.Length; i++)
+            for (var i = 0; i < arr.Length; i++)
             {
                 if (arr[i] != ' ')
                 {
@@ -76,14 +76,14 @@ namespace DotNetDBF
                                          int alignment,
                                          byte paddingByte)
         {
-            Encoding tEncoding = charEncoding;
+            var tEncoding = charEncoding;
             var inputBytes = tEncoding.GetBytes(text);
             if (inputBytes.Length >= length)
             {
                 return inputBytes.Take(length).ToArray();
             }
 
-            byte[] byte_array = FillArray(new byte[length], paddingByte);
+            var byte_array = FillArray(new byte[length], paddingByte);
 
             switch (alignment)
             {
@@ -96,7 +96,7 @@ namespace DotNetDBF
                     break;
 
                 case ALIGN_RIGHT:
-                    int t_offset = length - text.Length;
+                    var t_offset = length - text.Length;
                     Array.Copy(inputBytes,
                                0,
                                byte_array,
@@ -113,13 +113,13 @@ namespace DotNetDBF
                                               int fieldLength,
                                               int sizeDecimalPart)
         {
-            int sizeWholePart = fieldLength
+            var sizeWholePart = fieldLength
                                 -
                                 (sizeDecimalPart > 0 ? (sizeDecimalPart + 1) : 0);
 
-            StringBuilder format = new StringBuilder(fieldLength);
+            var format = new StringBuilder(fieldLength);
 
-            for (int i = 0; i < sizeWholePart; i++)
+            for (var i = 0; i < sizeWholePart; i++)
             {
 
                 format.Append(i+1== sizeWholePart ? "0":"#");
@@ -129,7 +129,7 @@ namespace DotNetDBF
             {
                 format.Append(".");
 
-                for (int i = 0; i < sizeDecimalPart; i++)
+                for (var i = 0; i < sizeDecimalPart; i++)
                 {
                     format.Append("0");
                 }

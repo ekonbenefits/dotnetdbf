@@ -176,7 +176,7 @@ namespace DotNetDBF.Enumerable
 
             if (tType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any())
             {
-                object[] tAnon = reader.NextRecord(tProps, tOrderedProps);
+                var tAnon = reader.NextRecord(tProps, tOrderedProps);
                 while (tAnon != null)
                 {
 
@@ -227,7 +227,7 @@ namespace DotNetDBF.Enumerable
 
       
             var tReturn = new List<object>();
-            object[] t = reader.NextRecord();
+            var t = reader.NextRecord();
 
             while (t != null)
             {
