@@ -63,6 +63,7 @@ namespace DotNetDBF
 
 #if NET35
 
+        [Obsolete("Will need to open your own stream in later versions of .Net Framework")]
         public DBFReader(string anIn)
         {
             try
@@ -152,6 +153,7 @@ namespace DotNetDBF
         #endregion
 
 #if NET35
+        [Obsolete("Will need to open your own stream and use DataMemo property in later versions of .Net Framework")]
         public string DataMemoLoc
         {
             get { return _dataMemoLoc; }
@@ -161,14 +163,14 @@ namespace DotNetDBF
 
         public delegate Stream LazyStream();
 
-        private Stream loadedStream;
+        private Stream _loadedStream;
         private LazyStream GetLazyStreamFromLocation()
         {
 #if NET35
             if (_dataMemo == null && !String.IsNullOrEmpty(_dataMemoLoc))
             {
-                return  () => loadedStream ??
-                                  (loadedStream = File.Open(_dataMemoLoc, FileMode.Open, FileAccess.Read,
+                return  () => _loadedStream ??
+                                  (_loadedStream = File.Open(_dataMemoLoc, FileMode.Open, FileAccess.Read,
                                       FileShare.Read));
             }else
 #endif
@@ -206,9 +208,13 @@ namespace DotNetDBF
         public void Close()
         {
 #if NET35
-            
+
+            _loadedStream?.Close();
+            _dataMemo?.Close();
             _dataInputStream.Close();
 #else
+
+            _dataMemo?.Dispose();
             _dataInputStream.Dispose();
 #endif
 

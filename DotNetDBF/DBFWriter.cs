@@ -367,8 +367,10 @@ namespace DotNetDBF
                 raf.WriteByte(DBFFieldType.EndOfData);
 #if NET35
                 raf.Close();
+                _dataMemo?.Close();
 #else
                 raf.Dispose();
+                _dataMemo?.Dispose();
 #endif
             }
 

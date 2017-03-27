@@ -25,11 +25,18 @@ namespace DotNetDBF
             _base = aBase;
             _fileLoc = fileLoc;
             _fileStream = fileStream;
-            _lockName = $"DotNetDBF.Memo.read.{_fileLoc?? Guid.NewGuid().ToString() }.{_block}.";
+            if (String.IsNullOrEmpty(fileLoc))
+            {
+                _lockName = fileStream();
+            }
+            else
+            {
+                _lockName = $"DotNetDBF.Memo.read.{_fileLoc}";
+            }
         }
 
         private readonly DBFBase _base;
-        private readonly string _lockName;
+        private readonly object _lockName;
         private long _block;
         private readonly string _fileLoc;
         private string _value;
@@ -95,10 +102,11 @@ namespace DotNetDBF
                     if (!_new && !_loaded)
                     {
                         var fileStream = _fileStream();
-                        using (var reader = new BinaryReader(fileStream))
+
+                        var reader = new BinaryReader(fileStream);
+                        
                         {
                             reader.BaseStream.Seek(_block * _base.BlockSize, SeekOrigin.Begin);
-                            string tString;
                             var tStringBuilder = new StringBuilder();
                             int tIndex;
                             var tSoftReturn = _base.CharEncoding.GetString(new byte[] {0x8d, 0x0a});
@@ -107,7 +115,7 @@ namespace DotNetDBF
                             {
                                 var tData = reader.ReadBytes(_base.BlockSize);
 
-                                tString = _base.CharEncoding.GetString(tData);
+                                var tString = _base.CharEncoding.GetString(tData);
                                 tIndex = tString.IndexOf(MemoTerminator, StringComparison.Ordinal);
                                 if (tIndex != -1)
                                     tString = tString.Substring(0, tIndex);
