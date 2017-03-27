@@ -15,11 +15,12 @@
 /**
  Base class for DBFReader and DBFWriter.
  */
+
 using System.Text;
 
 namespace DotNetDBF
 {
-    abstract public class DBFBase
+    public abstract class DBFBase
     {
         protected Encoding _charEncoding = Encoding.GetEncoding("utf-8");
         protected int _blockSize = 512;
@@ -30,6 +31,7 @@ namespace DotNetDBF
 
             get { return _charEncoding; }
         }
+
         public int BlockSize
         {
             set { _blockSize = value; }

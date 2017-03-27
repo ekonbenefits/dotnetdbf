@@ -16,33 +16,22 @@ namespace DotNetDBF
 
         internal int NextBlock
         {
-            get
-            {
-                return _nextBlock;
-            }
-            set
-            {
-                _nextBlock = value;
-            }
+            get { return _nextBlock; }
+            set { _nextBlock = value; }
         }
 
         internal byte Version
         {
-            get
-            {
-                return _version;
-            }set
-            {
-                _version = value;
-            }
+            get { return _version; }
+            set { _version = value; }
         }
 
         internal void Write(BinaryWriter dataOutput)
         {
-          dataOutput.Write(_nextBlock);
-          dataOutput.Write(new byte[12]);
-          dataOutput.Write(_version);
-          dataOutput.Write(new byte[495]);
+            dataOutput.Write(_nextBlock);
+            dataOutput.Write(new byte[12]);
+            dataOutput.Write(_version);
+            dataOutput.Write(new byte[495]);
         }
     }
 }

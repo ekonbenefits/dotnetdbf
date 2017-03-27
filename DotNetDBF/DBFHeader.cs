@@ -20,26 +20,22 @@ using System.IO;
 
 namespace DotNetDBF
 {
-
-    static public class DBFSigniture
+    public static class DBFSigniture
     {
         public const byte NotSet = 0,
-                          WithMemo = 0x80,
-                          DBase3 = 0x03,
-                          DBase3WithMemo = DBase3 | WithMemo;
-
+            WithMemo = 0x80,
+            DBase3 = 0x03,
+            DBase3WithMemo = DBase3 | WithMemo;
     }
 
     [Flags]
     public enum MemoFlags : byte
     {
-        
     }
 
 
     public class DBFHeader
     {
-
         public const byte HeaderRecordTerminator = 0x0D;
 
         private byte _day; /* 3 */
@@ -67,49 +63,38 @@ namespace DotNetDBF
 
         internal byte Signature
         {
-            get
-            {
-                return _signature;
-            }set
-            {
-                _signature = value;
-            }
+            get { return _signature; }
+            set { _signature = value; }
         }
 
-        internal short Size
-        {
-            get
-            {
-                return (short) (sizeof (byte) +
-                                sizeof (byte) + sizeof (byte) + sizeof (byte) +
-                                sizeof (int) +
-                                sizeof (short) +
-                                sizeof (short) +
-                                sizeof (short) +
-                                sizeof (byte) +
-                                sizeof (byte) +
-                                sizeof (int) +
-                                sizeof (int) +
-                                sizeof (int) +
-                                sizeof (byte) +
-                                sizeof (byte) +
-                                sizeof (short) +
-                                (DBFField.SIZE * _fieldArray.Length) +
-                                sizeof (byte));
-            }
-        }
+        internal short Size => (short) (sizeof(byte) +
+                                        sizeof(byte) + sizeof(byte) + sizeof(byte) +
+                                        sizeof(int) +
+                                        sizeof(short) +
+                                        sizeof(short) +
+                                        sizeof(short) +
+                                        sizeof(byte) +
+                                        sizeof(byte) +
+                                        sizeof(int) +
+                                        sizeof(int) +
+                                        sizeof(int) +
+                                        sizeof(byte) +
+                                        sizeof(byte) +
+                                        sizeof(short) +
+                                        (DBFField.SIZE * _fieldArray.Length) +
+                                        sizeof(byte));
 
         internal short RecordSize
         {
             get
             {
-                int tRecordLength = 0;
-                for (int i = 0; i < _fieldArray.Length; i++)
+                var tRecordLength = 0;
+                for (var i = 0; i < _fieldArray.Length; i++)
                 {
                     tRecordLength += _fieldArray[i].FieldLength;
                 }
 
-                return (short)(tRecordLength + 1);
+                return (short) (tRecordLength + 1);
             }
         }
 
@@ -190,9 +175,9 @@ namespace DotNetDBF
             reserv4 = dataInput.ReadInt16(); /* 30-31 */
 
 
-            List<DBFField> v_fields = new List<DBFField>();
+            var v_fields = new List<DBFField>();
 
-            DBFField field = DBFField.CreateField(dataInput); /* 32 each */
+            var field = DBFField.CreateField(dataInput); /* 32 each */
             while (field != null)
             {
                 v_fields.Add(field);
@@ -206,7 +191,7 @@ namespace DotNetDBF
         internal void Write(BinaryWriter dataOutput)
         {
             dataOutput.Write(_signature); /* 0 */
-            DateTime tNow = DateTime.Now;
+            var tNow = DateTime.Now;
             _year = (byte) (tNow.Year - 1900);
             _month = (byte) (tNow.Month);
             _day = (byte) (tNow.Day);
@@ -235,7 +220,7 @@ namespace DotNetDBF
             dataOutput.Write(_languageDriver); /* 29 */
             dataOutput.Write(reserv4); /* 30-31 */
 
-            for (int i = 0; i < _fieldArray.Length; i++)
+            for (var i = 0; i < _fieldArray.Length; i++)
             {
                 //System.out.println( "Length: " + _fieldArray[i].getFieldLength());
                 _fieldArray[i].Write(dataOutput);

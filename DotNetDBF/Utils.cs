@@ -21,26 +21,25 @@ using System.Threading;
 
 namespace DotNetDBF
 {
-    static public class Utils
+    public static class Utils
     {
-
         public const int ALIGN_LEFT = 10;
         public const int ALIGN_RIGHT = 12;
 
-        static public byte[] FillArray(byte[] anArray, byte value)
+        public static byte[] FillArray(byte[] anArray, byte value)
         {
-            for (int i = 0; i < anArray.Length; i++)
+            for (var i = 0; i < anArray.Length; i++)
             {
                 anArray[i] = value;
             }
             return anArray;
         }
 
-        static public byte[] trimLeftSpaces(byte[] arr)
+        public static byte[] trimLeftSpaces(byte[] arr)
         {
-            List<byte> tList = new List<byte>(arr.Length);
+            var tList = new List<byte>(arr.Length);
 
-            for (int i = 0; i < arr.Length; i++)
+            for (var i = 0; i < arr.Length; i++)
             {
                 if (arr[i] != ' ')
                 {
@@ -50,86 +49,85 @@ namespace DotNetDBF
             return tList.ToArray();
         }
 
-        static public byte[] textPadding(String text,
-                                         Encoding charEncoding,
-                                         int length)
+        public static byte[] textPadding(String text,
+            Encoding charEncoding,
+            int length)
         {
             return textPadding(text, charEncoding, length, ALIGN_LEFT);
         }
 
-        static public byte[] textPadding(String text,
-                                         Encoding charEncoding,
-                                         int length,
-                                         int alignment)
+        public static byte[] textPadding(String text,
+            Encoding charEncoding,
+            int length,
+            int alignment)
         {
             return
                 textPadding(text,
-                            charEncoding,
-                            length,
-                            alignment,
-                            DBFFieldType.Space);
+                    charEncoding,
+                    length,
+                    alignment,
+                    DBFFieldType.Space);
         }
 
-        static public byte[] textPadding(String text,
-                                         Encoding charEncoding,
-                                         int length,
-                                         int alignment,
-                                         byte paddingByte)
+        public static byte[] textPadding(String text,
+            Encoding charEncoding,
+            int length,
+            int alignment,
+            byte paddingByte)
         {
-            Encoding tEncoding = charEncoding;
+            var tEncoding = charEncoding;
             var inputBytes = tEncoding.GetBytes(text);
             if (inputBytes.Length >= length)
             {
                 return inputBytes.Take(length).ToArray();
             }
 
-            byte[] byte_array = FillArray(new byte[length], paddingByte);
+            var byte_array = FillArray(new byte[length], paddingByte);
 
             switch (alignment)
             {
                 case ALIGN_LEFT:
                     Array.Copy(inputBytes,
-                               0,
-                               byte_array,
-                               0,
-                               inputBytes.Length);
+                        0,
+                        byte_array,
+                        0,
+                        inputBytes.Length);
                     break;
 
                 case ALIGN_RIGHT:
-                    int t_offset = length - text.Length;
+                    var t_offset = length - text.Length;
                     Array.Copy(inputBytes,
-                               0,
-                               byte_array,
-                               t_offset,
-                               inputBytes.Length);
+                        0,
+                        byte_array,
+                        t_offset,
+                        inputBytes.Length);
                     break;
             }
 
             return byte_array;
         }
 
-        static public byte[] NumericFormating(IFormattable doubleNum,
-                                              Encoding charEncoding,
-                                              int fieldLength,
-                                              int sizeDecimalPart)
+        public static byte[] NumericFormating(IFormattable doubleNum,
+            Encoding charEncoding,
+            int fieldLength,
+            int sizeDecimalPart)
         {
-            int sizeWholePart = fieldLength
+            var sizeWholePart = fieldLength
                                 -
                                 (sizeDecimalPart > 0 ? (sizeDecimalPart + 1) : 0);
 
-            StringBuilder format = new StringBuilder(fieldLength);
+            var format = new StringBuilder(fieldLength);
 
-            for (int i = 0; i < sizeWholePart; i++)
+            for (var i = 0; i < sizeWholePart; i++)
             {
-
-                format.Append(i+1== sizeWholePart ? "0":"#");
+                format.Append(i + 1 == sizeWholePart ? "0" : "#");
             }
 
             if (sizeDecimalPart > 0)
             {
                 format.Append(".");
 
-                for (int i = 0; i < sizeDecimalPart; i++)
+                for (var i = 0; i < sizeDecimalPart; i++)
                 {
                     format.Append("0");
                 }
@@ -139,36 +137,36 @@ namespace DotNetDBF
             return
                 textPadding(
                     doubleNum.ToString(format.ToString(),
-                                       NumberFormatInfo.InvariantInfo),
+                        NumberFormatInfo.InvariantInfo),
                     charEncoding,
                     fieldLength,
                     ALIGN_RIGHT);
         }
 
-        static public bool contains(byte[] arr, byte value)
+        public static bool contains(byte[] arr, byte value)
         {
             return
                 Array.Exists(arr,
-                             delegate(byte anItem) { return anItem == value; });
+                    delegate(byte anItem) { return anItem == value; });
         }
 
 
-        static public Type TypeForNativeDBType(NativeDbType aType)
+        public static Type TypeForNativeDBType(NativeDbType aType)
         {
-            switch(aType)
+            switch (aType)
             {
                 case NativeDbType.Char:
-                    return typeof (string);
+                    return typeof(string);
                 case NativeDbType.Date:
-                    return typeof (DateTime);
+                    return typeof(DateTime);
                 case NativeDbType.Numeric:
-                    return typeof (decimal);
+                    return typeof(decimal);
                 case NativeDbType.Logical:
-                    return typeof (bool);
+                    return typeof(bool);
                 case NativeDbType.Float:
-                    return typeof (float);
+                    return typeof(float);
                 case NativeDbType.Memo:
-                    return typeof (MemoValue);
+                    return typeof(MemoValue);
                 default:
                     throw new ArgumentException("Unsupported Type");
             }

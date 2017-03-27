@@ -69,10 +69,7 @@ namespace DotNetDBF
             DecimalCount = aDecimalCount;
         }
 
-        public int Size
-        {
-            get { return SIZE; }
-        }
+        public int Size => SIZE;
 
         /**
          Returns the name of the field.
@@ -108,13 +105,7 @@ namespace DotNetDBF
          @return Data type as byte.
          */
 
-        public Type Type
-        {
-            get
-            {
-                return Utils.TypeForNativeDBType(DataType);
-            }
-        }
+        public Type Type => Utils.TypeForNativeDBType(DataType);
 
 
         public NativeDbType DataType
@@ -231,7 +222,7 @@ namespace DotNetDBF
 
         public bool Read(BinaryReader aReader)
         {
-            byte t_byte = aReader.ReadByte(); /* 0 */
+            var t_byte = aReader.ReadByte(); /* 0 */
             if (t_byte == DBFFieldType.EndOfField)
             {
                 //System.out.println( "End of header found");
@@ -241,7 +232,7 @@ namespace DotNetDBF
             aReader.Read(fieldName, 1, 10); /* 1-10 */
             fieldName[0] = t_byte;
 
-            for (int i = 0; i < fieldName.Length; i++)
+            for (var i = 0; i < fieldName.Length; i++)
             {
                 if (fieldName[i]
                     == 0)
@@ -304,9 +295,9 @@ namespace DotNetDBF
          @throws IOException If any stream reading problems occures.
          */
 
-        static internal DBFField CreateField(BinaryReader aReader)
+        internal static DBFField CreateField(BinaryReader aReader)
         {
-            DBFField field = new DBFField();
+            var field = new DBFField();
             if (field.Read(aReader))
             {
                 return field;

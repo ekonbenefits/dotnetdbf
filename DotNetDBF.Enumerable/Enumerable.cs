@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using ImpromptuInterface;
 using ImpromptuInterface.Dynamic;
+
 namespace DotNetDBF.Enumerable
 {
     /// <summary>
@@ -17,6 +18,7 @@ namespace DotNetDBF.Enumerable
         /// </summary>
         /// <returns></returns>
         bool Exists(string fieldName);
+
         /// <summary>
         /// Gets the data row.
         /// </summary>
@@ -44,7 +46,6 @@ namespace DotNetDBF.Enumerable
         {
             _wrappedArray = wrappedObj;
             _fieldNames = fieldNames;
-
         }
 
         public override IEnumerable<string> GetDynamicMemberNames()
@@ -62,7 +63,7 @@ namespace DotNetDBF.Enumerable
             result = null;
             var tLookup = binder.Name;
             var tIndex = Array.FindIndex(_fieldNames,
-                                         it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
+                it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
 
             if (tIndex < 0)
                 return false;
@@ -82,10 +83,9 @@ namespace DotNetDBF.Enumerable
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-
             var tLookup = binder.Name;
             var tIndex = Array.FindIndex(_fieldNames,
-                                         it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
+                it => it.Equals(tLookup, StringComparison.InvariantCultureIgnoreCase));
 
             if (tIndex < 0)
                 return false;
@@ -112,7 +112,6 @@ namespace DotNetDBF.Enumerable
     /// </summary>
     public static partial class DBFEnumerable
     {
-
         /// <summary>
         /// New Blank Row Dynamic object that matches writer;
         /// </summary>
@@ -155,7 +154,7 @@ namespace DotNetDBF.Enumerable
         /// <param name="reader">The reader.</param>
         /// <param name="prototype">The prototype. Anonymous class instance</param>
         /// <returns></returns>
-        static public IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype =null) where T : class 
+        public static IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype = null) where T : class
         {
             var tType = typeof(T);
 
@@ -166,44 +165,41 @@ namespace DotNetDBF.Enumerable
                             f => f.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase)) >= 0);
             var tProps = tProperties
                 .Select(
-                it =>
-                Array.FindIndex(reader.Fields,
-                                jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase))).Where(it=> it >= 0).ToArray();
-            
+                    it =>
+                        Array.FindIndex(reader.Fields,
+                            jt => jt.Name.Equals(it.Name, StringComparison.InvariantCultureIgnoreCase)))
+                .Where(it => it >= 0)
+                .ToArray();
+
             var tOrderedProps = tProps.OrderBy(it => it).ToArray();
             var tReturn = new List<T>();
 
 
             if (tType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any())
             {
-                object[] tAnon = reader.NextRecord(tProps, tOrderedProps);
+                var tAnon = reader.NextRecord(tProps, tOrderedProps);
                 while (tAnon != null)
                 {
-
-                    tReturn.Add((T)Activator.CreateInstance(tType, tAnon));
+                    tReturn.Add((T) Activator.CreateInstance(tType, tAnon));
                     tAnon = reader.NextRecord(tProps, tOrderedProps);
                 }
 
 
-
                 return tReturn;
             }
-               
-            var t = reader.NextRecord(tProps, tOrderedProps);  
+
+            var t = reader.NextRecord(tProps, tOrderedProps);
 
             while (t != null)
-                {
+            {
+                var tIntercepter = new Enumerable.DBFIntercepter(t, tProperties.Select(it => it.Name).ToArray());
 
-                    var tIntercepter = new Enumerable.DBFIntercepter(t, tProperties.Select(it => it.Name).ToArray());
-
-                    tReturn.Add(tIntercepter.ActLike<T>(typeof(Enumerable.IDBFIntercepter)));
-                    t = reader.NextRecord(tProps, tOrderedProps);
-                }
-
+                tReturn.Add(tIntercepter.ActLike<T>(typeof(Enumerable.IDBFIntercepter)));
+                t = reader.NextRecord(tProps, tOrderedProps);
+            }
 
 
-                return tReturn;
-            
+            return tReturn;
         }
 
         /// <summary>
@@ -213,28 +209,28 @@ namespace DotNetDBF.Enumerable
         /// <param name="whereColumn">The where column name.</param>
         /// <param name="whereColumnEquals">What the were column should equal.</param>
         /// <returns></returns>
-        static public IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null, dynamic whereColumnEquals = null)
+        public static IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null,
+            dynamic whereColumnEquals = null)
         {
-           
-            var tProperties = reader.GetSelectFields().Select(it=>it.Name).ToArray();
+            var tProperties = reader.GetSelectFields().Select(it => it.Name).ToArray();
 
-            int? tWhereColumn=null;
-            if(!String.IsNullOrEmpty(whereColumn))
+            int? tWhereColumn = null;
+            if (!String.IsNullOrEmpty(whereColumn))
             {
                 tWhereColumn = Array.FindIndex(tProperties,
-                                it => it.Equals(whereColumn, StringComparison.InvariantCultureIgnoreCase));
+                    it => it.Equals(whereColumn, StringComparison.InvariantCultureIgnoreCase));
             }
 
-      
+
             var tReturn = new List<object>();
-            object[] t = reader.NextRecord();
+            var t = reader.NextRecord();
 
             while (t != null)
             {
                 if (tWhereColumn.HasValue)
                 {
                     dynamic tO = t[tWhereColumn.Value];
-                    if(!tO.Equals(whereColumnEquals))
+                    if (!tO.Equals(whereColumnEquals))
                     {
                         t = reader.NextRecord();
                         continue;
@@ -251,9 +247,6 @@ namespace DotNetDBF.Enumerable
 
 
             return tReturn;
-
         }
-
-      
     }
 }

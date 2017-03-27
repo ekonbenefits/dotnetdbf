@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace DotNetDBF
@@ -23,14 +24,18 @@ namespace DotNetDBF
         private DBFHeader header;
         private Stream raf;
         private int recordCount;
-        private ArrayList v_records = new ArrayList();
+        private List<object> v_records = new List<object>();
         private string _dataMemoLoc;
+        private Stream _dataMemo;
 
         /// Creates an empty Object.
         public DBFWriter()
         {
             header = new DBFHeader();
         }
+
+#if NET35
+        
 
         /// Creates a DBFWriter which can append to records to an existing DBF file.
         /// @param dbfFile. The file passed in shouls be a valid DBF file.
@@ -41,10 +46,10 @@ namespace DotNetDBF
             {
                 raf =
                     File.Open(dbfFile,
-                              FileMode.OpenOrCreate,
-                              FileAccess.ReadWrite);
+                        FileMode.OpenOrCreate,
+                        FileAccess.ReadWrite);
 
-                _dataMemoLoc = Path.ChangeExtension(dbfFile, "dbt");
+                DataMemoLoc = Path.ChangeExtension(dbfFile, "dbt");
 
                 /* before proceeding check whether the passed in File object
 				 is an empty/non-existent file or not.
@@ -60,7 +65,7 @@ namespace DotNetDBF
 
                 /* position file pointer at the end of the raf */
                 raf.Seek(-1, SeekOrigin.End);
-                    /* to ignore the END_OF_DATA byte at EoF */
+                /* to ignore the END_OF_DATA byte at EoF */
             }
             catch (FileNotFoundException e)
             {
@@ -72,6 +77,7 @@ namespace DotNetDBF
             }
             recordCount = header.NumberOfRecords;
         }
+#endif
 
         public DBFWriter(Stream dbfFile)
         {
@@ -91,7 +97,7 @@ namespace DotNetDBF
 
             /* position file pointer at the end of the raf */
             raf.Seek(-1, SeekOrigin.End);
-                /* to ignore the END_OF_DATA byte at EoF */
+            /* to ignore the END_OF_DATA byte at EoF */
 
 
             recordCount = header.NumberOfRecords;
@@ -99,41 +105,50 @@ namespace DotNetDBF
 
         public byte Signature
         {
-            get
-            {
-                return header.Signature;
-            }set
-            {
-                header.Signature = value;
-            }
+            get { return header.Signature; }
+            set { header.Signature = value; }
         }
 
+#if NET35
+        
         public string DataMemoLoc
         {
             get { return _dataMemoLoc; }
-            set { _dataMemoLoc = value; }
+            set
+            {
+                _dataMemoLoc = value;
+                
+                _dataMemo?.Close();
+                _dataMemo = File.Open(_dataMemoLoc,
+                    FileMode.OpenOrCreate,
+                    FileAccess.ReadWrite);
+            }
+        }
+#endif
+
+        public Stream DataMemo
+        {
+            get { return _dataMemo; }
+            set { _dataMemo = value; }
         }
 
         public byte LanguageDriver
-	    {
+        {
             set
             {
                 if (header.LanguageDriver != 0x00)
-                    {
-                            throw new DBFException("LanguageDriver has already been set");
-                    }
+                {
+                    throw new DBFException("LanguageDriver has already been set");
+                }
 
                 header.LanguageDriver = value;
             }
-	    }
-	
-     
+        }
+
+
         public DBFField[] Fields
         {
-            get
-            {
-              return header.FieldArray; 
-            }
+            get { return header.FieldArray; }
 
 
             set
@@ -149,7 +164,7 @@ namespace DotNetDBF
                     throw new DBFException("Should have at least one field");
                 }
 
-                for (int i = 0; i < value.Length; i++)
+                for (var i = 0; i < value.Length; i++)
                 {
                     if (value[i] == null)
                     {
@@ -172,7 +187,7 @@ namespace DotNetDBF
                 }
                 catch (IOException e)
                 {
-                    throw new DBFException("Error accesing file",e);
+                    throw new DBFException("Error accesing file", e);
                 }
             }
         }
@@ -233,7 +248,7 @@ namespace DotNetDBF
                     "Invalid record. Invalid number of fields in row");
             }
 
-            for (int i = 0; i < header.FieldArray.Length; i++)
+            for (var i = 0; i < header.FieldArray.Length; i++)
             {
                 if (values[i] == null)
                 {
@@ -315,18 +330,18 @@ namespace DotNetDBF
         {
             try
             {
-                BinaryWriter outStream = new BinaryWriter(tOut);
+                var outStream = new BinaryWriter(tOut);
 
                 header.NumberOfRecords = v_records.Count;
                 header.Write(outStream);
 
                 /* Now write all the records */
-                int t_recCount = v_records.Count;
-                for (int i = 0; i < t_recCount; i++)
+                var t_recCount = v_records.Count;
+                for (var i = 0; i < t_recCount; i++)
                 {
                     /* iterate through records */
 
-                    Object[] t_values = (Object[]) v_records[i];
+                    var t_values = (Object[]) v_records[i];
 
                     WriteRecord(outStream, t_values);
                 }
@@ -350,14 +365,30 @@ namespace DotNetDBF
                 header.Write(new BinaryWriter(raf));
                 raf.Seek(0, SeekOrigin.End);
                 raf.WriteByte(DBFFieldType.EndOfData);
+#if NET35
                 raf.Close();
+                _dataMemo?.Close();
+#else
+                raf.Dispose();
+                _dataMemo?.Dispose();
+#endif
             }
+
+#if NET35
+
+
+            if (!String.IsNullOrEmpty(DataMemoLoc))
+            {
+                DataMemo.Close();
+            }
+#endif
+
         }
 
         private void WriteRecord(BinaryWriter dataOutput, Object[] objectArray)
         {
             dataOutput.Write((byte) ' ');
-            for (int j = 0; j < header.FieldArray.Length; j++)
+            for (var j = 0; j < header.FieldArray.Length; j++)
             {
                 /* iterate throught fields */
 
@@ -366,24 +397,24 @@ namespace DotNetDBF
                     case NativeDbType.Char:
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            String str_value = objectArray[j].ToString();
+                            var str_value = objectArray[j].ToString();
                             dataOutput.Write(
                                 Utils.textPadding(str_value,
-                                                  CharEncoding,
-                                                  header.FieldArray[j].
-                                                      FieldLength
-                                    )
-                                );
+                                    CharEncoding,
+                                    header.FieldArray[j].
+                                        FieldLength
+                                )
+                            );
                         }
                         else
                         {
                             dataOutput.Write(
                                 Utils.textPadding("",
-                                                  CharEncoding,
-                                                  header.FieldArray[j].
-                                                      FieldLength
-                                    )
-                                );
+                                    CharEncoding,
+                                    header.FieldArray[j].
+                                        FieldLength
+                                )
+                            );
                         }
 
                         break;
@@ -391,7 +422,7 @@ namespace DotNetDBF
                     case NativeDbType.Date:
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            DateTime tDate = (DateTime) objectArray[j];
+                            var tDate = (DateTime) objectArray[j];
 
                             dataOutput.Write(
                                 CharEncoding.GetBytes(tDate.ToString("yyyyMMdd")));
@@ -408,15 +439,15 @@ namespace DotNetDBF
 
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            Double tDouble = Convert.ToDouble(objectArray[j]);
+                            var tDouble = Convert.ToDouble(objectArray[j]);
                             dataOutput.Write(
                                 Utils.NumericFormating(
                                     tDouble,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     header.FieldArray[j].DecimalCount
-                                    )
-                                );
+                                )
+                            );
                         }
                         else
                         {
@@ -426,8 +457,8 @@ namespace DotNetDBF
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
-                                    )
-                                );
+                                )
+                            );
                         }
 
                         break;
@@ -436,15 +467,15 @@ namespace DotNetDBF
 
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            Decimal tDecimal = Convert.ToDecimal(objectArray[j]);
+                            var tDecimal = Convert.ToDecimal(objectArray[j]);
                             dataOutput.Write(
                                 Utils.NumericFormating(
                                     tDecimal,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     header.FieldArray[j].DecimalCount
-                                    )
-                                );
+                                )
+                            );
                         }
                         else
                         {
@@ -454,8 +485,8 @@ namespace DotNetDBF
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
-                                    )
-                                );
+                                )
+                            );
                         }
 
                         break;
@@ -486,16 +517,17 @@ namespace DotNetDBF
 
                             tMemoValue.Write(this);
 
-                            dataOutput.Write( Utils.NumericFormating(tMemoValue.Block,CharEncoding,10,0));
-                        }else
-                         {
-                             dataOutput.Write(
-                             Utils.textPadding("",
-                                               CharEncoding,
-                                               10
-                                 )
-                             );
-                         }
+                            dataOutput.Write(Utils.NumericFormating(tMemoValue.Block, CharEncoding, 10, 0));
+                        }
+                        else
+                        {
+                            dataOutput.Write(
+                                Utils.textPadding("",
+                                    CharEncoding,
+                                    10
+                                )
+                            );
+                        }
 
 
                         break;
