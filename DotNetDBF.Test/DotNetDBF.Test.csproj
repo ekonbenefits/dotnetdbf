@@ -43,10 +43,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Issue19Test.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="dbfs\cp1251.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_03.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_30.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_30.fpt" />
+    <EmbeddedResource Include="dbfs\dbase_31.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_83.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_83.dbt" />
+    <EmbeddedResource Include="dbfs\dbase_83_missing_memo.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_83_missing_memo_record_0.yml" />
+    <EmbeddedResource Include="dbfs\dbase_83_record_0.yml" />
+    <EmbeddedResource Include="dbfs\dbase_83_record_9.yml" />
+    <EmbeddedResource Include="dbfs\dbase_8b.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_8b.dbt" />
+    <EmbeddedResource Include="dbfs\dbase_f5.dbf" />
+    <EmbeddedResource Include="dbfs\dbase_f5.fpt" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +74,16 @@
       <Project>{c5e9ae18-1ea3-4c90-afab-5323093be4ac}</Project>
       <Name>DotNetDBF</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="dbfs\cp1251_summary.txt" />
+    <EmbeddedResource Include="dbfs\dbase_03_summary.txt" />
+    <EmbeddedResource Include="dbfs\dbase_30_summary.txt" />
+    <EmbeddedResource Include="dbfs\dbase_31_summary.txt" />
+    <EmbeddedResource Include="dbfs\dbase_83_schema.txt" />
+    <EmbeddedResource Include="dbfs\dbase_83_summary.txt" />
+    <EmbeddedResource Include="dbfs\dbase_8b_summary.txt" />
+    <EmbeddedResource Include="dbfs\dbase_f5_summary.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
