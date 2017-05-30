@@ -260,47 +260,41 @@ namespace DotNetDBF
                     case NativeDbType.Char:
                         if (!(values[i] is String) && !(values[i] is DBNull))
                         {
-                            throw new DBFException("Invalid value for field "
-                                                   + i);
+                            throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
                         break;
 
                     case NativeDbType.Logical:
                         if (!(values[i] is Boolean) && !(values[i] is DBNull))
                         {
-                            throw new DBFException("Invalid value for field "
-                                                   + i);
+                            throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
                         break;
 
                     case NativeDbType.Numeric:
                         if (!(values[i] is IConvertible) && !(values[i] is DBNull))
                         {
-                            throw new DBFException("Invalid value for field "
-                                                   + i);
+                            throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
                         break;
 
                     case NativeDbType.Date:
                         if (!(values[i] is DateTime) && !(values[i] is DBNull))
                         {
-                            throw new DBFException("Invalid value for field "
-                                                   + i);
+                            throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
                         break;
 
                     case NativeDbType.Float:
                         if (!(values[i] is IConvertible) && !(values[i] is DBNull))
                         {
-                            throw new DBFException("Invalid value for field "
-                                                   + i);
+                            throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
                         break;
                     case NativeDbType.Memo:
                         if (!(values[i] is MemoValue) && !(values[i] is DBNull))
                         {
-                            throw new DBFException("Invalid value for field "
-                                                   + i);
+                            throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
                         break;
                 }

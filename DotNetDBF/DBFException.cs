@@ -28,6 +28,22 @@ namespace DotNetDBF
         {
         }
     }
+
+    public class DBFRecordException : DBFException
+    {
+        public int Record { get; }
+
+        public DBFRecordException(String msg, int record) : base(msg)
+        {
+            Record = record;
+        }
+
+        public DBFRecordException(String msg, Exception internalException)
+            : base(msg, internalException)
+        {
+        }
+    }
+
     public class DBFException : IOException
     {
         public DBFException() : base()
