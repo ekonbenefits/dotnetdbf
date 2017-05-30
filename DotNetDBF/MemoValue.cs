@@ -111,10 +111,14 @@ namespace DotNetDBF
                             int tIndex;
                             var tSoftReturn = _base.CharEncoding.GetString(new byte[] {0x8d, 0x0a});
 
+                            byte[] tData;
                             do
                             {
-                                var tData = reader.ReadBytes(_base.BlockSize);
-
+                                tData = reader.ReadBytes(_base.BlockSize);
+                                if ((tData.Length == 0))
+                                {
+                                    throw new DBTException("Missing Data for block or no 1a memo terminiator");
+                                }
                                 var tString = _base.CharEncoding.GetString(tData);
                                 tIndex = tString.IndexOf(MemoTerminator, StringComparison.Ordinal);
                                 if (tIndex != -1)

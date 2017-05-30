@@ -16,6 +16,18 @@ using System.IO;
 
 namespace DotNetDBF
 {
+    public class DBTException : DBFException
+    {
+
+        public DBTException(String msg) : base(msg)
+        {
+        }
+
+        public DBTException(String msg, Exception internalException)
+            : base(msg, internalException)
+        {
+        }
+    }
     public class DBFException : IOException
     {
         public DBFException() : base()
