@@ -27,6 +27,7 @@ namespace DotNetDBF
         private List<object> v_records = new List<object>();
         private string _dataMemoLoc;
         private Stream _dataMemo;
+	private string _nullSymbol;
 
         /// Creates an empty Object.
         public DBFWriter()
@@ -145,6 +146,16 @@ namespace DotNetDBF
             }
         }
 
+	public string NullSymbol
+        {
+            get { return _nullSymbol; }
+            set
+            {
+                if (value.Length != 1)
+                    throw new ArgumentException(nameof(NullSymbol));
+                _nullSymbol = value;
+            }
+        }
 
         public DBFField[] Fields
         {
@@ -447,7 +458,7 @@ namespace DotNetDBF
                         {
                             dataOutput.Write(
                                 Utils.textPadding(
-                                    DBFFieldType.Unknown,
+                                    NullSymbol ?? DBFFieldType.Unknown,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
@@ -475,7 +486,7 @@ namespace DotNetDBF
                         {
                             dataOutput.Write(
                                 Utils.textPadding(
-                                    DBFFieldType.Unknown,
+                                    NullSymbol ?? DBFFieldType.Unknown,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
