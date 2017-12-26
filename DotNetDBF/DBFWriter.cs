@@ -27,7 +27,7 @@ namespace DotNetDBF
         private List<object> v_records = new List<object>();
         private string _dataMemoLoc;
         private Stream _dataMemo;
-	private string _nullSymbol;
+        private string _nullSymbol;
 
         /// Creates an empty Object.
         public DBFWriter()
