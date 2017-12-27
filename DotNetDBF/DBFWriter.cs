@@ -148,7 +148,7 @@ namespace DotNetDBF
 
 	public string NullSymbol
         {
-            get { return _nullSymbol; }
+            get { return _nullSymbol ?? DBFFieldType.Unknown; }
             set
             {
                 if (value != null && value.Length != 1)
@@ -458,7 +458,7 @@ namespace DotNetDBF
                         {
                             dataOutput.Write(
                                 Utils.textPadding(
-                                    NullSymbol ?? DBFFieldType.Unknown,
+                                    NullSymbol,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
@@ -486,7 +486,7 @@ namespace DotNetDBF
                         {
                             dataOutput.Write(
                                 Utils.textPadding(
-                                    NullSymbol ?? DBFFieldType.Unknown,
+                                    NullSymbol,
                                     CharEncoding,
                                     header.FieldArray[j].FieldLength,
                                     Utils.ALIGN_RIGHT
