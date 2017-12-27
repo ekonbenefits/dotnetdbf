@@ -151,7 +151,7 @@ namespace DotNetDBF
             get { return _nullSymbol; }
             set
             {
-                if (value.Length != 1)
+                if (value != null && value.Length != 1)
                     throw new ArgumentException(nameof(NullSymbol));
                 _nullSymbol = value;
             }
