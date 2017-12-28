@@ -31,6 +31,7 @@ namespace DotNetDBF
         private int[] _orderedSelectFields = new int[] {};
         /* Class specific variables */
         private bool _isClosed = true;
+        private string _nullSymbol;
 
         /**
 		 Initializes a DBFReader object.
@@ -161,6 +162,17 @@ namespace DotNetDBF
         }
 #endif
 
+	public string NullSymbol
+        {
+            get { return _nullSymbol ?? DBFFieldType.Unknown; }
+            set
+            {
+                if (value != null && value.Length != 1)
+                    throw new ArgumentException(nameof(NullSymbol));
+                _nullSymbol = value;
+            }
+        }
+	
         public delegate Stream LazyStream();
 
         private Stream _loadedStream;
@@ -349,7 +361,7 @@ namespace DotNetDBF
                                 var tLast = tParsed.Substring(tParsed.Length - 1);
                                 if (tParsed.Length > 0
                                     && tLast != " "
-                                    && tLast != DBFFieldType.Unknown)
+                                    && tLast != NullSymbol)
                                 {
                                     recordObjects[i] = Double.Parse(tParsed,
                                         NumberStyles.Float | NumberStyles.AllowLeadingWhite,
@@ -383,7 +395,7 @@ namespace DotNetDBF
                                 var tLast = tParsed.Substring(tParsed.Length - 1);
                                 if (tParsed.Length > 0
                                     && tLast != " "
-                                    && tLast != DBFFieldType.Unknown)
+                                    && tLast != NullSymbol)
                                 {
                                     recordObjects[i] = Decimal.Parse(tParsed,
                                         NumberStyles.Float | NumberStyles.AllowLeadingWhite,
