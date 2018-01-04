@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net40</TargetFramework>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
     <PackageId>dotnetdbf.enumerable</PackageId>
@@ -15,9 +15,7 @@
     <RepositoryType>gits</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>4.3.11.0</Version>
-    <AssemblyVersion>4.3.11.0</AssemblyVersion>
-    <FileVersion>4.3.11.0</FileVersion>
+    <Version>5.0.4</Version>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
   </PropertyGroup>
@@ -25,7 +23,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ImpromptuInterface" Version="6.2.2" />
+    <PackageReference Include="ImpromptuInterface" Version="7.0.1-*" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj" />

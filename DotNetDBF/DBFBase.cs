@@ -16,6 +16,7 @@
  Base class for DBFReader and DBFWriter.
  */
 
+using System;
 using System.Text;
 
 namespace DotNetDBF
@@ -24,6 +25,7 @@ namespace DotNetDBF
     {
         protected Encoding _charEncoding = Encoding.GetEncoding("utf-8");
         protected int _blockSize = 512;
+        private string _nullSymbol;
 
         public Encoding CharEncoding
         {
@@ -38,5 +40,17 @@ namespace DotNetDBF
 
             get { return _blockSize; }
         }
+        
+        public string NullSymbol
+        {
+            get { return _nullSymbol ?? DBFFieldType.Unknown; }
+            set
+            {
+                if (value != null && value.Length != 1)
+                    throw new ArgumentException(nameof(NullSymbol));
+                _nullSymbol = value;
+            }
+        }
+	
     }
 }

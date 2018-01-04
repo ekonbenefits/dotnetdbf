@@ -31,7 +31,7 @@ namespace DotNetDBF
         private int[] _orderedSelectFields = new int[] {};
         /* Class specific variables */
         private bool _isClosed = true;
-        private string _nullSymbol;
+        
 
         /**
 		 Initializes a DBFReader object.
@@ -162,17 +162,7 @@ namespace DotNetDBF
         }
 #endif
 
-	public string NullSymbol
-        {
-            get { return _nullSymbol ?? DBFFieldType.Unknown; }
-            set
-            {
-                if (value != null && value.Length != 1)
-                    throw new ArgumentException(nameof(NullSymbol));
-                _nullSymbol = value;
-            }
-        }
-	
+
         public delegate Stream LazyStream();
 
         private Stream _loadedStream;

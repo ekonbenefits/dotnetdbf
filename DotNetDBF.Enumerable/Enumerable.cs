@@ -4,7 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ImpromptuInterface;
-using ImpromptuInterface.Dynamic;
+using Dynamitey;
 
 namespace DotNetDBF.Enumerable
 {
@@ -37,7 +37,7 @@ namespace DotNetDBF.Enumerable
     /// <summary>
     /// DBF Dynamic Wrapper
     /// </summary>
-    public abstract class BaseDBFIntercepter : ImpromptuObject, IDBFIntercepter
+    public abstract class BaseDBFIntercepter : Dynamitey.DynamicObjects.BaseObject, IDBFIntercepter
     {
         private readonly string[] _fieldNames;
         private readonly object[] _wrappedArray;
@@ -75,7 +75,7 @@ namespace DotNetDBF.Enumerable
             Type outType;
             if (TryTypeForName(tLookup, out outType))
             {
-                result = Impromptu.CoerceConvert(result, outType);
+                result = Dynamic.CoerceConvert(result, outType);
             }
 
             return true;
@@ -93,7 +93,7 @@ namespace DotNetDBF.Enumerable
             Type outType;
             if (TryTypeForName(tLookup, out outType))
             {
-                value = Impromptu.CoerceConvert(value, outType);
+                value = Dynamic.CoerceConvert(value, outType);
             }
 
             _wrappedArray[tIndex] = value;

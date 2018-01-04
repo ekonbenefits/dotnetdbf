@@ -146,16 +146,6 @@ namespace DotNetDBF
             }
         }
 
-	public string NullSymbol
-        {
-            get { return _nullSymbol ?? DBFFieldType.Unknown; }
-            set
-            {
-                if (value != null && value.Length != 1)
-                    throw new ArgumentException(nameof(NullSymbol));
-                _nullSymbol = value;
-            }
-        }
 
         public DBFField[] Fields
         {
