@@ -188,7 +188,7 @@ namespace DotNetDBF
                 }
                 catch (IOException e)
                 {
-                    throw new DBFException("Error accesing file", e);
+                    throw new DBFException("Error accessing file", e);
                 }
             }
         }
@@ -224,12 +224,12 @@ namespace DotNetDBF
             if (raf != null)
             {
                 throw new DBFException(
-                    "Appending to a file, requires using Writerecord instead");
+                    "Appending to a file, requires using WriteRecord instead");
             }
             AddRecord(values, false);
         }
 
-        private void AddRecord(object[] values, bool writeImediately)
+        private void AddRecord(object[] values, bool writeImmediately)
         {
             if (header.FieldArray == null)
             {
@@ -301,7 +301,7 @@ namespace DotNetDBF
                 }
             }
 
-            if (!writeImediately)
+            if (!writeImmediately)
             {
                 v_records.Add(values);
             }
@@ -385,7 +385,7 @@ namespace DotNetDBF
             dataOutput.Write((byte) ' ');
             for (var j = 0; j < header.FieldArray.Length; j++)
             {
-                /* iterate throught fields */
+                /* iterate through fields */
 
                 switch (header.FieldArray[j].DataType)
                 {
