@@ -124,6 +124,15 @@ namespace DotNetDBF.Enumerable
             return new Enumerable.DBFInterceptor(obj, fields);
         }
 
+        public static void CopyRecordTo(this IDBFInterceptor original, IDBFInterceptor dest)
+        {
+            foreach (var fieldName in Dynamitey.Dynamic.GetMemberNames(dest, true))
+            {
+                var val = Dynamic.InvokeGet(original, fieldName);
+                Dynamic.InvokeSet(dest, fieldName, val);
+            }
+        }
+
 
         /// <summary>
         /// Writes the record.
