@@ -157,13 +157,12 @@ namespace DotNetDBF
 
         public override bool Equals(object obj)
         {
-            if (obj as MemoValue == null)
-                return false;
-            if (ReferenceEquals(this, obj))
+            if (obj is MemoValue m)
             {
-                return true;
+                return ReferenceEquals(this, obj) || Value.Equals(m.Value);
             }
-            return Value.Equals(((MemoValue) obj).Value);
+
+            return false;
         }
     }
 }
