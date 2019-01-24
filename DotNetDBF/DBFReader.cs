@@ -26,7 +26,9 @@ namespace DotNetDBF
         private BinaryReader _dataInputStream;
         private DBFHeader _header;
         private Stream _dataMemo;
+#if NET35
         private string _dataMemoLoc;
+#endif
         private int[] _selectFields = new int[] {};
         private int[] _orderedSelectFields = new int[] {};
         /* Class specific variables */
@@ -164,8 +166,9 @@ namespace DotNetDBF
 
 
         public delegate Stream LazyStream();
-
+#if NET35
         private Stream _loadedStream;
+#endif        
         private LazyStream GetLazyStreamFromLocation()
         {
 #if NET35
@@ -316,10 +319,9 @@ namespace DotNetDBF
                                 var tMonth = CharEncoding.GetString(t_byte_month);
                                 var tDay = CharEncoding.GetString(t_byte_day);
 
-                                int tIntYear, tIntMonth, tIntDay;
-                                if (int.TryParse(tYear, out tIntYear) &&
-                                    int.TryParse(tMonth, out tIntMonth) &&
-                                    int.TryParse(tDay, out tIntDay))
+                                if (int.TryParse(tYear, out var tIntYear) &&
+                                    int.TryParse(tMonth, out var tIntMonth) &&
+                                    int.TryParse(tDay, out var tIntDay))
                                 {
                                     recordObjects[i] = new DateTime(
                                         tIntYear,
@@ -425,28 +427,38 @@ namespace DotNetDBF
                             break;
 
                         case NativeDbType.Memo:
-                            if (string.IsNullOrEmpty(_dataMemoLoc) && _dataMemo == null)
+                            if (
+#if net35
+                                string.IsNullOrEmpty(_dataMemoLoc) && 
+#endif
+                                _dataMemo is null)
                                 throw new Exception("Memo Location Not Set");
 
 
-                            var tRawMemoPointer = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
-                            var tMemoPoiner = CharEncoding.GetString(tRawMemoPointer);
-                            if (string.IsNullOrEmpty(tMemoPoiner))
+                            var rawMemoPointer = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
+                            var memoPointer = CharEncoding.GetString(rawMemoPointer);
+                            if (string.IsNullOrEmpty(memoPointer))
                             {
                                 recordObjects[i] = DBNull.Value;
                                 break;
                             }
-                            long tBlock;
-                            if (!long.TryParse(tMemoPoiner, out tBlock))
+
+                            if (!long.TryParse(memoPointer, out var tBlock))
                             {
-                                //Because Memo files can vary and are often the least importat data, 
+                                //Because Memo files can vary and are often the least important data, 
                                 //we will return null when it doesn't match our format.
                                 recordObjects[i] = DBNull.Value;
                                 break;
                             }
 
 
-                            recordObjects[i] = new MemoValue(tBlock, this, _dataMemoLoc, GetLazyStreamFromLocation());
+                            recordObjects[i] = new MemoValue(tBlock, this, 
+                                #if net35
+                                _dataMemoLoc,
+                                #else
+                                null,
+                                #endif
+                                GetLazyStreamFromLocation());
                             break;
                         default:
                             _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);

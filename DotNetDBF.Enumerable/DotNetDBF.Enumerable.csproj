@@ -7,18 +7,22 @@
     <Authors>Jay Tuley</Authors>
     <Company>Ekon Benefits</Company>
     <Description>For dotnetdbf projects using .net 4.0 projects this is an enumeration framework in which makes it easy to use Linq to Objects.</Description>
-    <PackageLicenseUrl>http://www.gnu.org/licenses/lgpl.html</PackageLicenseUrl>
+    <PackageLicense>lgpl</PackageLicense>
     <PackageProjectUrl>http://code.google.com/p/dotnetdbf/</PackageProjectUrl>
     <PackageTags>clipper xbase dbf linq</PackageTags>
+    <PackageLicenseFile>Copying.TXT</PackageLicenseFile>
     <PackageIconUrl>https://github.com/ekonbenefits/dotnetdbf</PackageIconUrl>
     <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf.git</RepositoryUrl>
     <RepositoryType>gits</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>5.0.4</Version>
+    <Version>5.1.0</Version>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\Copying.txt" Pack="true" PackagePath=""/>
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

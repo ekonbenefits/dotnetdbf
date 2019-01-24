@@ -1,5 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+// ReSharper disable StringLiteralTypo
+// ReSharper disable IdentifierTypo
+
+
+namespace DotNetDBF.Enumerable
+{
+    /// <summary>
+    /// Interface to get the contents of the DBF Wrapper
+    /// </summary>
+    ///
+    [Obsolete("DotNetDBF.Enumerable.IDBFInterceptor is the new interface name",error:true)]
+    public interface IDBFIntercepter:IDBFInterceptor
+    {
+       
+    }
+    
+    
+    [Obsolete("DotNetDBF.Enumerable.DBFInterceptor is the new class name")]
+    public class DBFIntercepter : DBFEnumerable.DBFIntercepter
+    {
+        public DBFIntercepter(object[] wrappedObj, string[] fieldNames) : base(wrappedObj, fieldNames)
+        {
+        }
+    }
+
+
+}
+
 
 namespace DotNetDBF.Enumerable
 {
@@ -57,8 +85,8 @@ namespace DotNetDBF.Enumerable
 
         /// <summary>
         /// Return all the records. T should be interface with getter properties that match types and names of the database. 
-        /// Optionally instead of T being and interface you can pass in an annoymous object with properties that match that 
-        /// database and then you'll get an IEnumerable of that annonymous type with the data filled in.
+        /// Optionally instead of T being and interface you can pass in an anonymous object with properties that match that 
+        /// database and then you'll get an IEnumerable of that anonymous type with the data filled in.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="reader">The reader.</param>
@@ -83,13 +111,13 @@ namespace DotNetDBF.Enumerable
         }
 
 
-        [Obsolete("DotNetDBF.Enumerable.IDBFIntercepter is the new interface name")]
-        public interface IDBFIntercepter : DotNetDBF.Enumerable.IDBFIntercepter
+        [Obsolete("DotNetDBF.Enumerable.IDBFIntercepter is the new interface name",error:true)]
+        public interface IDBFIntercepter : DotNetDBF.Enumerable.IDBFInterceptor
         {
         }
 
         [Obsolete("DotNetDBF.Enumerable.DBFIntercepter is the new class name")]
-        public class DBFIntercepter : DotNetDBF.Enumerable.BaseDBFIntercepter, IDBFIntercepter
+        public class DBFIntercepter : DotNetDBF.Enumerable.BaseDBFInterceptor, IDBFIntercepter
         {
             public DBFIntercepter(object[] wrappedObj, string[] fieldNames)
                 : base(wrappedObj, fieldNames)

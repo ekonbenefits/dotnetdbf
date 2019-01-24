@@ -19,7 +19,8 @@ namespace DotNetDBF
         }
 
 
-        internal MemoValue(long block, DBFBase aBase, string fileLoc, DBFReader.LazyStream fileStream)
+        internal MemoValue(long block, DBFBase aBase, 
+            string fileLoc, DBFReader.LazyStream fileStream)
         {
             _block = block;
             _base = aBase;
@@ -99,36 +100,34 @@ namespace DotNetDBF
             {
                 lock (_lockName)
                 {
-                    if (!_new && !_loaded)
-                    {
-                        var fileStream = _fileStream();
+                    if (_new || _loaded) return _value;
+                    var fileStream = _fileStream();
 
-                        var reader = new BinaryReader(fileStream);
+                    var reader = new BinaryReader(fileStream);
                         
-                        {
-                            reader.BaseStream.Seek(_block * _base.BlockSize, SeekOrigin.Begin);
-                            var tStringBuilder = new StringBuilder();
-                            int tIndex;
-                            var tSoftReturn = _base.CharEncoding.GetString(new byte[] {0x8d, 0x0a});
+                    {
+                        reader.BaseStream.Seek(_block * _base.BlockSize, SeekOrigin.Begin);
+                        var tStringBuilder = new StringBuilder();
+                        int tIndex;
+                        var tSoftReturn = _base.CharEncoding.GetString(new byte[] {0x8d, 0x0a});
 
-                            byte[] tData;
-                            do
+                        byte[] tData;
+                        do
+                        {
+                            tData = reader.ReadBytes(_base.BlockSize);
+                            if ((tData.Length == 0))
                             {
-                                tData = reader.ReadBytes(_base.BlockSize);
-                                if ((tData.Length == 0))
-                                {
-                                    throw new DBTException("Missing Data for block or no 1a memo terminiator");
-                                }
-                                var tString = _base.CharEncoding.GetString(tData);
-                                tIndex = tString.IndexOf(MemoTerminator, StringComparison.Ordinal);
-                                if (tIndex != -1)
-                                    tString = tString.Substring(0, tIndex);
-                                tStringBuilder.Append(tString);
-                            } while (tIndex == -1);
-                            _value = tStringBuilder.ToString().Replace(tSoftReturn, string.Empty);
-                        }
-                        _loaded = true;
+                                throw new DBTException("Missing Data for block or no 1a memo terminator");
+                            }
+                            var tString = _base.CharEncoding.GetString(tData);
+                            tIndex = tString.IndexOf(MemoTerminator, StringComparison.Ordinal);
+                            if (tIndex != -1)
+                                tString = tString.Substring(0, tIndex);
+                            tStringBuilder.Append(tString);
+                        } while (tIndex == -1);
+                        _value = tStringBuilder.ToString().Replace(tSoftReturn, string.Empty);
                     }
+                    _loaded = true;
 
                     return _value;
                 }
@@ -138,8 +137,6 @@ namespace DotNetDBF
                 lock (_lockName)
                 {
                     _new = true;
-
-
                     _value = value;
                 }
             }

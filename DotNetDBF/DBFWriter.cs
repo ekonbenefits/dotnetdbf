@@ -25,10 +25,10 @@ namespace DotNetDBF
         private Stream raf;
         private int recordCount;
         private List<object> v_records = new List<object>();
-        private string _dataMemoLoc;
         private Stream _dataMemo;
-        private string _nullSymbol;
-
+#if NET35
+        private string _dataMemoLoc;
+#endif
         /// Creates an empty Object.
         public DBFWriter()
         {
