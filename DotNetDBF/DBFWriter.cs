@@ -66,7 +66,12 @@ namespace DotNetDBF
 
                 /* position file pointer at the end of the raf */
                 raf.Seek(-1, SeekOrigin.End);
-                /* to ignore the END_OF_DATA byte at EoF */
+                /* check whether the last byte is 0x1A (end of file marker for dbf files) - in this case move 1 byte back to ignore it when writing new records */ 
+                var lastByte = raf.ReadByte();  /* Advances to end of stream */
+                if (lastByte == DBFFieldType.EndOfData)
+                {
+                    raf.Seek(-1, SeekOrigin.End);
+                }
             }
             catch (FileNotFoundException e)
             {
@@ -98,8 +103,12 @@ namespace DotNetDBF
 
             /* position file pointer at the end of the raf */
             raf.Seek(-1, SeekOrigin.End);
-            /* to ignore the END_OF_DATA byte at EoF */
-
+            /* check whether the last byte is 0x1A (end of file marker for dbf files) - in this case move 1 byte back to ignore it when writing new records */ 
+            var lastByte = raf.ReadByte();  /* Advances to end of stream */
+            if (lastByte == DBFFieldType.EndOfData)
+            {
+                raf.Seek(-1, SeekOrigin.End);
+            }
 
             recordCount = header.NumberOfRecords;
         }
