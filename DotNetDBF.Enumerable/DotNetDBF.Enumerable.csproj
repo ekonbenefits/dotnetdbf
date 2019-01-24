@@ -21,13 +21,13 @@
     <IncludeSource>True</IncludeSource>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\Copying.txt" Pack="true" PackagePath=""/>
+    <None Include="..\Copying.txt" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ImpromptuInterface" Version="7.0.1-*" />
+    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj" />
