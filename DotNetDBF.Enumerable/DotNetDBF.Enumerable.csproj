@@ -8,7 +8,7 @@
     <Company>Ekon Benefits</Company>
     <Description>For dotnetdbf projects using .net 4.0 projects this is an enumeration framework in which makes it easy to use Linq to Objects.</Description>
     <PackageLicense>lgpl</PackageLicense>
-    <PackageProjectUrl>http://code.google.com/p/dotnetdbf/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/ekonbenefits/dotnetdbf</PackageProjectUrl>
     <PackageTags>clipper xbase dbf linq</PackageTags>
     <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
     <PackageIconUrl>https://github.com/ekonbenefits/dotnetdbf</PackageIconUrl>
@@ -16,7 +16,9 @@
     <RepositoryType>gits</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>6.0.0.1</Version>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <Version>6.0.0.2</Version>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
   </PropertyGroup>
@@ -24,7 +26,7 @@
     <None Include="..\Copying.txt" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />

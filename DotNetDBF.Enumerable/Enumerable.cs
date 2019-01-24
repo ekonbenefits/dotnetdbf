@@ -128,8 +128,15 @@ namespace DotNetDBF.Enumerable
         {
             foreach (var fieldName in Dynamitey.Dynamic.GetMemberNames(dest, true))
             {
-                var val = Dynamic.InvokeGet(original, fieldName);
-                Dynamic.InvokeSet(dest, fieldName, val);
+                try
+                {
+                    var val = Dynamic.InvokeGet(original, fieldName);
+                    Dynamic.InvokeSet(dest, fieldName, val);
+                }
+                catch
+                {
+                    // ignored
+                }
             }
         }
 
