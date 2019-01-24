@@ -16,7 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
-    <PackageLicenseFile>Copying.TXT</PackageLicenseFile>
+    <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\Copying.txt" Pack="true" PackagePath=""/>

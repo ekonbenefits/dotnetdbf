@@ -10,7 +10,7 @@
     <PackageLicense>lgpl</PackageLicense>
     <PackageProjectUrl>http://code.google.com/p/dotnetdbf/</PackageProjectUrl>
     <PackageTags>clipper xbase dbf linq</PackageTags>
-    <PackageLicenseFile>Copying.TXT</PackageLicenseFile>
+    <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
     <PackageIconUrl>https://github.com/ekonbenefits/dotnetdbf</PackageIconUrl>
     <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf.git</RepositoryUrl>
     <RepositoryType>gits</RepositoryType>
