@@ -157,8 +157,8 @@ namespace DotNetDBF
         [Obsolete("Will need to open your own stream and use DataMemo property in later versions of .Net Framework")]
         public string DataMemoLoc
         {
-            get { return _dataMemoLoc; }
-            set { _dataMemoLoc = value; }
+            get => _dataMemoLoc;
+            set => _dataMemoLoc = value;
         }
 #endif
 
@@ -169,7 +169,7 @@ namespace DotNetDBF
         private LazyStream GetLazyStreamFromLocation()
         {
 #if NET35
-            if (_dataMemo == null && !String.IsNullOrEmpty(_dataMemoLoc))
+            if (_dataMemo == null && !string.IsNullOrEmpty(_dataMemoLoc))
             {
                 return  () => _loadedStream ??
                                   (_loadedStream = File.Open(_dataMemoLoc, FileMode.Open, FileAccess.Read,
@@ -185,11 +185,11 @@ namespace DotNetDBF
 
         public Stream DataMemo
         {
-            get { return _dataMemo; }
-            set { _dataMemo = value; }
+            get => _dataMemo;
+            set => _dataMemo = value;
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             var sb =
                 new StringBuilder(_header.Year + "/" + _header.Month + "/"
@@ -230,13 +230,13 @@ namespace DotNetDBF
 		 these arrays follow the convention mentioned in the class description.
 		 */
 
-        public Object[] NextRecord()
+        public object[] NextRecord()
         {
             return NextRecord(_selectFields, _orderedSelectFields);
         }
 
 
-        internal Object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
+        internal object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
         {
             if (_isClosed)
             {
@@ -244,7 +244,7 @@ namespace DotNetDBF
             }
             var tOrderdSelectIndexes = sortedIndexes;
 
-            var recordObjects = new Object[_header.FieldArray.Length];
+            var recordObjects = new object[_header.FieldArray.Length];
 
             try
             {
@@ -317,9 +317,9 @@ namespace DotNetDBF
                                 var tDay = CharEncoding.GetString(t_byte_day);
 
                                 int tIntYear, tIntMonth, tIntDay;
-                                if (Int32.TryParse(tYear, out tIntYear) &&
-                                    Int32.TryParse(tMonth, out tIntMonth) &&
-                                    Int32.TryParse(tDay, out tIntDay))
+                                if (int.TryParse(tYear, out tIntYear) &&
+                                    int.TryParse(tMonth, out tIntMonth) &&
+                                    int.TryParse(tDay, out tIntDay))
                                 {
                                     recordObjects[i] = new DateTime(
                                         tIntYear,
@@ -353,7 +353,7 @@ namespace DotNetDBF
                                     && tLast != " "
                                     && tLast != NullSymbol)
                                 {
-                                    recordObjects[i] = Double.Parse(tParsed,
+                                    recordObjects[i] = double.Parse(tParsed,
                                         NumberStyles.Float | NumberStyles.AllowLeadingWhite,
                                         NumberFormatInfo.InvariantInfo);
                                 }
@@ -387,7 +387,7 @@ namespace DotNetDBF
                                     && tLast != " "
                                     && tLast != NullSymbol)
                                 {
-                                    recordObjects[i] = Decimal.Parse(tParsed,
+                                    recordObjects[i] = decimal.Parse(tParsed,
                                         NumberStyles.Float | NumberStyles.AllowLeadingWhite,
                                         NumberFormatInfo.InvariantInfo);
                                 }
@@ -425,7 +425,7 @@ namespace DotNetDBF
                             break;
 
                         case NativeDbType.Memo:
-                            if (String.IsNullOrEmpty(_dataMemoLoc) && _dataMemo == null)
+                            if (string.IsNullOrEmpty(_dataMemoLoc) && _dataMemo == null)
                                 throw new Exception("Memo Location Not Set");
 
 

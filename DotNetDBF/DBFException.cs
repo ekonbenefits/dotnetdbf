@@ -19,11 +19,11 @@ namespace DotNetDBF
     public class DBTException : DBFException
     {
 
-        public DBTException(String msg) : base(msg)
+        public DBTException(string msg) : base(msg)
         {
         }
 
-        public DBTException(String msg, Exception internalException)
+        public DBTException(string msg, Exception internalException)
             : base(msg, internalException)
         {
         }
@@ -33,12 +33,12 @@ namespace DotNetDBF
     {
         public int Record { get; }
 
-        public DBFRecordException(String msg, int record) : base(msg)
+        public DBFRecordException(string msg, int record) : base(msg)
         {
             Record = record;
         }
 
-        public DBFRecordException(String msg, Exception internalException)
+        public DBFRecordException(string msg, Exception internalException)
             : base(msg, internalException)
         {
         }
@@ -50,11 +50,11 @@ namespace DotNetDBF
         {
         }
 
-        public DBFException(String msg) : base(msg)
+        public DBFException(string msg) : base(msg)
         {
         }
 
-        public DBFException(String msg, Exception internalException)
+        public DBFException(string msg, Exception internalException)
             : base(msg, internalException)
         {
         }

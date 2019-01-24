@@ -51,7 +51,7 @@ namespace DotNetDBF
 
         public DBFField(string aFieldName,
                         NativeDbType aType,
-                        Int32 aFieldLength)
+                        int aFieldLength)
         {
             Name = aFieldName;
             DataType = aType;
@@ -60,8 +60,8 @@ namespace DotNetDBF
 
         public DBFField(string aFieldName,
                         NativeDbType aType,
-                        Int32 aFieldLength,
-                        Int32 aDecimalCount)
+                        int aFieldLength,
+                        int aDecimalCount)
         {
             Name = aFieldName;
             DataType = aType;
@@ -77,9 +77,9 @@ namespace DotNetDBF
          @return Name of the field as String.
          */
 
-        public String Name
+        public string Name
         {
-            get { return Encoding.ASCII.GetString(fieldName, 0, nameNullIndex); }
+            get => Encoding.ASCII.GetString(fieldName, 0, nameNullIndex);
             set
             {
                 if (value == null)
@@ -110,10 +110,7 @@ namespace DotNetDBF
 
         public NativeDbType DataType
         {
-            get
-            {
-                return (NativeDbType)dataType;
-            }
+            get => (NativeDbType)dataType;
             set
             {
                 switch (value)
@@ -194,7 +191,7 @@ namespace DotNetDBF
 
         public int DecimalCount
         {
-            get { return decimalCount; }
+            get => decimalCount;
             /**
              Sets the decimal place size of the field.
              Before calling this method the size of the field

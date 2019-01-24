@@ -25,7 +25,7 @@ namespace DotNetDBF
             _base = aBase;
             _fileLoc = fileLoc;
             _fileStream = fileStream;
-            if (String.IsNullOrEmpty(fileLoc))
+            if (string.IsNullOrEmpty(fileLoc))
             {
                 _lockName = fileStream();
             }
@@ -125,7 +125,7 @@ namespace DotNetDBF
                                     tString = tString.Substring(0, tIndex);
                                 tStringBuilder.Append(tString);
                             } while (tIndex == -1);
-                            _value = tStringBuilder.ToString().Replace(tSoftReturn, String.Empty);
+                            _value = tStringBuilder.ToString().Replace(tSoftReturn, string.Empty);
                         }
                         _loaded = true;
                     }

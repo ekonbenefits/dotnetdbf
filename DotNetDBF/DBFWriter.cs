@@ -41,7 +41,7 @@ namespace DotNetDBF
         /// Creates a DBFWriter which can append to records to an existing DBF file.
         /// @param dbfFile. The file passed in shouls be a valid DBF file.
         /// @exception Throws DBFException if the passed in file does exist but not a valid DBF file, or if an IO error occurs.
-        public DBFWriter(String dbfFile)
+        public DBFWriter(string dbfFile)
         {
             try
             {
@@ -106,15 +106,15 @@ namespace DotNetDBF
 
         public byte Signature
         {
-            get { return header.Signature; }
-            set { header.Signature = value; }
+            get => header.Signature;
+            set => header.Signature = value;
         }
 
 #if NET35
         
         public string DataMemoLoc
         {
-            get { return _dataMemoLoc; }
+            get => _dataMemoLoc;
             set
             {
                 _dataMemoLoc = value;
@@ -129,8 +129,8 @@ namespace DotNetDBF
 
         public Stream DataMemo
         {
-            get { return _dataMemo; }
-            set { _dataMemo = value; }
+            get => _dataMemo;
+            set => _dataMemo = value;
         }
 
         public byte LanguageDriver
@@ -149,7 +149,7 @@ namespace DotNetDBF
 
         public DBFField[] Fields
         {
-            get { return header.FieldArray; }
+            get => header.FieldArray;
 
 
             set
@@ -209,7 +209,7 @@ namespace DotNetDBF
 		 Add a record.
 		 */
 
-        public void WriteRecord(params Object[] values)
+        public void WriteRecord(params object[] values)
         {
             if (raf == null)
             {
@@ -219,7 +219,7 @@ namespace DotNetDBF
             AddRecord(values, true);
         }
 
-        public void AddRecord(params Object[] values)
+        public void AddRecord(params object[] values)
         {
             if (raf != null)
             {
@@ -229,7 +229,7 @@ namespace DotNetDBF
             AddRecord(values, false);
         }
 
-        private void AddRecord(Object[] values, bool writeImediately)
+        private void AddRecord(object[] values, bool writeImediately)
         {
             if (header.FieldArray == null)
             {
@@ -259,14 +259,14 @@ namespace DotNetDBF
                 switch (header.FieldArray[i].DataType)
                 {
                     case NativeDbType.Char:
-                        if (!(values[i] is String) && !(values[i] is DBNull))
+                        if (!(values[i] is string) && !(values[i] is DBNull))
                         {
                             throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
                         break;
 
                     case NativeDbType.Logical:
-                        if (!(values[i] is Boolean) && !(values[i] is DBNull))
+                        if (!(values[i] is bool) && !(values[i] is DBNull))
                         {
                             throw new DBFRecordException($"Invalid value for field {i}", i);
                         }
@@ -336,7 +336,7 @@ namespace DotNetDBF
                 {
                     /* iterate through records */
 
-                    var t_values = (Object[]) v_records[i];
+                    var t_values = (object[]) v_records[i];
 
                     WriteRecord(outStream, t_values);
                 }
@@ -372,7 +372,7 @@ namespace DotNetDBF
 #if NET35
 
 
-            if (!String.IsNullOrEmpty(DataMemoLoc))
+            if (!string.IsNullOrEmpty(DataMemoLoc))
             {
                 DataMemo.Close();
             }
@@ -380,7 +380,7 @@ namespace DotNetDBF
 
         }
 
-        private void WriteRecord(BinaryWriter dataOutput, Object[] objectArray)
+        private void WriteRecord(BinaryWriter dataOutput, object[] objectArray)
         {
             dataOutput.Write((byte) ' ');
             for (var j = 0; j < header.FieldArray.Length; j++)

@@ -23,27 +23,15 @@ namespace DotNetDBF
 {
     public abstract class DBFBase
     {
-        protected Encoding _charEncoding = Encoding.GetEncoding("utf-8");
-        protected int _blockSize = 512;
-        private string _nullSymbol;
 
-        public Encoding CharEncoding
-        {
-            set { _charEncoding = value; }
+        public Encoding CharEncoding { get; set; } = Encoding.GetEncoding("utf-8");
 
-            get { return _charEncoding; }
-        }
-
-        public int BlockSize
-        {
-            set { _blockSize = value; }
-
-            get { return _blockSize; }
-        }
+        public int BlockSize { get; set; } = 512;
         
+        private string _nullSymbol;
         public string NullSymbol
         {
-            get { return _nullSymbol ?? DBFFieldType.Unknown; }
+            get => _nullSymbol ?? DBFFieldType.Unknown;
             set
             {
                 if (value != null && value.Length != 1)

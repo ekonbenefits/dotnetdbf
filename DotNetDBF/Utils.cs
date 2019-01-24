@@ -49,14 +49,14 @@ namespace DotNetDBF
             return tList.ToArray();
         }
 
-        public static byte[] textPadding(String text,
+        public static byte[] textPadding(string text,
             Encoding charEncoding,
             int length)
         {
             return textPadding(text, charEncoding, length, ALIGN_LEFT);
         }
 
-        public static byte[] textPadding(String text,
+        public static byte[] textPadding(string text,
             Encoding charEncoding,
             int length,
             int alignment)
@@ -69,7 +69,7 @@ namespace DotNetDBF
                     DBFFieldType.Space);
         }
 
-        public static byte[] textPadding(String text,
+        public static byte[] textPadding(string text,
             Encoding charEncoding,
             int length,
             int alignment,

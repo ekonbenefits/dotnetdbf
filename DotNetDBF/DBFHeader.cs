@@ -63,8 +63,8 @@ namespace DotNetDBF
 
         internal byte Signature
         {
-            get { return _signature; }
-            set { _signature = value; }
+            get => _signature;
+            set => _signature = value;
         }
 
         internal short Size => (short) (sizeof(byte) +
@@ -100,57 +100,57 @@ namespace DotNetDBF
 
         internal short HeaderLength
         {
-            set { _headerLength = value; }
+            set => _headerLength = value;
 
-            get { return _headerLength; }
+            get => _headerLength;
         }
 
         internal DBFField[] FieldArray
         {
-            set { _fieldArray = value; }
+            set => _fieldArray = value;
 
-            get { return _fieldArray; }
+            get => _fieldArray;
         }
 
         internal byte Year
         {
-            set { _year = value; }
+            set => _year = value;
 
-            get { return _year; }
+            get => _year;
         }
 
         internal byte Month
         {
-            set { _month = value; }
+            set => _month = value;
 
-            get { return _month; }
+            get => _month;
         }
 
         internal byte Day
         {
-            set { _day = value; }
+            set => _day = value;
 
-            get { return _day; }
+            get => _day;
         }
 
         internal int NumberOfRecords
         {
-            set { _numberOfRecords = value; }
+            set => _numberOfRecords = value;
 
-            get { return _numberOfRecords; }
+            get => _numberOfRecords;
         }
 
         internal short RecordLength
         {
-            set { _recordLength = value; }
+            set => _recordLength = value;
 
-            get { return _recordLength; }
+            get => _recordLength;
         }
 
         internal byte LanguageDriver
         {
-            get { return _languageDriver; }
-            set { _languageDriver = value; }
+            get => _languageDriver;
+            set => _languageDriver = value;
         }
 
         internal void Read(BinaryReader dataInput)
