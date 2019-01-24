@@ -107,25 +107,24 @@ namespace DotNetDBF
                         
                     {
                         reader.BaseStream.Seek(_block * _base.BlockSize, SeekOrigin.Begin);
-                        var tStringBuilder = new StringBuilder();
-                        int tIndex;
-                        var tSoftReturn = _base.CharEncoding.GetString(new byte[] {0x8d, 0x0a});
+                        var builder = new StringBuilder();
+                        int termIndex;
+                        var softReturn = _base.CharEncoding.GetString(new byte[] {0x8d, 0x0a});
 
-                        byte[] tData;
                         do
                         {
-                            tData = reader.ReadBytes(_base.BlockSize);
-                            if ((tData.Length == 0))
+                            var data = reader.ReadBytes(_base.BlockSize);
+                            if ((data.Length == 0))
                             {
                                 throw new DBTException("Missing Data for block or no 1a memo terminator");
                             }
-                            var tString = _base.CharEncoding.GetString(tData);
-                            tIndex = tString.IndexOf(MemoTerminator, StringComparison.Ordinal);
-                            if (tIndex != -1)
-                                tString = tString.Substring(0, tIndex);
-                            tStringBuilder.Append(tString);
-                        } while (tIndex == -1);
-                        _value = tStringBuilder.ToString().Replace(tSoftReturn, string.Empty);
+                            var stringVal = _base.CharEncoding.GetString(data);
+                            termIndex = stringVal.IndexOf(MemoTerminator, StringComparison.Ordinal);
+                            if (termIndex != -1)
+                                stringVal = stringVal.Substring(0, termIndex);
+                            builder.Append(stringVal);
+                        } while (termIndex == -1);
+                        _value = builder.ToString().Replace(softReturn, string.Empty);
                     }
                     _loaded = true;
 

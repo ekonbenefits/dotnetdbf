@@ -43,30 +43,30 @@ namespace DotNetDBF
         {
         }
 
-        public DBFField(string aFieldName, NativeDbType aType)
+        public DBFField(string fieldName, NativeDbType type)
         {
-            Name = aFieldName;
-            DataType = aType;
+            Name = fieldName;
+            DataType = type;
         }
 
-        public DBFField(string aFieldName,
-                        NativeDbType aType,
-                        int aFieldLength)
+        public DBFField(string fieldName,
+                        NativeDbType type,
+                        int fieldLength)
         {
-            Name = aFieldName;
-            DataType = aType;
-            FieldLength = aFieldLength;
+            Name = fieldName;
+            DataType = type;
+            FieldLength = fieldLength;
         }
 
-        public DBFField(string aFieldName,
-                        NativeDbType aType,
-                        int aFieldLength,
-                        int aDecimalCount)
+        public DBFField(string fieldName,
+                        NativeDbType type,
+                        int fieldLength,
+                        int decimalCount)
         {
-            Name = aFieldName;
-            DataType = aType;
-            FieldLength = aFieldLength;
-            DecimalCount = aDecimalCount;
+            Name = fieldName;
+            DataType = type;
+            FieldLength = fieldLength;
+            DecimalCount = decimalCount;
         }
 
         public int Size => SIZE;
@@ -162,20 +162,21 @@ namespace DotNetDBF
                         "Field length should be a positive number");
                 }
 
-                if (DataType == NativeDbType.Date || DataType == NativeDbType.Memo || DataType == NativeDbType.Logical)
+                switch (DataType)
                 {
-                    throw new NotSupportedException(
-                        "Cannot set length on this type of field");
+                    case NativeDbType.Date:
+                    case NativeDbType.Memo:
+                    case NativeDbType.Logical:
+                        throw new NotSupportedException(
+                            "Cannot set length on this type of field");
+                    case NativeDbType.Char when value > 255:
+                        fieldLength = value % 256;
+                        decimalCount = (byte) (value / 256);
+                        return;
+                    default:
+                        fieldLength = value;
+                        break;
                 }
-
-                if (DataType == NativeDbType.Char && value > 255)
-                {
-                    fieldLength = value % 256;
-                    decimalCount = (byte) (value / 256);
-                    return;
-                }
-
-                fieldLength = value;
             }
         }
 
@@ -217,16 +218,16 @@ namespace DotNetDBF
             }
         }
 
-        public bool Read(BinaryReader aReader)
+        public bool Read(BinaryReader reader)
         {
-            var t_byte = aReader.ReadByte(); /* 0 */
+            var t_byte = reader.ReadByte(); /* 0 */
             if (t_byte == DBFFieldType.EndOfField)
             {
                 //System.out.println( "End of header found");
                 return false;
             }
 
-            aReader.Read(fieldName, 1, 10); /* 1-10 */
+            reader.Read(fieldName, 1, 10); /* 1-10 */
             fieldName[0] = t_byte;
 
             for (var i = 0; i < fieldName.Length; i++)
@@ -239,16 +240,16 @@ namespace DotNetDBF
                 }
             }
 
-            dataType = aReader.ReadByte(); /* 11 */
-            reserv1 = aReader.ReadInt32(); /* 12-15 */
-            fieldLength = aReader.ReadByte(); /* 16 */
-            decimalCount = aReader.ReadByte(); /* 17 */
-            reserv2 = aReader.ReadInt16(); /* 18-19 */
-            workAreaId = aReader.ReadByte(); /* 20 */
-            reserv3 = aReader.ReadInt16(); /* 21-22 */
-            setFieldsFlag = aReader.ReadByte(); /* 23 */
-            aReader.Read(reserv4, 0, 7); /* 24-30 */
-            indexFieldFlag = aReader.ReadByte(); /* 31 */
+            dataType = reader.ReadByte(); /* 11 */
+            reserv1 = reader.ReadInt32(); /* 12-15 */
+            fieldLength = reader.ReadByte(); /* 16 */
+            decimalCount = reader.ReadByte(); /* 17 */
+            reserv2 = reader.ReadInt16(); /* 18-19 */
+            workAreaId = reader.ReadByte(); /* 20 */
+            reserv3 = reader.ReadInt16(); /* 21-22 */
+            setFieldsFlag = reader.ReadByte(); /* 23 */
+            reader.Read(reserv4, 0, 7); /* 24-30 */
+            indexFieldFlag = reader.ReadByte(); /* 31 */
             return true;
         }
 
@@ -260,25 +261,25 @@ namespace DotNetDBF
          @throws IOException if any stream related issues occur.
          */
 
-        public void Write(BinaryWriter aWriter)
+        public void Write(BinaryWriter writer)
         {
             // Field Name
-            aWriter.Write(fieldName); /* 0-10 */
-            aWriter.Write(new byte[11 - fieldName.Length],
+            writer.Write(fieldName); /* 0-10 */
+            writer.Write(new byte[11 - fieldName.Length],
                           0,
                           11 - fieldName.Length);
 
             // data type
-            aWriter.Write(dataType); /* 11 */
-            aWriter.Write(reserv1); /* 12-15 */
-            aWriter.Write((byte) fieldLength); /* 16 */
-            aWriter.Write(decimalCount); /* 17 */
-            aWriter.Write(reserv2); /* 18-19 */
-            aWriter.Write(workAreaId); /* 20 */
-            aWriter.Write(reserv3); /* 21-22 */
-            aWriter.Write(setFieldsFlag); /* 23 */
-            aWriter.Write(reserv4); /* 24-30*/
-            aWriter.Write(indexFieldFlag); /* 31 */
+            writer.Write(dataType); /* 11 */
+            writer.Write(reserv1); /* 12-15 */
+            writer.Write((byte) fieldLength); /* 16 */
+            writer.Write(decimalCount); /* 17 */
+            writer.Write(reserv2); /* 18-19 */
+            writer.Write(workAreaId); /* 20 */
+            writer.Write(reserv3); /* 21-22 */
+            writer.Write(setFieldsFlag); /* 23 */
+            writer.Write(reserv4); /* 24-30*/
+            writer.Write(indexFieldFlag); /* 31 */
         }
 
         /**
@@ -289,13 +290,13 @@ namespace DotNetDBF
          
          @param in DataInputStream
          @return Returns the created DBFField object.
-         @throws IOException If any stream reading problems occures.
+         @throws IOException If any stream reading problems occurs.
          */
 
-        internal static DBFField CreateField(BinaryReader aReader)
+        internal static DBFField CreateField(BinaryReader reader)
         {
             var field = new DBFField();
-            if (field.Read(aReader))
+            if (field.Read(reader))
             {
                 return field;
             }

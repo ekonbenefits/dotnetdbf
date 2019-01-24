@@ -3,7 +3,7 @@
     <TargetFrameworks>net35;netstandard1.3</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
-    <Version>5.1.0.0</Version>
+    <Version>6.0.0.1</Version>
     <Company>Ekon Benefits</Company>
     <Copyright>Copyright 2009-2017</Copyright>
     <Description>This is a basic file parser for reading and writing xBase DBF files particularlly Clipper. Code originally derived from javadbf.</Description>

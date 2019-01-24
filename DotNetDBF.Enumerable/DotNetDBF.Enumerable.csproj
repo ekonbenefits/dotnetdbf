@@ -16,7 +16,7 @@
     <RepositoryType>gits</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>5.1.0</Version>
+    <Version>6.0.0.1</Version>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
   </PropertyGroup>

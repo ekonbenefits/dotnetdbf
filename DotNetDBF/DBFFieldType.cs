@@ -36,15 +36,15 @@ namespace DotNetDBF
     {
         public const byte EndOfData = 0x1A; //^Z End of File
         public const byte EndOfField = 0x0D; //End of Field
-        public const byte False = 0x46; //F in Ascci
+        public const byte False = 0x46; //F in Ascii
         public const byte Space = 0x20; //Space in ascii
         public const byte True = 0x54; //T in ascii
         public const byte UnknownByte = 0x3F; //Unknown Bool value
         public const string Unknown = "?"; //Unknown value
 
-        public static DbType FromNative(NativeDbType aByte)
+        public static DbType FromNative(NativeDbType @byte)
         {
-            switch (aByte)
+            switch (@byte)
             {
                 case NativeDbType.Char:
                     return DbType.AnsiStringFixedLength;
@@ -60,7 +60,7 @@ namespace DotNetDBF
                     return DbType.AnsiString;
                 default:
                     throw new DBFException(
-                        $"Unsupported Native Type {aByte}");
+                        $"Unsupported Native Type {@byte}");
             }
         }
 
