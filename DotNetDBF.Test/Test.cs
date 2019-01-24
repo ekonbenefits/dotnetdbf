@@ -286,18 +286,21 @@ namespace DotNetDBFTest
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
-                var writer = new DBFWriter
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
-                             };
-                var field = new DBFField("F1", NativeDbType.Memo);
-                var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
-                var field3 = new DBFField("F3", NativeDbType.Char, 10);
-                writer.Fields = new[] {field, field2, field3};
+                using (var writer = new DBFWriter {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
+                })
+                {
+                   
+                    ;
+                    var field = new DBFField("F1", NativeDbType.Memo);
+                    var field2 = new DBFField("F2", NativeDbType.Numeric, 10);
+                    var field3 = new DBFField("F3", NativeDbType.Char, 10);
+                    writer.Fields = new[] {field, field2, field3};
 
-                writtenValue = "alpha";
-                writer.AddRecord(new MemoValue(GetCharacters(fieldLength)), 10, writtenValue);
-                writer.Write(fos);
+                    writtenValue = "alpha";
+                    writer.AddRecord(new MemoValue(GetCharacters(fieldLength)), 10, writtenValue);
+                    writer.Write(fos);
+                }
             }
             using (
                 Stream fis =
@@ -305,14 +308,16 @@ namespace DotNetDBFTest
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             {
-                var reader = new DBFReader(fis)
-                             {
-                                 DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
-                             };
+                using (var reader = new DBFReader(fis)
+                {
+                    DataMemoLoc = Path.ChangeExtension(TestSelectPath(), "DBT")
+                })
+                {
 
-                var readValues = reader.AllRecords<ITestInterface>();
+                    var readValues = reader.AllRecords<ITestInterface>();
 
-                Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
+                    Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
+                }
             }
         }
 

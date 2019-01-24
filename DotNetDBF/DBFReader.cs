@@ -428,11 +428,13 @@ namespace DotNetDBF
 
                         case NativeDbType.Memo:
                             if (
-#if net35
+#if NET35
                                 string.IsNullOrEmpty(_dataMemoLoc) && 
 #endif
                                 _dataMemo is null)
+                            {
                                 throw new Exception("Memo Location Not Set");
+                            }
 
 
                             var rawMemoPointer = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
