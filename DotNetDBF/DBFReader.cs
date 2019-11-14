@@ -462,10 +462,59 @@ namespace DotNetDBF
                                 #endif
                                 GetLazyStreamFromLocation());
                             break;
+                        case NativeDbType.Binary:
+                            {
+                                //
+                                // Binary double.
+                                //
+                                byte[] data = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
+
+                                object val;
+
+                                if (data != null && data.Length > 0)
+                                {
+                                    val = BitConverter.ToDouble(data, 0);
+                                }
+                                else
+                                {
+                                    val = DBNull.Value;
+                                }
+
+                                recordObjects[i] = val;
+
+                                break;
+                            }
+                        case NativeDbType.Long:
+                        case NativeDbType.Autoincrement:
+                            {
+                                //
+                                // Binary long.
+                                //
+                                byte[] data = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
+
+                                object val;
+
+                                if (data != null && data.Length > 0)
+                                {
+                                    val = BitConverter.ToInt32(data, 0);
+                                }
+                                else
+                                {
+                                    val = DBNull.Value;
+                                }
+
+                                recordObjects[i] = val;
+
+                                break;
+                            }
                         default:
-                            _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
-                            recordObjects[i] = DBNull.Value;
-                            break;
+                            {
+                                byte[] data = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
+
+                                recordObjects[i] = data != null ? (object)data : DBNull.Value;
+
+                                break;
+                            }
                     }
                 }
             }
