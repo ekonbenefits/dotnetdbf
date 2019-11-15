@@ -463,9 +463,13 @@ namespace DotNetDBF
                                 GetLazyStreamFromLocation());
                             break;
                         default:
-                            _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
-                            recordObjects[i] = DBNull.Value;
-                            break;
+                            {
+                                byte[] data = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
+
+                                recordObjects[i] = data != null ? (object)data : DBNull.Value;
+
+                                break;
+                            }
                     }
                 }
             }
