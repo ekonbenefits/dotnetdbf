@@ -7,9 +7,5 @@ For .net 4.0 projects there is an enumeration framework in which makes it easy t
 
 Code derived from javadbf.
 
-
-##Get The Source
-Located in the Mecurial Repository
-
 ##Get The Binaries
 Use [NuGet](http://nuget.org/packages/dotnetdbf/) from Visual Studio
