@@ -462,51 +462,6 @@ namespace DotNetDBF
                                 #endif
                                 GetLazyStreamFromLocation());
                             break;
-                        case NativeDbType.Binary:
-                            {
-                                //
-                                // Binary double.
-                                //
-                                byte[] data = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
-
-                                object val;
-
-                                if (data != null && data.Length > 0)
-                                {
-                                    val = BitConverter.ToDouble(data, 0);
-                                }
-                                else
-                                {
-                                    val = DBNull.Value;
-                                }
-
-                                recordObjects[i] = val;
-
-                                break;
-                            }
-                        case NativeDbType.Long:
-                        case NativeDbType.Autoincrement:
-                            {
-                                //
-                                // Binary long.
-                                //
-                                byte[] data = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
-
-                                object val;
-
-                                if (data != null && data.Length > 0)
-                                {
-                                    val = BitConverter.ToInt32(data, 0);
-                                }
-                                else
-                                {
-                                    val = DBNull.Value;
-                                }
-
-                                recordObjects[i] = val;
-
-                                break;
-                            }
                         default:
                             {
                                 byte[] data = _dataInputStream.ReadBytes(_header.FieldArray[i].FieldLength);
