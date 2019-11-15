@@ -6,3 +6,4 @@ obj
 
 *.user
 .idea/*
+.vs/*
