@@ -26,20 +26,18 @@ namespace DotNetDBF
         private int recordCount;
         private List<object> v_records = new List<object>();
         private Stream _dataMemo;
-#if NET35
+
         private string _dataMemoLoc;
-#endif
+
         /// Creates an empty Object.
         public DBFWriter()
         {
             header = new DBFHeader();
         }
 
-#if NET35
-        
 
         /// Creates a DBFWriter which can append to records to an existing DBF file.
-        /// @param dbfFile. The file passed in shouls be a valid DBF file.
+        /// @param dbfFile. The file passed in should be a valid DBF file.
         /// @exception Throws DBFException if the passed in file does exist but not a valid DBF file, or if an IO error occurs.
         public DBFWriter(string dbfFile)
         {
@@ -83,7 +81,6 @@ namespace DotNetDBF
             }
             recordCount = header.NumberOfRecords;
         }
-#endif
 
         public DBFWriter(Stream dbfFile)
         {
@@ -119,7 +116,7 @@ namespace DotNetDBF
             set => header.Signature = value;
         }
 
-#if NET35
+
         
         public string DataMemoLoc
         {
@@ -134,7 +131,6 @@ namespace DotNetDBF
                     FileAccess.ReadWrite);
             }
         }
-#endif
 
         public Stream DataMemo
         {
@@ -364,23 +360,14 @@ namespace DotNetDBF
                 header.Write(new BinaryWriter(raf));
                 raf.Seek(0, SeekOrigin.End);
                 raf.WriteByte(DBFFieldType.EndOfData);
-#if NET35
+
                 raf.Close();
                 _dataMemo?.Close();
-#else
-                raf.Dispose();
-                _dataMemo?.Dispose();
-#endif
-            }
 
-#if NET35
-
-
-            if (!string.IsNullOrEmpty(DataMemoLoc))
+            } else if (!string.IsNullOrEmpty(DataMemoLoc))
             {
                 DataMemo.Close();
             }
-#endif
 
         }
 

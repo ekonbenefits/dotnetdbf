@@ -26,9 +26,9 @@ namespace DotNetDBF
         private BinaryReader _dataInputStream;
         private DBFHeader _header;
         private Stream _dataMemo;
-#if NET35
+
         private string _dataMemoLoc;
-#endif
+
         private int[] _selectFields = new int[] {};
         private int[] _orderedSelectFields = new int[] {};
         /* Class specific variables */
@@ -64,9 +64,7 @@ namespace DotNetDBF
                 : _header.FieldArray;
         }
 
-#if NET35
 
-        [Obsolete("Will need to open your own stream in later versions of .Net Framework")]
         public DBFReader(string anIn)
         {
             try
@@ -102,7 +100,6 @@ namespace DotNetDBF
                 throw new DBFException("Failed To Read DBF", ex);
             }
         }
-#endif
 
         public DBFReader(Stream anIn)
         {
@@ -155,30 +152,28 @@ namespace DotNetDBF
 
         #endregion
 
-#if NET35
-        [Obsolete("Will need to open your own stream and use DataMemo property in later versions of .Net Framework")]
+
         public string DataMemoLoc
         {
             get => _dataMemoLoc;
             set => _dataMemoLoc = value;
         }
-#endif
+
 
 
         public delegate Stream LazyStream();
-#if NET35
+
         private Stream _loadedStream;
-#endif        
+     
         private LazyStream GetLazyStreamFromLocation()
         {
-#if NET35
+
             if (_dataMemo == null && !string.IsNullOrEmpty(_dataMemoLoc))
             {
                 return  () => _loadedStream ??
                                   (_loadedStream = File.Open(_dataMemoLoc, FileMode.Open, FileAccess.Read,
                                       FileShare.Read));
-            }else
-#endif
+            }
             if (_dataMemo != null)
             {
                 return () => _dataMemo;
@@ -212,16 +207,14 @@ namespace DotNetDBF
 
         public void Close()
         {
-#if NET35
+
 
             _loadedStream?.Close();
             _dataMemo?.Close();
             _dataInputStream.Close();
-#else
 
             _dataMemo?.Dispose();
-            _dataInputStream.Dispose();
-#endif
+
 
 
             _isClosed = true;
@@ -428,9 +421,9 @@ namespace DotNetDBF
 
                         case NativeDbType.Memo:
                             if (
-#if NET35
+
                                 string.IsNullOrEmpty(_dataMemoLoc) && 
-#endif
+
                                 _dataMemo is null)
                             {
                                 throw new Exception("Memo Location Not Set");
@@ -455,11 +448,7 @@ namespace DotNetDBF
 
 
                             recordObjects[i] = new MemoValue(tBlock, this, 
-                                #if net35
                                 _dataMemoLoc,
-                                #else
-                                null,
-                                #endif
                                 GetLazyStreamFromLocation());
                             break;
                         default:
