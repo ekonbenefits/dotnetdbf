@@ -425,7 +425,7 @@ namespace DotNetDBF
 
                         if (objectArray[j] != null && objectArray[j] != DBNull.Value)
                         {
-                            var tDouble = Convert.ToDouble(objectArray[j]);
+                            var tDouble = Convert.ToDecimal(objectArray[j]);
                             dataOutput.Write(
                                 Utils.NumericFormating(
                                     tDouble,

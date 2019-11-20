@@ -348,7 +348,13 @@ namespace DotNetDBF
                                     && tLast != " "
                                     && tLast != NullSymbol)
                                 {
-                                    recordObjects[i] = double.Parse(tParsed,
+                                    //
+                                    // A Float in FoxPro has 20 significant digits, since it is
+                                    // stored as a string with possible E-postfix notation.
+                                    // An IEEE 754 float or double can not handle this number of digits
+                                    // correctly. Therefor the only correct implementation is to use a decimal.
+                                    //
+                                    recordObjects[i] = decimal.Parse(tParsed,
                                         NumberStyles.Float | NumberStyles.AllowLeadingWhite,
                                         NumberFormatInfo.InvariantInfo);
                                 }
