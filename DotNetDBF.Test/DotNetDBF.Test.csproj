@@ -1,51 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8D5436E3-F584-40A0-ACDC-65346ECEADB0}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotNetDBF.Test</RootNamespace>
-    <AssemblyName>DotNetDBF.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
+    <OutputType Condition="'$(TargetFramework)'!='netcoreapp2.0'">Exe</OutputType>
+    <Copyright>Copyright ©  2017</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Issue19Test.cs" />
-    <Compile Include="Test.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <PackageReference Include="NUnit" Version="3.7.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.*" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="dbfs\cp1251.dbf" />
@@ -63,17 +25,10 @@
     <EmbeddedResource Include="dbfs\dbase_8b.dbt" />
     <EmbeddedResource Include="dbfs\dbase_f5.dbf" />
     <EmbeddedResource Include="dbfs\dbase_f5.fpt" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DotNetDBF.Enumerable\DotNetDBF.Enumerable.csproj">
-      <Project>{3bb97ecd-325d-4288-b355-57cfc1404019}</Project>
-      <Name>DotNetDBF.Enumerable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj">
-      <Project>{c5e9ae18-1ea3-4c90-afab-5323093be4ac}</Project>
-      <Name>DotNetDBF</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\DotNetDBF.Enumerable\DotNetDBF.Enumerable.csproj" />
+    <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="dbfs\cp1251_summary.txt" />
@@ -85,5 +40,4 @@
     <EmbeddedResource Include="dbfs\dbase_8b_summary.txt" />
     <EmbeddedResource Include="dbfs\dbase_f5_summary.txt" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
