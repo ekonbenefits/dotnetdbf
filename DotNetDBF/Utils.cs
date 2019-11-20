@@ -164,7 +164,7 @@ namespace DotNetDBF
                 case NativeDbType.Logical:
                     return typeof(bool);
                 case NativeDbType.Float:
-                    return typeof(float);
+                    return typeof(decimal);
                 case NativeDbType.Memo:
                     return typeof(MemoValue);
                 default:
