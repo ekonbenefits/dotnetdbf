@@ -59,8 +59,7 @@ namespace DotNetDBF
                 case NativeDbType.Memo:
                     return DbType.AnsiString;
                 default:
-                    throw new DBFException(
-                        $"Unsupported Native Type {@byte}");
+                    return DbType.Object;
             }
         }
 

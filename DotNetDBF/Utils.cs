@@ -168,7 +168,7 @@ namespace DotNetDBF
                 case NativeDbType.Memo:
                     return typeof(MemoValue);
                 default:
-                    throw new ArgumentException("Unsupported Type");
+                    return typeof(Object);
             }
         }
     }
