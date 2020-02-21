@@ -1,9 +1,9 @@
 /*
  DBFReader
  Class for reading the records assuming that the given
- InputStream comtains DBF data.
+ InputStream contains DBF data.
  
- This file is part of DotNetDBF packege.
+ This file is part of DotNetDBF package.
  
  original author (javadbf): anil@linuxense.com 2004/03/31
  
@@ -231,8 +231,12 @@ namespace DotNetDBF
             return NextRecord(_selectFields, _orderedSelectFields);
         }
 
+        public object[] NextRecord(bool throwOnParsingError)
+        {
+            return NextRecord(_selectFields, _orderedSelectFields, throwOnParsingError);
+        }
 
-        internal object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
+        internal object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes, bool throwOnParsingError = true)
         {
             if (_isClosed)
             {
@@ -365,8 +369,10 @@ namespace DotNetDBF
                             }
                             catch (FormatException e)
                             {
-                                throw new DBFException("Failed to parse Float",
-                                    e);
+                                if (throwOnParsingError)
+                                    throw new DBFException("Failed to parse Float", e);
+
+                                recordObjects[i] = default(decimal);
                             }
 
                             break;
@@ -399,8 +405,11 @@ namespace DotNetDBF
                             }
                             catch (FormatException e)
                             {
-                                throw new DBFException(
-                                    "Failed to parse Number", e);
+                                if (throwOnParsingError)
+                                    throw new DBFException(
+                                        "Failed to parse Number", e);
+
+                                recordObjects[i] = default(decimal);
                             }
 
                             break;
