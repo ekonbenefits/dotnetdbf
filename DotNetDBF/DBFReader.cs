@@ -87,12 +87,10 @@ namespace DotNetDBF
                 _header.Read(_dataInputStream);
 
                 /* it might be required to leap to the start of records at times */
-                var t_dataStartIndex = _header.HeaderLength
-                                       - (32 + (32 * _header.FieldArray.Length))
-                                       - 1;
+                var t_dataStartIndex = _header.HeaderLength - _dataInputStream.BaseStream.Position;
                 if (t_dataStartIndex > 0)
                 {
-                    _dataInputStream.ReadBytes((t_dataStartIndex));
+                    _dataInputStream.ReadBytes((int)(t_dataStartIndex));
                 }
             }
             catch (IOException ex)
