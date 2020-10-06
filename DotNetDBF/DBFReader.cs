@@ -226,12 +226,7 @@ namespace DotNetDBF
 		 these arrays follow the convention mentioned in the class description.
 		 */
 
-        public object[] NextRecord()
-        {
-            return NextRecord(_selectFields, _orderedSelectFields);
-        }
-
-        public object[] NextRecord(bool throwOnParsingError)
+        public object[] NextRecord(bool throwOnParsingError = true)
         {
             return NextRecord(_selectFields, _orderedSelectFields, throwOnParsingError);
         }
