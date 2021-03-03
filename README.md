@@ -2,8 +2,8 @@ dotnetdbf
 =========
 
 This is a basic file parser written in C# for reading and writing xBase DBF files.
-Pure .NET direct access to xBase DBF. No need OBBC/JDBC for readind and writeing xBase DBF.
-xBase DBF files are used by Clipper and FoxPro.
+Pure .NET direct access to xBase DBF. No need OBBC/JDBC for reading and writing xBase DBF.
+xBase DBF files are used by *Clipper* and *FoxPro*.
 
 Compilable on Linux (Mono).
 For .net 4.0 projects there is an enumeration framework in which makes it easy to use Linq to Objects. 
@@ -14,7 +14,7 @@ Code derived from javadbf.
 Use [NuGet](http://nuget.org/packages/dotnetdbf/) from Visual Studio
 
 ## Quick start 
-Writng ODF
+### Writing to DBF
 
 <pre>
 using (Stream fos = File.Open(dbffile, FileMode.OpenOrCreate, FileAccess.ReadWrite))
@@ -36,4 +36,18 @@ using (Stream fos = File.Open(dbffile, FileMode.OpenOrCreate, FileAccess.ReadWri
           }
           writer.Write(fos);
       }
+</pre>
+
+### Reading from DBF to DataTable
+
+<pre>
+string dbffile = "_data.DBF";
+DataTable DT = null;	
+using (Stream fos = File.Open(dbffile, FileMode.Open, FileAccess.Read))
+using (var reader = new DBFReader(fos))
+{
+      DT = reader.ReadDataTable("_data");
+}
+string DTXml = "_data.xml";
+DT.WriteXml(DTXml, XmlWriteMode.WriteSchema);
 </pre>
