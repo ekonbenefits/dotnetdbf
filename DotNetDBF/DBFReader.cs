@@ -479,5 +479,37 @@ namespace DotNetDBF
 
             return selectIndexes.Any() ? selectIndexes.Select(it => recordObjects[it]).ToArray() : recordObjects;
         }
+	
+	/// <summary>
+        /// Reads the data table from DBF from current position to end.
+        /// </summary>
+        /// <returns>The data table with all data, original types and names of columns.</returns>
+        /// <param name="dataTableName">Name for data table.</param>
+        public DataTable ReadDataTable(string dataTableName)
+        {
+            DataTable DT = new DataTable(dataTableName);
+            for (var i = 0; i < _header.FieldArray.Length; i++)
+            {
+                DBFField DF = _header.FieldArray[i];
+                string n = DF.Name;
+                DT.Columns.Add(n, DF.Type);
+                if (DF.Type == typeof(System.String))
+                    DT.Columns[n].MaxLength = DF.FieldLength;
+                DT.Columns[n].AllowDBNull = false;
+            }
+            object[] cDBF = NextRecord(_selectFields, _orderedSelectFields);
+            while (cDBF != null)
+            {
+                DataRow nDR = DT.NewRow();
+                for (var i = 0; i < _header.FieldArray.Length; i++)
+                {
+                    object o = cDBF[i];
+                    nDR[_header.FieldArray[i].Name] = o;
+                }
+                DT.Rows.Add(nDR);
+                cDBF = NextRecord(_selectFields, _orderedSelectFields);
+            }
+            return DT;
+        }
     }
 }
