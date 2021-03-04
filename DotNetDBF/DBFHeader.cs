@@ -132,7 +132,13 @@ namespace DotNetDBF
             while (field != null)
             {
                 v_fields.Add(field);
-                field = DBFField.CreateField(dataInput);
+
+                if ((HeaderLength - dataInput.BaseStream.Position) < 32)
+                {
+                    break;
+                }
+
+                field = DBFField.CreateField(dataInput);                
             }
 
             FieldArray = v_fields.ToArray();
