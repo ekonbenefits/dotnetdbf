@@ -503,12 +503,8 @@ namespace DotNetDBF
                 DataRow nDR = DT.NewRow();
                 foreach (int i in _orderedSelectFields)
                 {
-                    object o = cDBF[i];
-                    if (o != null)
-                        nDR[_header.FieldArray[i].Name] = o;
-                    else
-                        nDR[_header.FieldArray[i].Name] = DBNull;
-                }
+                    nDR[_header.FieldArray[i].Name] = cDBF[i] ?? DBNull.Value;
+		}
                 DT.Rows.Add(nDR);
                 cDBF = NextRecord(_selectFields, _orderedSelectFields);
             }
