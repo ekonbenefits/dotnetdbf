@@ -485,7 +485,8 @@ namespace DotNetDBF
         /// </summary>
         /// <returns>The data table with all data, original types and names of columns.</returns>
         /// <param name="dataTableName">Name for data table.</param>
-        public DataTable ReadDataTable(string dataTableName)
+        public DataTable ReadAllToDataTable(string dataTableName)
+
         {
             DataTable DT = new DataTable(dataTableName);
             for (var i = 0; i < _header.FieldArray.Length; i++)
