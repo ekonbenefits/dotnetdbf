@@ -483,13 +483,13 @@ namespace DotNetDBF
 	/// <summary>
         /// Reads the data table from DBF from current position to end.
         /// </summary>
-        /// <returns>The data table with all data, original types and names of columns.</returns>
+        /// <returns>The data table with all data, original types and names and order of columns.</returns>
         /// <param name="dataTableName">Name for data table.</param>
         public DataTable ReadAllToDataTable(string dataTableName)
 
         {
             DataTable DT = new DataTable(dataTableName);
-            for (var i = 0; i < _header.FieldArray.Length; i++)
+            foreach (int i in _orderedSelectFields)
             {
                 DBFField DF = _header.FieldArray[i];
                 string n = DF.Name;
@@ -501,13 +501,13 @@ namespace DotNetDBF
             while (cDBF != null)
             {
                 DataRow nDR = DT.NewRow();
-                for (var i = 0; i < _header.FieldArray.Length; i++)
+                foreach (int i in _orderedSelectFields)
                 {
                     object o = cDBF[i];
                     if (o != null)
                         nDR[_header.FieldArray[i].Name] = o;
                     else
-                        nDR[_header.FieldArray[i].Name] = DBNull.Value;
+                        nDR[_header.FieldArray[i].Name] = DBNull;
                 }
                 DT.Rows.Add(nDR);
                 cDBF = NextRecord(_selectFields, _orderedSelectFields);
