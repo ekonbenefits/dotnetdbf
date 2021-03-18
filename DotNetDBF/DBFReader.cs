@@ -18,6 +18,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Linq;
+using System.Data;
 
 namespace DotNetDBF
 {
@@ -55,6 +56,16 @@ namespace DotNetDBF
                         Array.FindIndex(_header.FieldArray,
                             jt => jt.Name.Equals(it, StringComparison.OrdinalIgnoreCase))).ToArray();
             _orderedSelectFields = _selectFields.OrderBy(it => it).ToArray();
+        }
+
+        public void SelectAllFields()
+        {
+            List<int> l = new List<int>();
+            foreach (DBFField f in _header.FieldArray)
+                l.Add(Array.IndexOf(_header.FieldArray, f));
+            _selectFields = l.ToArray();
+            _orderedSelectFields = _selectFields.OrderBy(it => it).ToArray();
+
         }
 
         public DBFField[] GetSelectFields()
@@ -229,6 +240,38 @@ namespace DotNetDBF
         public object[] NextRecord()
         {
             return NextRecord(_selectFields, _orderedSelectFields);
+        }
+
+        /// <summary>
+        /// Reads the data table from DBF from current position to end.
+        /// </summary>
+        /// <returns>The data table with all data, original types and names of columns.</returns>
+        /// <param name="dataTableName">Name for data table.</param>
+        public DataTable ReadDataTable(string dataTableName)
+        {
+            if (_selectFields.Length == 0)
+                SelectAllFields();
+            DataTable DT = new DataTable(dataTableName);
+            foreach (int i in _orderedSelectFields)
+            {
+                DBFField DF = _header.FieldArray[i];
+                string n = DF.Name;
+                DT.Columns.Add(n, DF.Type);
+                if (DF.Type == typeof(System.String))
+                    DT.Columns[n].MaxLength = DF.FieldLength;
+            }
+            object[] cDBF = NextRecord(_selectFields, _orderedSelectFields);
+            while (cDBF != null)
+            {
+                DataRow nDR = DT.NewRow();
+                foreach (int i in _orderedSelectFields)
+                {
+                    nDR[_header.FieldArray[i].Name] = cDBF[i] ?? DBNull.Value;
+                }
+                DT.Rows.Add(nDR);
+                cDBF = NextRecord(_selectFields, _orderedSelectFields);
+            }
+            return DT;
         }
 
 
@@ -478,37 +521,6 @@ namespace DotNetDBF
             }
 
             return selectIndexes.Any() ? selectIndexes.Select(it => recordObjects[it]).ToArray() : recordObjects;
-        }
-	
-	/// <summary>
-        /// Reads the data table from DBF from current position to end.
-        /// </summary>
-        /// <returns>The data table with all data, original types and names and order of columns.</returns>
-        /// <param name="dataTableName">Name for data table.</param>
-        public DataTable ReadAllToDataTable(string dataTableName)
-
-        {
-            DataTable DT = new DataTable(dataTableName);
-            foreach (int i in _orderedSelectFields)
-            {
-                DBFField DF = _header.FieldArray[i];
-                string n = DF.Name;
-                DT.Columns.Add(n, DF.Type);
-                if (DF.Type == typeof(System.String))
-                    DT.Columns[n].MaxLength = DF.FieldLength;
-            }
-            object[] cDBF = NextRecord(_selectFields, _orderedSelectFields);
-            while (cDBF != null)
-            {
-                DataRow nDR = DT.NewRow();
-                foreach (int i in _orderedSelectFields)
-                {
-                    nDR[_header.FieldArray[i].Name] = cDBF[i] ?? DBNull.Value;
-		}
-                DT.Rows.Add(nDR);
-                cDBF = NextRecord(_selectFields, _orderedSelectFields);
-            }
-            return DT;
         }
     }
 }
