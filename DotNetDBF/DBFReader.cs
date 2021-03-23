@@ -252,9 +252,8 @@ namespace DotNetDBF
             if (_selectFields.Length == 0)
                 SelectAllFields();
             DataTable DT = new DataTable(dataTableName);
-            foreach (int i in _orderedSelectFields)
+            foreach (DBFField DF in GetSelectFields())
             {
-                DBFField DF = _header.FieldArray[i];
                 string n = DF.Name;
                 DT.Columns.Add(n, DF.Type);
                 if (DF.Type == typeof(System.String))
