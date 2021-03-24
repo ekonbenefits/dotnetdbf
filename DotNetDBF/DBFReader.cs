@@ -248,7 +248,8 @@ namespace DotNetDBF
                 if (DF.Type == typeof(System.String))
                     DT.Columns[n].MaxLength = DF.FieldLength;
             }
-            object[] cDBF = NextRecord(_selectFields, _orderedSelectFields);
+            object[] cDBF = NextRecord();
+
             while (cDBF != null)
             {
                 DataRow nDR = DT.NewRow();
