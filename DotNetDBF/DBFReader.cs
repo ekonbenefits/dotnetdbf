@@ -240,8 +240,6 @@ namespace DotNetDBF
         /// <param name="dataTableName">Name for data table.</param>
         public DataTable ReadDataTable(string dataTableName)
         {
-            if (_selectFields.Length == 0)
-                SelectAllFields();
             DataTable DT = new DataTable(dataTableName);
             foreach (DBFField DF in GetSelectFields())
             {
