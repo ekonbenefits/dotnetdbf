@@ -239,24 +239,24 @@ namespace DotNetDBF
         /// <returns>The data table with all data, original types and names of columns.</returns>
         /// <param name="dataTableName">Name for data table.</param>
         public DataTable ReadAllToDataTable(string dataTableName)
-
         {
-            DataTable DT = new DataTable(dataTableName);
-            foreach (DBFField DF in GetSelectFields())
+	    DataTable DT = new DataTable(dataTableName);
+            DBFField[] sf = GetSelectFields();
+            foreach (DBFField DF in sf)
             {
                 string n = DF.Name;
                 DT.Columns.Add(n, DF.Type);
                 if (DF.Type == typeof(System.String))
                     DT.Columns[n].MaxLength = DF.FieldLength;
             }
-            object[] cDBF = NextRecord();
 
+            object[] cDBF = NextRecord();
             while (cDBF != null)
             {
-                DataRow nDR = DT.NewRow();
-               foreach(DBFField df in GetSelectFields())
+               DataRow nDR = DT.NewRow();
+               foreach(DBFField df in sf)
                 {
-                    object o = cDBF[i];
+                    object o = cDBF[Array.IndexOf(sf, df)];
                     switch(o){
                         case null:
                             o = DBNull.Value;;
@@ -269,11 +269,9 @@ namespace DotNetDBF
                 }
                 DT.Rows.Add(nDR);
                 cDBF = NextRecord();
-
             }
             return DT;
         }
-
 
         internal object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
         {
