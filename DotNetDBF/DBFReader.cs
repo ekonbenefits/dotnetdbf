@@ -258,7 +258,8 @@ namespace DotNetDBF
                     nDR[_header.FieldArray[i].Name] = cDBF[i] ?? DBNull.Value;
                 }
                 DT.Rows.Add(nDR);
-                cDBF = NextRecord(_selectFields, _orderedSelectFields);
+                cDBF = NextRecord();
+
             }
             return DT;
         }
