@@ -58,15 +58,6 @@ namespace DotNetDBF
             _orderedSelectFields = _selectFields.OrderBy(it => it).ToArray();
         }
 
-        public void SelectAllFields()
-        {
-            List<int> l = new List<int>();
-            foreach (DBFField f in _header.FieldArray)
-                l.Add(Array.IndexOf(_header.FieldArray, f));
-            _selectFields = l.ToArray();
-            _orderedSelectFields = _selectFields.OrderBy(it => it).ToArray();
-
-        }
 
         public DBFField[] GetSelectFields()
         {
