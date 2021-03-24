@@ -253,9 +253,18 @@ namespace DotNetDBF
             while (cDBF != null)
             {
                 DataRow nDR = DT.NewRow();
-                foreach (int i in _orderedSelectFields)
+               foreach(DBFField df in GetSelectFields())
                 {
-                    nDR[_header.FieldArray[i].Name] = cDBF[i] ?? DBNull.Value;
+                    object o = cDBF[i];
+                    switch(o){
+                        case null:
+                            o = DBNull.Value;;
+                            break;
+                        //Using a switch case incase it's discovered something else should be special cased, like MemoValue.    
+                        default:
+                            break;
+                    }
+                    nDR[df.Name] = o;
                 }
                 DT.Rows.Add(nDR);
                 cDBF = NextRecord();
