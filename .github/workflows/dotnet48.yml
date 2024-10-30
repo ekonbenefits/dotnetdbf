@@ -31,6 +31,6 @@ jobs:
     - name: Restore
       run: dotnet restore -p:TargetFramework=net472
     - name: Build
-      run: dotnet build -f net472 -t:rebuild -property:Configuration=Release
+      run: dotnet build -f net472 --no-restore -t:rebuild -property:Configuration=Release
     - name: Test
       run: dotnet test --configuration Release --no-build --no-restore
