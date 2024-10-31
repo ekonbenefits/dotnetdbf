@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         dotnet: [ '8.0.x' ]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest]
     
     steps:
     - uses: actions/checkout@v1
@@ -21,7 +21,3 @@ jobs:
       run: dotnet build --configuration Release
     - name: Tests
       run: dotnet test DotNetDBF.Test/DotNetDBF.Test.csproj --configuration Release --no-build --no-restore
-    - name: Publish
-      run:
-        dotnet nuget push "publish/*.nupkg" --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
-      if: matrix.os == 'windows-latest'

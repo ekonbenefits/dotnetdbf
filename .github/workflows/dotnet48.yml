@@ -14,8 +14,16 @@ jobs:
         dotnet-version: 4.7.2
 
     - name: Restore
-      run: dotnet restore -p:TargetFramework=net472
+      run: nuget restore DotNetDBF.sln
     - name: Build
-      run: dotnet build -f net472 --no-restore -t:rebuild -property:Configuration=Release
+      run: msbuild DotNetDBF.sln --no-restore -t:rebuild -property:Configuration=Release
     - name: Test
-      run: dotnet test --configuration Release --no-build --no-restore
+      uses: microsoft/vstest-action@v1.0.0
+      with:
+        testAssembly: DotNetDBF.Test.dll
+        searchFolder: .\DotNetDBF.Test\bin\Release\*\
+        runInParallel: true
+        platform: x64
+    - name: Publish
+      run:
+        dotnet nuget push "publish/*.nupkg" --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
