@@ -12,7 +12,7 @@ jobs:
     - uses: microsoft/setup-msbuild@v2
       with:
         dotnet-version: 4.7.2
-    
+
     - name: Restore
       run: dotnet restore -p:TargetFramework=net472
     - name: Build

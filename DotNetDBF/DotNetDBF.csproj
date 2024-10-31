@@ -11,7 +11,7 @@
     <Authors>Anil Kumar, Jay Tuley</Authors>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>

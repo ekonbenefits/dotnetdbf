@@ -12,7 +12,7 @@
     <PackageTags>clipper xbase dbf linq</PackageTags>
     <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
     <PackageIconUrl>https://github.com/ekonbenefits/dotnetdbf</PackageIconUrl>
-    <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf</RepositoryUrl>
     <RepositoryType>gits</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
