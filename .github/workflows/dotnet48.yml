@@ -18,7 +18,7 @@ jobs:
     - name: Build
       run: msbuild DotNetDBF.sln -t:rebuild -property:Configuration=Release
     - name: Test
-      uses: josepho0918/vstest-action@v1.0.0
+      uses: josepho0918/vstest-action@0e887de
       with:
         testAssembly: DotNetDBF.Test.dll
         searchFolder: .\DotNetDBF.Test\bin\Release\*\
