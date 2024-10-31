@@ -26,4 +26,4 @@ jobs:
         platform: x64
     - name: Publish
       run:
-        dotnet nuget push '${{ github.workspace }}/publish/*.nupkg' --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+        dotnet nuget push '${{ github.workspace }}\publish\*.nupkg' --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
