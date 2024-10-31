@@ -22,7 +22,6 @@ jobs:
     - name: Tests
       run: dotnet test DotNetDBF.Test/DotNetDBF.Test.csproj --configuration Release --no-build --no-restore
     - name: Publish
-      run: dotnet nuget push publish/* --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${GITHUB_TOKEN}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run:
+        dotnet nuget push "publish/*.nupkg" --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
       if: matrix.os == 'windows-latest'

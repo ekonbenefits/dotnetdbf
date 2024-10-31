@@ -1,4 +1,4 @@
-name: Build CrossComple .net core/.net framework Windows
+name: .net framework Windows
 
 on: [push]
 
