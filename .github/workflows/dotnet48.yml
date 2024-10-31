@@ -16,7 +16,7 @@ jobs:
     - name: Restore
       run: nuget restore DotNetDBF.sln
     - name: Build
-      run: msbuild DotNetDBF.sln --no-restore -t:rebuild -property:Configuration=Release
+      run: msbuild DotNetDBF.sln -t:rebuild -property:Configuration=Release
     - name: Test
       uses: microsoft/vstest-action@v1.0.0
       with:
