@@ -1,0 +1,29 @@
+name: .net framework Windows
+
+on: [push]
+
+jobs:
+  build:
+    name: Test Windows .net Framework Only
+    runs-on: windows-2022
+    steps:
+    - uses: actions/checkout@v4
+    - uses: NuGet/setup-nuget@v2
+    - uses: microsoft/setup-msbuild@v2
+      with:
+        dotnet-version: 4.7.2
+
+    - name: Restore
+      run: nuget restore DotNetDBF.sln
+    - name: Build
+      run: msbuild DotNetDBF.sln -t:rebuild -property:Configuration=Release
+    - name: Test
+      uses: josepho0918/vstest-action@0e887de8dcfab5ce3eecaf4ad6320bb9b3ecf633
+      with:
+        testAssembly: DotNetDBF.Test.dll
+        searchFolder: .\DotNetDBF.Test\bin\Release\*\
+        runInParallel: true
+        platform: x64
+    - name: Publish
+      run:
+        dotnet nuget push '${{ github.workspace }}\publish\*.nupkg' --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}

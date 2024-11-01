@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
     <PackageId>dotnetdbf.enumerable</PackageId>
@@ -12,13 +12,12 @@
     <PackageTags>clipper xbase dbf linq</PackageTags>
     <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
     <PackageIconUrl>https://github.com/ekonbenefits/dotnetdbf</PackageIconUrl>
-    <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ekonbenefits/dotnetdbf</RepositoryUrl>
     <RepositoryType>gits</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <Version>6.0.0.2</Version>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
   </PropertyGroup>
@@ -26,7 +25,7 @@
     <None Include="..\Copying.txt" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />

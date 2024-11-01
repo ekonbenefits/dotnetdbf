@@ -480,14 +480,17 @@ namespace DotNetDBFTest
         [Test]
         public void Test()
         {
+            string test_dir = @"f:\st\dev\testdata";
+            if (!System.IO.Directory.Exists(test_dir))
+                Assert.Ignore();
             using (
                 Stream fis =
-                    File.Open(@"f:\st\dev\testdata\p.dbf",
+                    File.Open($@"{test_dir}\p.dbf" ,
                         FileMode.OpenOrCreate,
                         FileAccess.ReadWrite))
             using (var reader = new DBFReader(fis)
                                 {
-                                    DataMemoLoc = Path.ChangeExtension(@"f:\st\dev\testdata\p.dbf", "DBT")
+                                    DataMemoLoc = Path.ChangeExtension($@"{test_dir}\p.dbf", "DBT")
                                 })
             {
                 var readValues = reader.NextRecord();
