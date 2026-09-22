@@ -1,8 +1,16 @@
 <Project>
+
+  <!--
+    The CI publish step pushes from publish/, so pack drops a copy there. Keyed on this file's
+    own directory rather than $(SolutionDir): that is only set when the build was started from
+    the solution, and packing a single project made it "/", so the copy went to /publish and
+    failed the pack outright.
+  -->
   <Target Name="CopyPackage" AfterTargets="Pack">
     <Copy
       SourceFiles="$(OutputPath)$(PackageId).$(PackageVersion).nupkg"
-      DestinationFolder="$(SolutionDir)\publish"
+      DestinationFolder="$(MSBuildThisFileDirectory)publish"
     />
   </Target>
+
 </Project>

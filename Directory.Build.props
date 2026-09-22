@@ -3,4 +3,15 @@
     <VersionPrefix>7.0.1</VersionPrefix>
     <VersionSuffix Condition=" '$(GITHUB_RUN_NUMBER)' != '' ">preview$(GITHUB_RUN_NUMBER)</VersionSuffix>
   </PropertyGroup>
+
+  <!--
+    Building a net4x target off Windows works only where the .NET Framework reference
+    assemblies can be found - today that is Mono, which happens to be on the hosted runner
+    images. This package supplies them itself, so the build does not depend on what an image
+    ships. Build-time only; it is in no package's dependencies.
+  -->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+  </ItemGroup>
+
 </Project>
