@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DotNetDBF.Test
 {
-#if NET48
+#if NETFRAMEWORK   // the .NET Framework leg builds as an Exe and so needs an entry point
     public class Program
     {
         public static void Main()
