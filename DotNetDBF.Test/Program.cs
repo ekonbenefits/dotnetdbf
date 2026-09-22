@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DotNetDBF.Test
 {
-#if NET472
+#if NET48
     public class Program
     {
         public static void Main()
