@@ -40,7 +40,10 @@ jobs:
           dotnet test DotNetDBF.Test/DotNetDBF.Test.csproj --configuration Release -f net10.0 \
             --collect:"XPlat Code Coverage" --results-directory coverage
 
+      # always(): a failed test step must not cost the report - that is exactly when it is
+      # wanted. coverlet writes the cobertura even when tests fail.
       - name: Summarise
+        if: always()
         shell: bash
         run: |
           set -e
@@ -52,6 +55,7 @@ jobs:
           cat coverage/report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload coverage
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage
