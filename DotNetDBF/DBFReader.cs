@@ -18,6 +18,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Linq;
+using System.Data;
 
 namespace DotNetDBF
 {
@@ -56,6 +57,7 @@ namespace DotNetDBF
                             jt => jt.Name.Equals(it, StringComparison.OrdinalIgnoreCase))).ToArray();
             _orderedSelectFields = _selectFields.OrderBy(it => it).ToArray();
         }
+
 
         public DBFField[] GetSelectFields()
         {
@@ -231,6 +233,45 @@ namespace DotNetDBF
             return NextRecord(_selectFields, _orderedSelectFields);
         }
 
+        /// <summary>
+        /// Reads the data table from DBF from current position to end.
+        /// </summary>
+        /// <returns>The data table with all data, original types and names of columns.</returns>
+        /// <param name="dataTableName">Name for data table.</param>
+        public DataTable ReadAllToDataTable(string dataTableName)
+        {
+	    DataTable DT = new DataTable(dataTableName);
+            DBFField[] sf = GetSelectFields();
+            foreach (DBFField DF in sf)
+            {
+                string n = DF.Name;
+                DT.Columns.Add(n, DF.Type);
+                if (DF.Type == typeof(System.String))
+                    DT.Columns[n].MaxLength = DF.FieldLength;
+            }
+
+            object[] cDBF = NextRecord();
+            while (cDBF != null)
+            {
+               DataRow nDR = DT.NewRow();
+               foreach(DBFField df in sf)
+                {
+                    object o = cDBF[Array.IndexOf(sf, df)];
+                    switch(o){
+                        case null:
+                            o = DBNull.Value;;
+                            break;
+                        //Using a switch case incase it's discovered something else should be special cased, like MemoValue.    
+                        default:
+                            break;
+                    }
+                    nDR[df.Name] = o;
+                }
+                DT.Rows.Add(nDR);
+                cDBF = NextRecord();
+            }
+            return DT;
+        }
 
         internal object[] NextRecord(IEnumerable<int> selectIndexes, IList<int> sortedIndexes)
         {
