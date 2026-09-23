@@ -18,7 +18,7 @@ namespace DotNetDBFTest
     }
 
     [TestFixture]
-    public class DotNetDBFTest : AssertionHelper
+    public class DotNetDBFTest
     {
         private string TestPath([CallerMemberName] string name = null)
             => Path.Combine(Path.GetTempPath(), name + "_121212.dbf");
@@ -41,7 +41,7 @@ namespace DotNetDBFTest
             var chars = new[] {"a", "b", "c", "d", "e", "f", "g", " "};
             var returnval = string.Join(string.Empty,
                 Enumerable.Range(0, aLength).Select(it => chars[it % chars.Length]).ToArray());
-            Assert.That(returnval.Length, EqualTo(aLength), "GetCharacters() did not return correct length  string");
+            Assert.That(returnval.Length, Is.EqualTo(aLength), "GetCharacters() did not return correct length  string");
             return returnval;
         }
 
@@ -79,7 +79,7 @@ namespace DotNetDBFTest
             {
                 var readValues = reader.NextRecord();
 
-                Assert.That(readValues[0], EqualTo(writtenValue), "Written Value Equals Read");
+                Assert.That(readValues[0], Is.EqualTo(writtenValue), "Written Value Equals Read");
             }
         }
 
@@ -110,10 +110,10 @@ namespace DotNetDBFTest
                         FileAccess.ReadWrite))
             {
                 var reader = new DBFReader(fis);
-                Assert.That(reader.Fields.First().FieldLength, EqualTo(fieldLength));
+                Assert.That(reader.Fields.First().FieldLength, Is.EqualTo(fieldLength));
                 var readValues = reader.NextRecord();
 
-                Assert.That(readValues[0], EqualTo(writtenValue), "Written Value not equaling Read");
+                Assert.That(readValues[0], Is.EqualTo(writtenValue), "Written Value not equaling Read");
             }
         }
 
@@ -144,7 +144,7 @@ namespace DotNetDBFTest
             {
                 var readValues = reader.NextRecord();
 
-                Assert.That(readValues[0], EqualTo(writtenValue), "Written Value not equaling Read");
+                Assert.That(readValues[0], Is.EqualTo(writtenValue), "Written Value not equaling Read");
             }
         }
 
@@ -185,7 +185,7 @@ namespace DotNetDBFTest
                 reader.SetSelectFields("F3");
                 var readValues = reader.NextRecord();
 
-                Assert.That(readValues[0], StartsWith(writtenValue), "Written Value not equaling Read");
+                Assert.That(readValues[0], Does.StartWith(writtenValue), "Written Value not equaling Read");
             }
         }
 
@@ -228,8 +228,8 @@ namespace DotNetDBFTest
                 reader.SetSelectFields("F1", "F3");
                 var readValues = reader.DynamicAllRecords().First();
 
-                Assert.That(readValues.F1.ToString(), EqualTo(writtenMemo), "Written Value not equaling Read");
-                Assert.That(readValues.F3, EqualTo(writtenValue), "Written Value not equaling Read");
+                Assert.That(readValues.F1.ToString(), Is.EqualTo(writtenMemo), "Written Value not equaling Read");
+                Assert.That(readValues.F3, Is.EqualTo(writtenValue), "Written Value not equaling Read");
             }
         }
 
@@ -270,7 +270,7 @@ namespace DotNetDBFTest
 
                 var readValues = reader.AllRecords(new {F2 = default(decimal), F3 = default(string)});
 
-                Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
+                Assert.That(readValues.First().F3, Does.StartWith(writtenValue), "Written Value not equaling Read");
             }
         }
 
@@ -316,7 +316,7 @@ namespace DotNetDBFTest
 
                     var readValues = reader.AllRecords<ITestInterface>();
 
-                    Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
+                    Assert.That(readValues.First().F3, Does.StartWith(writtenValue), "Written Value not equaling Read");
                 }
             }
         }
@@ -357,7 +357,7 @@ namespace DotNetDBFTest
             {
                 var readValues = reader.DynamicAllRecords();
 
-                Assert.That(readValues.First().F3, StartsWith(writtenValue), "Written Value not equaling Read");
+                Assert.That(readValues.First().F3, Does.StartWith(writtenValue), "Written Value not equaling Read");
             }
         }
 
@@ -540,7 +540,7 @@ namespace DotNetDBFTest
         {
             using (var reader = new DBFReader(TestPath(name)))
             {
-                Assert.That(reader.RecordCount, EqualTo(1));
+                Assert.That(reader.RecordCount, Is.EqualTo(1));
             }
         }
     }
