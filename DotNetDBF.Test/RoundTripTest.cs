@@ -220,7 +220,7 @@ namespace DotNetDBFTest
             }
 
             var bytes = File.ReadAllBytes(path);
-            Assert.That(bytes[bytes.Length - 1], EqualTo(DBFFieldType.EndOfData));
+            Assert.That(bytes[bytes.Length - 1], Is.EqualTo(DBFFieldType.EndOfData));
         }
 
         // --- what the writer refuses ------------------------------------------------------
