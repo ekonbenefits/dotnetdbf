@@ -12,7 +12,7 @@ namespace DotNetDBFTest
     /// it is for. One type per test, so a failure names the type that broke.
     /// </summary>
     [TestFixture]
-    public class RoundTripTest : AssertionHelper
+    public class RoundTripTest
     {
         /// <summary>
         /// A test that fails because the library is wrong, not because the test is. Each one
@@ -63,35 +63,35 @@ namespace DotNetDBFTest
         public void Character_round_trips()
         {
             var read = RoundTrip(new DBFField("F1", NativeDbType.Char, 10), "hello");
-            Assert.That(read, EqualTo("hello"));
+            Assert.That(read, Is.EqualTo("hello"));
         }
 
         [Test]
         public void Logical_round_trips_both_ways()
         {
-            Assert.That(RoundTrip(new DBFField("T", NativeDbType.Logical), true), EqualTo(true));
-            Assert.That(RoundTrip(new DBFField("F", NativeDbType.Logical), false), EqualTo(false));
+            Assert.That(RoundTrip(new DBFField("T", NativeDbType.Logical), true), Is.EqualTo(true));
+            Assert.That(RoundTrip(new DBFField("F", NativeDbType.Logical), false), Is.EqualTo(false));
         }
 
         [Test]
         public void Date_round_trips()
         {
             var when = new DateTime(2019, 7, 4);
-            Assert.That(RoundTrip(new DBFField("D1", NativeDbType.Date), when), EqualTo(when));
+            Assert.That(RoundTrip(new DBFField("D1", NativeDbType.Date), when), Is.EqualTo(when));
         }
 
         [Test]
         public void Numeric_round_trips_with_decimals()
         {
             var value = 123.45m;
-            Assert.That(RoundTrip(new DBFField("N1", NativeDbType.Numeric, 10, 2), value), EqualTo(value));
+            Assert.That(RoundTrip(new DBFField("N1", NativeDbType.Numeric, 10, 2), value), Is.EqualTo(value));
         }
 
         [Test]
         public void Float_round_trips()
         {
             var value = 3.5m;
-            Assert.That(RoundTrip(new DBFField("F1", NativeDbType.Float, 10, 2), value), EqualTo(value));
+            Assert.That(RoundTrip(new DBFField("F1", NativeDbType.Float, 10, 2), value), Is.EqualTo(value));
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace DotNetDBFTest
             using (var reader = new DBFReader(fis) { DataMemoLoc = memo })
             {
                 var read = reader.NextRecord()[0];
-                Assert.That(read.ToString(), EqualTo(text));
+                Assert.That(read.ToString(), Is.EqualTo(text));
             }
         }
 
@@ -160,7 +160,7 @@ namespace DotNetDBFTest
 
             foreach (var value in seen)
             {
-                Assert.That(Describe(value), EqualTo(Describe(forNumeric)),
+                Assert.That(Describe(value), Is.EqualTo(Describe(forNumeric)),
                     "every field type should report an absent value the same way: " + kinds);
             }
         }
@@ -189,21 +189,21 @@ namespace DotNetDBFTest
             using (var fis = File.Open(path, FileMode.Open, FileAccess.Read))
             using (var reader = new DBFReader(fis))
             {
-                Assert.That(reader.RecordCount, EqualTo(3));
+                Assert.That(reader.RecordCount, Is.EqualTo(3));
 
                 var first = reader.NextRecord();
-                Assert.That(first[0], EqualTo("first"));
-                Assert.That(first[1], EqualTo(1m));
-                Assert.That(first[2], EqualTo(true));
+                Assert.That(first[0], Is.EqualTo("first"));
+                Assert.That(first[1], Is.EqualTo(1m));
+                Assert.That(first[2], Is.EqualTo(true));
 
                 reader.NextRecord();                       // second
 
                 var third = reader.NextRecord();
-                Assert.That(third[0], EqualTo("third"));
-                Assert.That(third[1], EqualTo(333m));
-                Assert.That(third[2], EqualTo(true));
+                Assert.That(third[0], Is.EqualTo("third"));
+                Assert.That(third[1], Is.EqualTo(333m));
+                Assert.That(third[2], Is.EqualTo(true));
 
-                Assert.That(reader.NextRecord(), Null, "past the end");
+                Assert.That(reader.NextRecord(), Is.Null, "past the end");
             }
         }
 
@@ -343,7 +343,7 @@ namespace DotNetDBFTest
         {
             // The counterpart, and why the check cannot simply reject every string: a numeric
             // string converts fine and round-trips.
-            Assert.That(RoundTrip(new DBFField("N1", NativeDbType.Numeric, 10, 2), "12.5"), EqualTo(12.5m));
+            Assert.That(RoundTrip(new DBFField("N1", NativeDbType.Numeric, 10, 2), "12.5"), Is.EqualTo(12.5m));
         }
     }
 }
