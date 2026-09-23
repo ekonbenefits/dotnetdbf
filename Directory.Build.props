@@ -1,5 +1,13 @@
 <Project>
   <PropertyGroup>
+    <!--
+      Without this, a project's language version comes from its target framework: net472 and
+      netstandard2.0 default to C# 7.3, so the libraries and the net48 test leg were compiling
+      as C# 7.3 while the net10.0 leg got C# 14. That divergence is invisible until something
+      depends on it - NUnit 4.6 steers Assert.Throws with [OverloadResolutionPriority], which
+      C# 7.3 ignores, and the net48 leg alone failed with twenty ambiguity errors.
+    -->
+    <LangVersion>latest</LangVersion>
     <VersionPrefix>7.0.1</VersionPrefix>
     <VersionSuffix Condition=" '$(GITHUB_RUN_NUMBER)' != '' ">preview$(GITHUB_RUN_NUMBER)</VersionSuffix>
   </PropertyGroup>

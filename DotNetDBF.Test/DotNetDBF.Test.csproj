@@ -6,9 +6,6 @@
          ($(TargetFrameworkIdentifier) would read better but is not set this early.) -->
     <OutputType Condition="$(TargetFramework.StartsWith('net4'))">Exe</OutputType>
     <Copyright>Copyright ©  2017</Copyright>
-    <!-- net48 would otherwise default to C# 7.3, where [OverloadResolutionPriority] is ignored
-         and NUnit 4.6's Action/TestDelegate overloads are ambiguous for a plain lambda. -->
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="10.0.1">
