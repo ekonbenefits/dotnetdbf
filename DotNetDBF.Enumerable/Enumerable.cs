@@ -169,8 +169,9 @@ namespace DotNetDBF.Enumerable
         /// <typeparam name="T"></typeparam>
         /// <param name="reader">The reader.</param>
         /// <param name="prototype">The prototype. Anonymous class instance</param>
+        /// <param name="throwOnParsingError">Indicates if parsing error throws an exception. Default: true</param>
         /// <returns></returns>
-        public static IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype = null) where T : class
+        public static IEnumerable<T> AllRecords<T>(this DBFReader reader, T prototype = null, bool throwOnParsingError = true) where T : class
         {
             var tType = typeof(T);
 
@@ -194,25 +195,25 @@ namespace DotNetDBF.Enumerable
 
             if (tType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any())
             {
-                var tAnon = reader.NextRecord(tProps, tOrderedProps);
+                var tAnon = reader.NextRecord(tProps, tOrderedProps, throwOnParsingError);
                 while (tAnon != null)
                 {
                     tReturn.Add((T) Activator.CreateInstance(tType, tAnon));
-                    tAnon = reader.NextRecord(tProps, tOrderedProps);
+                    tAnon = reader.NextRecord(tProps, tOrderedProps, throwOnParsingError);
                 }
 
 
                 return tReturn;
             }
 
-            var t = reader.NextRecord(tProps, tOrderedProps);
+            var t = reader.NextRecord(tProps, tOrderedProps, throwOnParsingError);
 
             while (t != null)
             {
                 var interceptor = new Enumerable.DBFInterceptor(t, tProperties.Select(it => it.Name).ToArray());
 
                 tReturn.Add(interceptor.ActLike<T>(typeof(Enumerable.IDBFInterceptor)));
-                t = reader.NextRecord(tProps, tOrderedProps);
+                t = reader.NextRecord(tProps, tOrderedProps, throwOnParsingError);
             }
 
 
@@ -225,9 +226,10 @@ namespace DotNetDBF.Enumerable
         /// <param name="reader">The reader.</param>
         /// <param name="whereColumn">The where column name.</param>
         /// <param name="whereColumnEquals">What the were column should equal.</param>
+        /// <param name="throwOnParsingError">Indicates if parsing error throws an exception. Default: true</param>
         /// <returns></returns>
         public static IEnumerable<dynamic> DynamicAllRecords(this DBFReader reader, string whereColumn = null,
-            dynamic whereColumnEquals = null)
+            dynamic whereColumnEquals = null, bool throwOnParsingError = true)
         {
             var props = reader.GetSelectFields().Select(it => it.Name).ToArray();
 
@@ -240,7 +242,7 @@ namespace DotNetDBF.Enumerable
 
 
             var tReturn = new List<object>();
-            var t = reader.NextRecord();
+            var t = reader.NextRecord(throwOnParsingError);
 
             while (t != null)
             {
@@ -249,7 +251,7 @@ namespace DotNetDBF.Enumerable
                     dynamic tO = t[i];
                     if (!tO.Equals(whereColumnEquals))
                     {
-                        t = reader.NextRecord();
+                        t = reader.NextRecord(throwOnParsingError);
                         continue;
                     }
                 }
@@ -259,7 +261,7 @@ namespace DotNetDBF.Enumerable
 
 
                 tReturn.Add(interceptor);
-                t = reader.NextRecord();
+                t = reader.NextRecord(throwOnParsingError);
             }
 
 
