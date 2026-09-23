@@ -8,9 +8,22 @@
       C# 7.3 ignores, and the net48 leg alone failed with twenty ambiguity errors.
     -->
     <LangVersion>latest</LangVersion>
-    <VersionPrefix>7.0.1</VersionPrefix>
-    <VersionSuffix Condition=" '$(GITHUB_RUN_NUMBER)' != '' ">preview$(GITHUB_RUN_NUMBER)</VersionSuffix>
   </PropertyGroup>
+
+  <!--
+    The version comes from git tags (MinVer): a commit tagged v8.1.0 builds as 8.1.0, and one
+    N commits past it as 8.1.1-alpha.0.N, so every CI build sorts above the last release.
+    The minimum covers the old four-part tags (v7.0.1.0), which are not SemVer and which
+    MinVer therefore ignores - until the first v8.x tag, builds are 8.0.0-alpha.0.N.
+    Needs full history to see the tags: CI checks out with fetch-depth: 0.
+  -->
+  <PropertyGroup>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <MinVerMinimumMajorMinor>8.0</MinVerMinimumMajorMinor>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
 
   <!--
     Building a net4x target off Windows works only where the .NET Framework reference

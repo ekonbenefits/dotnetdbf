@@ -13,6 +13,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        # MinVer versions from the tags, so it needs the history rather than a shallow clone.
+        fetch-depth: 0
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
@@ -33,6 +36,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-dotnet@v4
         with:

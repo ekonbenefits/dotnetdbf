@@ -2,12 +2,20 @@ name: .net framework Windows
 
 on: [push]
 
+# packages: write for the GitHub Packages push below.
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     name: Test Windows .net Framework Only
     runs-on: windows-2022
     steps:
     - uses: actions/checkout@v4
+      with:
+        # MinVer versions from the tags, so it needs the history rather than a shallow clone.
+        fetch-depth: 0
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
@@ -23,6 +31,14 @@ jobs:
         platform: x64
         # Same exclusion as the core workflow: KnownBugs fail because the library is wrong.
         otherConsoleOptions: /TestCaseFilter:"TestCategory!=KnownBugs"
-    - name: Publish
+    # Every master build (8.0.0-alpha.0.N between releases) and every release goes to GitHub
+    # Packages; other branches build and test but publish nothing.
+    - name: Publish to GitHub Packages
+      if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
       run:
-        dotnet nuget push '${{ github.workspace }}\publish\*.nupkg' --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+        dotnet nuget push '${{ github.workspace }}\publish\*.nupkg' --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+    # A release is a v-tag (v8.0.0): MinVer builds that commit as exactly 8.0.0.
+    - name: Publish to nuget.org
+      if: startsWith(github.ref, 'refs/tags/v')
+      run:
+        dotnet nuget push '${{ github.workspace }}\publish\*.nupkg' --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
