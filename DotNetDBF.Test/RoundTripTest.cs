@@ -28,12 +28,22 @@ namespace DotNetDBFTest
             => Path.Combine(Path.GetTempPath(), name + "_roundtrip.dbf");
 
         /// <summary>Writes one record of one field, reads it back, and hands back what came out.</summary>
-        private object RoundTrip(DBFField field, object value, [CallerMemberName] string name = null)
+        /// <remarks>
+        /// A Memo field needs a memo location on both ends even when the value is null, or the
+        /// reader throws "Memo Location Not Set", so the caller asks for one with
+        /// <paramref name="withMemo" />.
+        /// </remarks>
+        private object RoundTrip(DBFField field, object value, [CallerMemberName] string name = null,
+                                 bool withMemo = false)
         {
             var path = TestPath(name);
+            var memo = Path.ChangeExtension(path, "dbt");
+            if (withMemo && File.Exists(memo)) File.Delete(memo);   // OpenOrCreate, so it would grow forever
+
             using (var fos = File.Open(path, FileMode.Create, FileAccess.ReadWrite))
             using (var writer = new DBFWriter())
             {
+                if (withMemo) writer.DataMemoLoc = memo;
                 writer.Fields = new[] { field };
                 writer.AddRecord(value);
                 writer.Write(fos);
@@ -42,6 +52,7 @@ namespace DotNetDBFTest
             using (var fis = File.Open(path, FileMode.Open, FileAccess.Read))
             using (var reader = new DBFReader(fis))
             {
+                if (withMemo) reader.DataMemoLoc = memo;
                 return reader.NextRecord()[0];
             }
         }
@@ -88,8 +99,10 @@ namespace DotNetDBFTest
         {
             var text = new string('x', 300);
             var path = TestPath();
+            var memo = Path.ChangeExtension(path, "dbt");
+            if (File.Exists(memo)) File.Delete(memo);   // DataMemoLoc opens OpenOrCreate, so it would append forever
             using (var fos = File.Open(path, FileMode.Create, FileAccess.ReadWrite))
-            using (var writer = new DBFWriter { DataMemoLoc = Path.ChangeExtension(path, "dbt") })
+            using (var writer = new DBFWriter { DataMemoLoc = memo })
             {
                 writer.Fields = new[] { new DBFField("M1", NativeDbType.Memo) };
                 writer.AddRecord(new MemoValue(text));
@@ -97,7 +110,7 @@ namespace DotNetDBFTest
             }
 
             using (var fis = File.Open(path, FileMode.Open, FileAccess.Read))
-            using (var reader = new DBFReader(fis) { DataMemoLoc = Path.ChangeExtension(path, "dbt") })
+            using (var reader = new DBFReader(fis) { DataMemoLoc = memo })
             {
                 var read = reader.NextRecord()[0];
                 Assert.That(read.ToString(), EqualTo(text));
@@ -115,6 +128,7 @@ namespace DotNetDBFTest
         ///     Date     null
         ///     Float    null
         ///     Logical  DBNull.Value
+        ///     Memo     DBNull.Value
         ///
         /// A caller cannot write one check for "was this set?". Which of the three is right is
         /// a decision for the library; that they disagree is the bug, so this asserts only that
@@ -128,11 +142,12 @@ namespace DotNetDBFTest
             var forDate = RoundTrip(new DBFField("D", NativeDbType.Date), null, "null_date");
             var forFloat = RoundTrip(new DBFField("F", NativeDbType.Float, 10, 2), null, "null_float");
             var forLogical = RoundTrip(new DBFField("L", NativeDbType.Logical), null, "null_logical");
+            var forMemo = RoundTrip(new DBFField("M", NativeDbType.Memo), null, "null_memo", withMemo: true);
 
             string Describe(object v) =>
                 v == null ? "null" : v == DBNull.Value ? "DBNull.Value" : $"{v.GetType().Name} \"{v}\"";
 
-            var seen = new[] { forChar, forNumeric, forDate, forFloat, forLogical };
+            var seen = new[] { forChar, forNumeric, forDate, forFloat, forLogical, forMemo };
             var kinds = string.Join(", ", new[]
             {
                 "Char=" + Describe(forChar),
@@ -140,6 +155,7 @@ namespace DotNetDBFTest
                 "Date=" + Describe(forDate),
                 "Float=" + Describe(forFloat),
                 "Logical=" + Describe(forLogical),
+                "Memo=" + Describe(forMemo),
             });
 
             foreach (var value in seen)
@@ -189,6 +205,22 @@ namespace DotNetDBFTest
 
                 Assert.That(reader.NextRecord(), Null, "past the end");
             }
+        }
+
+        [Test]
+        public void The_file_ends_with_the_end_of_data_marker()
+        {
+            var path = TestPath();
+            using (var fos = File.Open(path, FileMode.Create, FileAccess.ReadWrite))
+            using (var writer = new DBFWriter())
+            {
+                writer.Fields = new[] { new DBFField("F1", NativeDbType.Char, 10) };
+                writer.AddRecord("one");
+                writer.Write(fos);
+            }
+
+            var bytes = File.ReadAllBytes(path);
+            Assert.That(bytes[bytes.Length - 1], EqualTo(DBFFieldType.EndOfData));
         }
 
         // --- what the writer refuses ------------------------------------------------------
@@ -243,6 +275,49 @@ namespace DotNetDBFTest
             {
                 writer.Fields = new[] { new DBFField("L1", NativeDbType.Logical) };
                 Assert.Throws<DBFRecordException>(() => writer.AddRecord("not a bool"));
+            }
+
+            using (var writer = new DBFWriter())
+            {
+                writer.Fields = new[] { new DBFField("M1", NativeDbType.Memo) };
+                Assert.Throws<DBFRecordException>(() => writer.AddRecord("not a MemoValue"));
+            }
+        }
+
+        // --- what the writer refuses before a record ---------------------------------------
+
+        [Test]
+        public void Fields_cannot_be_set_twice()
+        {
+            using (var writer = new DBFWriter())
+            {
+                writer.Fields = new[] { new DBFField("F1", NativeDbType.Char, 10) };
+                Assert.Throws<DBFException>(
+                    () => writer.Fields = new[] { new DBFField("F2", NativeDbType.Char, 10) });
+            }
+        }
+
+        [Test]
+        public void Fields_cannot_be_empty_or_null()
+        {
+            using (var writer = new DBFWriter())
+            {
+                Assert.Throws<DBFException>(() => writer.Fields = new DBFField[0]);
+            }
+
+            using (var writer = new DBFWriter())
+            {
+                Assert.Throws<DBFException>(() => writer.Fields = null);
+            }
+        }
+
+        [Test]
+        public void A_null_field_is_refused()
+        {
+            using (var writer = new DBFWriter())
+            {
+                Assert.Throws<DBFException>(
+                    () => writer.Fields = new[] { new DBFField("F1", NativeDbType.Char, 10), null });
             }
         }
 
