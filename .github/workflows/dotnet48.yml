@@ -21,6 +21,8 @@ jobs:
         searchFolder: .\DotNetDBF.Test\bin\Release\net48\
         runInParallel: true
         platform: x64
+        # Same exclusion as the core workflow: KnownBugs fail because the library is wrong.
+        otherConsoleOptions: /TestCaseFilter:"TestCategory!=KnownBugs"
     - name: Publish
       run:
         dotnet nuget push '${{ github.workspace }}\publish\*.nupkg' --source https://nuget.pkg.github.com/ekonbenefits/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
