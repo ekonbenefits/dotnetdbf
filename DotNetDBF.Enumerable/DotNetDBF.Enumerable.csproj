@@ -28,7 +28,7 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
+    <PackageReference Include="ImpromptuInterface" Version="8.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNetDBF\DotNetDBF.csproj" />
